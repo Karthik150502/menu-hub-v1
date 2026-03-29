@@ -1,84 +1,89 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
+import Sidebar from '@/components/global/sidebar';
+import { useSidebar } from '@/components/global/sidebar-context';
 import { HelloWave } from '@/components/hello-wave';
+import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Image } from 'expo-image';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const { openSidebar } = useSidebar();
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Sidebar />
+      {/* ── Main content ─────────────────────────────────────────────────── */}
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/partial-react-logo.png')}
+            style={styles.reactLogo}
+          />
+        }
+      >
+        <ScrollableStatsStrip />
+        {/* Menu button */}
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={openSidebar}
+          activeOpacity={0.75}
+        >
+          <View style={styles.menuLine} />
+          <View style={[styles.menuLine, { width: 18 }]} />
+          <View style={styles.menuLine} />
+        </TouchableOpacity>
+
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">Welcome user!</ThemedText>
+          <HelloWave />
+        </ThemedView>
+
+        <ThemedView style={styles.stepContainer}>
+          <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+          <ThemedText>
+            Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see
+            changes. Press{' '}
+            <ThemedText type="defaultSemiBold">
+              {Platform.select({ ios: 'cmd + d', android: 'cmd + m', web: 'F12' })}
+            </ThemedText>{' '}
+            to open developer tools.
+          </ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.stepContainer}>
+          <ThemedText type="subtitle">Step 2: Open the sidebar</ThemedText>
+          <ThemedText>
+            Tap the <ThemedText type="defaultSemiBold">☰ menu button</ThemedText> above or the
+            button below to open the animated sidebar.
+          </ThemedText>
+          <TouchableOpacity
+            style={styles.demoButton}
+            onPress={openSidebar}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.demoButtonText}>Open Sidebar ›</Text>
+          </TouchableOpacity>
+        </ThemedView>
+      </ParallaxScrollView>
+    </View>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -88,11 +93,29 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  menuButton: {
+    alignSelf: 'flex-start',
+    gap: 5,
+    padding: 8,
+    marginBottom: 4,
+  },
+  menuLine: {
+    height: 2,
+    width: 24,
+    backgroundColor: '#63B3ED',
+    borderRadius: 2,
+  },
+  demoButton: {
+    marginTop: 8,
+    alignSelf: 'flex-start',
+    backgroundColor: '#1A56DB',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  demoButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
   },
 });
