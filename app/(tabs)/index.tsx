@@ -1,6 +1,7 @@
 import Sidebar from '@/components/global/sidebar';
 import { useSidebar } from '@/components/global/sidebar-context';
 import { HelloWave } from '@/components/hello-wave';
+import DishesDisplay from '@/components/interactive/dishes-display';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -27,6 +28,11 @@ export default function HomeScreen() {
         }
       >
         <ScrollableStatsStrip />
+        {/* ── Dishes in a fixed-height box ─────────────────────────────── */}
+        <View style={styles.dishesContainer}>
+          <DishesDisplay />
+        </View>
+
         {/* Menu button */}
         <TouchableOpacity
           style={styles.menuButton}
@@ -117,5 +123,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 14,
+  },
+
+  // ── Dishes container ──────────────────────────────────────────────────────
+  dishesContainer: {
+    width:"99%",
+    height: 460,        // ~60% of a typical screen
+    marginBottom: 16,
+    borderRadius: 20,
+    overflow: 'hidden', // clips the FlatList scroll within rounded corners
   },
 });

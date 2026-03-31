@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import StatStrip, { StatCard } from "../stat-strip";
 
 
-// ─── Mock data fetcher (replace with your real API call) ─────────────────────
+// ─── Mock data fetcher (replace with real API call) ─────────────────────
 function generateStats(): StatCard[] {
     return [
         {
