@@ -1,13 +1,11 @@
 import Sidebar from '@/components/global/sidebar';
 import { useSidebar } from '@/components/global/sidebar-context';
-import { HelloWave } from '@/components/hello-wave';
 import DishesDisplay from '@/components/interactive/dishes-display';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { Colors } from '@/constants/theme';
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 
 export default function HomeScreen() {
@@ -19,7 +17,7 @@ export default function HomeScreen() {
       <Sidebar />
       {/* ── Main content ─────────────────────────────────────────────────── */}
       <ParallaxScrollView
-        headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+        headerBackgroundColor={{ light: Colors.light.headerBackgroundColor, dark: Colors.dark.headerBackgroundColor }}
         headerImage={
           <Image
             source={require('@/assets/images/partial-react-logo.png')}
@@ -28,12 +26,7 @@ export default function HomeScreen() {
         }
       >
         <ScrollableStatsStrip />
-        {/* ── Dishes in a fixed-height box ─────────────────────────────── */}
-        <View style={styles.dishesContainer}>
-          <DishesDisplay />
-        </View>
 
-        {/* Menu button */}
         <TouchableOpacity
           style={styles.menuButton}
           onPress={openSidebar}
@@ -44,37 +37,12 @@ export default function HomeScreen() {
           <View style={styles.menuLine} />
         </TouchableOpacity>
 
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="title">Welcome user!</ThemedText>
-          <HelloWave />
-        </ThemedView>
+        {/* ── Dishes in a fixed-height box ─────────────────────────────── */}
+        <View style={styles.dishesContainer}>
+          <DishesDisplay />
+        </View>
 
-        <ThemedView style={styles.stepContainer}>
-          <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-          <ThemedText>
-            Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see
-            changes. Press{' '}
-            <ThemedText type="defaultSemiBold">
-              {Platform.select({ ios: 'cmd + d', android: 'cmd + m', web: 'F12' })}
-            </ThemedText>{' '}
-            to open developer tools.
-          </ThemedText>
-        </ThemedView>
 
-        <ThemedView style={styles.stepContainer}>
-          <ThemedText type="subtitle">Step 2: Open the sidebar</ThemedText>
-          <ThemedText>
-            Tap the <ThemedText type="defaultSemiBold">☰ menu button</ThemedText> above or the
-            button below to open the animated sidebar.
-          </ThemedText>
-          <TouchableOpacity
-            style={styles.demoButton}
-            onPress={openSidebar}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.demoButtonText}>Open Sidebar ›</Text>
-          </TouchableOpacity>
-        </ThemedView>
       </ParallaxScrollView>
     </View>
   );
@@ -108,27 +76,14 @@ const styles = StyleSheet.create({
   menuLine: {
     height: 2,
     width: 24,
-    backgroundColor: '#63B3ED',
+    backgroundColor: '#ffffff',
     borderRadius: 2,
-  },
-  demoButton: {
-    marginTop: 8,
-    alignSelf: 'flex-start',
-    backgroundColor: '#1A56DB',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  demoButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
   },
 
   // ── Dishes container ──────────────────────────────────────────────────────
   dishesContainer: {
-    width:"99%",
-    height: 460,        // ~60% of a typical screen
+    width: "100%",
+    height: 580,        // ~60% of a typical screen
     marginBottom: 16,
     borderRadius: 20,
     overflow: 'hidden', // clips the FlatList scroll within rounded corners

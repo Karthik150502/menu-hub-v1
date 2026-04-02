@@ -1,3 +1,4 @@
+import { DESIGN_TOKENS } from '@/constants/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -27,7 +28,6 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
   footer,
   optionGroups = [],
   side = 'left',
-  backgroundColor = '#0F1117',
   overlayOpacity = 0.6,
   containerStyle,
 }) => {
@@ -137,7 +137,10 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
         style={[
           styles.sidebar,
           sidebarStyle,
-          { backgroundColor, transform: [{ translateX }] },
+          {
+            backgroundColor: DESIGN_TOKENS.background_1,
+            transform: [{ translateX }]
+          },
           containerStyle,
         ]}
       >
@@ -200,7 +203,7 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
           </View>
         )}
       </Animated.View>
-    </Modal>
+    </Modal >
   );
 };
 
@@ -347,7 +350,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     borderRadius: 12,
   },
-  optionDisabled: { opacity: 0.38 },
+  optionDisabled: { opacity: 0.58 },
   optionIcon: { marginRight: 14, width: 22, alignItems: 'center' },
   optionLabel: {
     flex: 1,
@@ -357,7 +360,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   optionLabelDisabled: { color: 'rgba(255,255,255,0.35)' },
-  optionDanger: { color: '#FC8181' },
+  optionDanger: { color: DESIGN_TOKENS.subNegativeDark },
   optionChevron: { marginLeft: 8 },
   chevronText: { fontSize: 20, color: 'rgba(255,255,255,0.2)', lineHeight: 22 },
 

@@ -1,3 +1,4 @@
+import { STATS_CARD_COLORS } from '@/constants/theme';
 import React, { useRef } from 'react';
 import {
     Animated,
@@ -45,22 +46,6 @@ export interface StatStripProps {
     style?: ViewStyle;
 }
 
-// ─── Palette ──────────────────────────────────────────────────────────────────
-
-const COLORS = {
-    bg: '#0A0C12',
-    cardBg: '#111520',
-    cardBorder: 'rgba(255,255,255,0.07)',
-    label: 'rgba(255,255,255,0.42)',
-    value: '#FFFFFF',
-    subPositive: '#34D399',
-    subNegative: '#F87171',
-    subNeutral: 'rgba(255,255,255,0.35)',
-    accentDefault: '#3B82F6',
-    refreshIcon: 'rgba(255,255,255,0.45)',
-    title: 'rgba(255,255,255,0.75)',
-};
-
 // ─── StatCard component ───────────────────────────────────────────────────────
 
 const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> = ({
@@ -78,12 +63,11 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
 
     const subColor =
         card.trend === 'positive'
-            ? COLORS.subPositive
+            ? STATS_CARD_COLORS.subPositive
             : card.trend === 'negative'
-                ? COLORS.subNegative
-                : COLORS.subNeutral;
-
-    const accent = card.accentColor ?? COLORS.accentDefault;
+                ? STATS_CARD_COLORS.subNegative
+                : STATS_CARD_COLORS.subNeutral;
+    ;
 
     return (
         <Animated.View style={[{ transform: [{ scale: pressAnim }] }]}>
@@ -92,12 +76,11 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
                 onPressIn={onPressIn}
                 onPressOut={onPressOut}
                 activeOpacity={1}
-                disabled={!card.onPress}
             >
                 <View
                     style={[
                         styles.card,
-                        { width, height, borderTopColor: accent },
+                        { width, height, borderTopColor: STATS_CARD_COLORS.accentDefault },
                     ]}
                 >
                     <Text style={styles.cardLabel} numberOfLines={1}>
@@ -198,7 +181,8 @@ export const StatStrip: React.FC<StatStripProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: COLORS.bg,
+        backgroundColor: STATS_CARD_COLORS.bg,
+        paddingVertical: 16
     },
     header: {
         flexDirection: 'row',
@@ -212,7 +196,7 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: '700',
         letterSpacing: 1.6,
-        color: COLORS.title,
+        color: STATS_CARD_COLORS.title,
         textTransform: 'uppercase',
     },
     refreshBtn: {
@@ -220,7 +204,7 @@ const styles = StyleSheet.create({
     },
     refreshIcon: {
         fontSize: 20,
-        color: COLORS.refreshIcon,
+        color: STATS_CARD_COLORS.refreshIcon,
         lineHeight: 24,
     },
 
@@ -233,10 +217,10 @@ const styles = StyleSheet.create({
 
     // Card
     card: {
-        backgroundColor: COLORS.cardBg,
+        backgroundColor: STATS_CARD_COLORS.cardBg,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: COLORS.cardBorder,
+        borderColor: STATS_CARD_COLORS.cardBorder,
         borderTopWidth: 2,
         paddingHorizontal: 14,
         paddingVertical: 14,
@@ -252,14 +236,14 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: '600',
         letterSpacing: 0.8,
-        color: COLORS.label,
+        color: STATS_CARD_COLORS.label,
         textTransform: 'uppercase',
         marginBottom: 6,
     },
     cardValue: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: COLORS.value,
+        fontSize: 18,
+        fontWeight: '500',
+        color: STATS_CARD_COLORS.value,
         letterSpacing: -0.5,
         flex: 1,
     },
