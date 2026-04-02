@@ -13,16 +13,14 @@ function generateStats(): StatCard[] {
             value: Math.floor(Math.random() * 600 + 200),
             subValue: `↑ ${Math.floor(Math.random() * 20 + 1)}% vs yesterday`,
             trend: 'positive',
-            accentColor: '#3B82F6',
             onPress: () => console.log('Orders tapped'),
         },
         {
             key: 'revenue',
             label: "Today's Revenue",
-            value: `$ ${(Math.random() * 400 + 50).toFixed(2)}`,
+            value: `₹ ${(Math.random() * 100000 + 50).toFixed(2)}`,
             subValue: `↑ ${Math.floor(Math.random() * 15 + 1)}%`,
             trend: 'positive',
-            accentColor: '#10B981',
             onPress: () => console.log('Revenue tapped'),
         },
         {
@@ -31,7 +29,6 @@ function generateStats(): StatCard[] {
             value: Math.floor(Math.random() * 20),
             subValue: `↓ ${Math.floor(Math.random() * 5 + 1)}% vs avg`,
             trend: 'negative',
-            accentColor: '#F87171',
         },
         {
             key: 'customers',
@@ -39,7 +36,6 @@ function generateStats(): StatCard[] {
             value: Math.floor(Math.random() * 80 + 10),
             subValue: 'This week',
             trend: 'neutral',
-            accentColor: '#A78BFA',
         },
         {
             key: 'rating',
@@ -47,7 +43,6 @@ function generateStats(): StatCard[] {
             value: (Math.random() * 1 + 4).toFixed(1),
             subValue: '★★★★★',
             trend: 'positive',
-            accentColor: '#FBBF24',
         },
     ];
 }

@@ -4,13 +4,18 @@ import { Category } from "@/components/interactive/filter-chip";
 
 export const CATEGORIES: Category[] = [
     { key: "all", label: "All" },
-    { key: "non-veg", label: "Non Veg", filter: (d: Dish) => d.category === "starter" },
-    { key: "veg", label: "Veg", filter: (d: Dish) => d.category === "main" },
-    { key: "beverages", label: "Beverages", filter: (d: Dish) => d.category === "drink" },
+    { key: "non-veg", label: "Non Veg", filter: (d: Dish) => d.category === "non-veg" },
+    { key: "veg", label: "Veg", filter: (d: Dish) => d.category === "veg" },
+    { key: "beverages", label: "Beverages", filter: (d: Dish) => d.category === "beverages" },
+    { key: "deserts", label: "Deserts", filter: (d: Dish) => d.category === "deserts" },
+    { key: "chats", label: "chats", filter: (d: Dish) => d.category === "chats" },
+    { key: "liqour", label: "Liqour/ Alcholol", filter: (d: Dish) => d.category === "liqour" },
+    { key: "chinese", label: "Chinese", filter: (d: Dish) => d.category === "chinese" },
 ];
 
-// ─── Initial data ─────────────────────────────────────────────────────────────
+// ─── Initial  data ─────────────────────────────────────────────────────────────
 export const INITIAL_DISHES: Dish[] = [
+    // ─── NON-VEG ─────────────────────────────────────────
     {
         key: 'butter-chicken',
         name: 'Butter Chicken',
@@ -22,59 +27,411 @@ export const INITIAL_DISHES: Dish[] = [
         category: "non-veg"
     },
     {
-        key: 'paneer-tikka',
-        name: 'Paneer Tikka',
-        description: 'Smoky grilled cottage cheese with spiced marinade',
-        price: 250,
-        color: ['#22C55E', '#16A34A'],
+        key: 'chicken-tikka',
+        name: 'Chicken Tikka',
+        description: 'Grilled chicken marinated in spices and yogurt',
+        price: 280,
+        color: ['#FB7185', '#E11D48'],
         available: true,
-        category: "veg"
-    },
-    {
-        key: 'masala-dosa',
-        name: 'Masala Dosa',
-        description: 'Crispy rice crepe with spiced potato filling',
-        price: 180,
-        color: ['#EF4444', '#B91C1C'],
-        available: false,
-        category: "veg"
-    },
-    {
-        key: 'biryani',
-        name: 'Chicken Biryani',
-        description: 'Slow-cooked basmati rice layered with spiced chicken',
-        price: 380,
-        color: ['#EAB308', '#CA8A04'],
-        available: true,
-        badge: "Chef's Pick 👨‍🍳",
         category: "non-veg"
     },
     {
-        key: 'dal-makhani',
-        name: 'Dal Makhani',
-        description: 'Slow simmered black lentils in buttery tomato sauce',
-        price: 200,
-        color: ['#8B5CF6', '#6D28D9'],
+        key: 'mutton-rogan-josh',
+        name: 'Mutton Rogan Josh',
+        description: 'Kashmiri style slow-cooked mutton curry',
+        price: 420,
+        color: ['#7C2D12', '#B91C1C'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'fish-fry',
+        name: 'Fish Fry',
+        description: 'Crispy fried fish with coastal spices',
+        price: 300,
+        color: ['#38BDF8', '#0EA5E9'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'prawn-curry',
+        name: 'Prawn Curry',
+        description: 'Spicy coconut-based prawn curry',
+        price: 350,
+        color: ['#F97316', '#FB923C'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'chicken-65',
+        name: 'Chicken 65',
+        description: 'Spicy deep-fried chicken bites',
+        price: 260,
+        color: ['#DC2626', '#991B1B'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'egg-curry',
+        name: 'Egg Curry',
+        description: 'Boiled eggs in spicy gravy',
+        price: 180,
+        color: ['#FACC15', '#EAB308'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'chicken-korma',
+        name: 'Chicken Korma',
+        description: 'Creamy Mughlai chicken curry',
+        price: 340,
+        color: ['#FDE68A', '#F59E0B'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'keema-pav',
+        name: 'Keema Pav',
+        description: 'Spiced minced meat served with bread',
+        price: 220,
+        color: ['#A16207', '#78350F'],
+        available: true,
+        category: "non-veg"
+    },
+    {
+        key: 'chicken-lollipop',
+        name: 'Chicken Lollipop',
+        description: 'Fried chicken wings in Indo-Chinese style',
+        price: 280,
+        color: ['#EF4444', '#B91C1C'],
+        available: true,
+        category: "non-veg"
+    },
+
+    // ─── VEG ─────────────────────────────────────────────
+    {
+        key: 'paneer-butter-masala',
+        name: 'Paneer Butter Masala',
+        description: 'Creamy tomato gravy with paneer cubes',
+        price: 260,
+        color: ['#F97316', '#EA580C'],
         available: true,
         category: "veg"
     },
     {
-        key: 'garlic-naan',
-        name: 'Garlic Naan',
-        description: 'Soft leavened bread with garlic butter and herbs',
+        key: 'veg-biryani',
+        name: 'Veg Biryani',
+        description: 'Aromatic basmati rice with vegetables',
+        price: 240,
+        color: ['#EAB308', '#CA8A04'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'palak-paneer',
+        name: 'Palak Paneer',
+        description: 'Spinach gravy with paneer',
+        price: 230,
+        color: ['#16A34A', '#15803D'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'aloo-gobi',
+        name: 'Aloo Gobi',
+        description: 'Potato and cauliflower curry',
+        price: 180,
+        color: ['#FACC15', '#EAB308'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'veg-korma',
+        name: 'Veg Korma',
+        description: 'Mixed vegetables in creamy gravy',
+        price: 210,
+        color: ['#FDE68A', '#F59E0B'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'chole-bhature',
+        name: 'Chole Bhature',
+        description: 'Spicy chickpeas with fried bread',
+        price: 200,
+        color: ['#92400E', '#78350F'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'rajma-chawal',
+        name: 'Rajma Chawal',
+        description: 'Kidney beans with rice',
+        price: 190,
+        color: ['#7F1D1D', '#991B1B'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'veg-fried-rice',
+        name: 'Veg Fried Rice',
+        description: 'Rice stir-fried with vegetables',
+        price: 170,
+        color: ['#86EFAC', '#22C55E'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'paneer-bhurji',
+        name: 'Paneer Bhurji',
+        description: 'Scrambled paneer with spices',
+        price: 210,
+        color: ['#FCD34D', '#F59E0B'],
+        available: true,
+        category: "veg"
+    },
+    {
+        key: 'veg-noodles',
+        name: 'Veg Noodles',
+        description: 'Stir-fried noodles with vegetables',
+        price: 160,
+        color: ['#A7F3D0', '#34D399'],
+        available: true,
+        category: "veg"
+    },
+
+    // ─── BEVERAGES ──────────────────────────────────────
+    {
+        key: 'cold-coffee',
+        name: 'Cold Coffee',
+        description: 'Chilled coffee with ice cream',
+        price: 140,
+        color: ['#7C2D12', '#92400E'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'fresh-lime-soda',
+        name: 'Fresh Lime Soda',
+        description: 'Refreshing lime soda',
+        price: 90,
+        color: ['#4ADE80', '#22C55E'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'oreo-shake',
+        name: 'Oreo Shake',
+        description: 'Milkshake blended with Oreo cookies',
+        price: 160,
+        color: ['#1F2937', '#111827'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'banana-shake',
+        name: 'Banana Shake',
+        description: 'Creamy banana milkshake',
+        price: 130,
+        color: ['#FACC15', '#EAB308'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'masala-chai',
+        name: 'Masala Chai',
+        description: 'Traditional Indian spiced tea',
+        price: 40,
+        color: ['#92400E', '#78350F'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'green-tea',
+        name: 'Green Tea',
+        description: 'Healthy herbal green tea',
+        price: 60,
+        color: ['#16A34A', '#15803D'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'buttermilk',
+        name: 'Buttermilk',
+        description: 'Cooling yogurt-based drink',
+        price: 50,
+        color: ['#E0F2FE', '#BAE6FD'],
+        available: true,
+        category: "beverages"
+    },
+    {
+        key: 'watermelon-juice',
+        name: 'Watermelon Juice',
+        description: 'Fresh watermelon juice',
+        price: 110,
+        color: ['#F87171', '#DC2626'],
+        available: true,
+        category: "beverages"
+    },
+
+    // ─── DESSERTS (your key: deserts) ───────────────────
+    {
+        key: 'gulab-jamun',
+        name: 'Gulab Jamun',
+        description: 'Sweet milk dumplings in syrup',
+        price: 90,
+        color: ['#7C2D12', '#991B1B'],
+        available: true,
+        category: "deserts"
+    },
+    {
+        key: 'rasmalai',
+        name: 'Rasmalai',
+        description: 'Soft paneer balls in sweet milk',
+        price: 120,
+        color: ['#FDE68A', '#FACC15'],
+        available: true,
+        category: "deserts"
+    },
+    {
+        key: 'chocolate-brownie',
+        name: 'Chocolate Brownie',
+        description: 'Warm chocolate brownie',
+        price: 150,
+        color: ['#451A03', '#78350F'],
+        available: true,
+        category: "deserts"
+    },
+    {
+        key: 'ice-cream-sundae',
+        name: 'Ice Cream Sundae',
+        description: 'Ice cream with toppings',
+        price: 140,
+        color: ['#FBCFE8', '#F472B6'],
+        available: true,
+        category: "deserts"
+    },
+    {
+        key: 'kheer',
+        name: 'Kheer',
+        description: 'Rice pudding with dry fruits',
+        price: 100,
+        color: ['#FEF3C7', '#FDE68A'],
+        available: true,
+        category: "deserts"
+    },
+
+    // ─── CHATS ─────────────────────────────────────────
+    {
+        key: 'pani-puri',
+        name: 'Pani Puri',
+        description: 'Crispy puris with tangy water',
+        price: 50,
+        color: ['#FBBF24', '#F59E0B'],
+        available: true,
+        category: "chats"
+    },
+    {
+        key: 'bhel-puri',
+        name: 'Bhel Puri',
+        description: 'Puffed rice with chutneys',
         price: 60,
         color: ['#F59E0B', '#D97706'],
         available: true,
-        category: "veg"
+        category: "chats"
     },
     {
-        key: 'mango-lassi',
-        name: 'Mango Lassi',
-        description: 'Chilled yogurt drink blended with Alphonso mango',
-        price: 120,
-        color: ['#FB923C', '#F97316'],
+        key: 'sev-puri',
+        name: 'Sev Puri',
+        description: 'Flat puris topped with sev',
+        price: 70,
+        color: ['#FACC15', '#CA8A04'],
         available: true,
-        badge: 'New 🥭',
-        category: "beverages"
+        category: "chats"
     },
+    {
+        key: 'dahi-puri',
+        name: 'Dahi Puri',
+        description: 'Puris filled with yogurt and chutneys',
+        price: 80,
+        color: ['#E0F2FE', '#38BDF8'],
+        available: true,
+        category: "chats"
+    },
+
+    // ─── LIQUOR (typo preserved: liqour) ────────────────
+    {
+        key: 'beer',
+        name: 'Beer',
+        description: 'Chilled lager beer',
+        price: 200,
+        color: ['#FACC15', '#CA8A04'],
+        available: true,
+        category: "liqour"
+    },
+    {
+        key: 'whiskey',
+        name: 'Whiskey',
+        description: 'Premium aged whiskey',
+        price: 350,
+        color: ['#92400E', '#78350F'],
+        available: true,
+        category: "liqour"
+    },
+    {
+        key: 'vodka',
+        name: 'Vodka',
+        description: 'Classic vodka shot',
+        price: 300,
+        color: ['#E5E7EB', '#9CA3AF'],
+        available: true,
+        category: "liqour"
+    },
+
+    // ─── CHINESE ───────────────────────────────────────
+    {
+        key: 'veg-manchurian',
+        name: 'Veg Manchurian',
+        description: 'Fried veggie balls in sauce',
+        price: 180,
+        color: ['#DC2626', '#991B1B'],
+        available: true,
+        category: "chinese"
+    },
+    {
+        key: 'chicken-manchurian',
+        name: 'Chicken Manchurian',
+        description: 'Chicken balls in spicy sauce',
+        price: 220,
+        color: ['#EF4444', '#B91C1C'],
+        available: true,
+        category: "chinese"
+    },
+    {
+        key: 'hakka-noodles',
+        name: 'Hakka Noodles',
+        description: 'Stir-fried noodles',
+        price: 170,
+        color: ['#FDE68A', '#F59E0B'],
+        available: true,
+        category: "chinese"
+    },
+    {
+        key: 'schezwan-rice',
+        name: 'Schezwan Fried Rice',
+        description: 'Spicy fried rice',
+        price: 190,
+        color: ['#F97316', '#EA580C'],
+        available: true,
+        category: "chinese"
+    },
+    {
+        key: 'spring-rolls',
+        name: 'Spring Rolls',
+        description: 'Crispy rolls with filling',
+        price: 150,
+        color: ['#A3E635', '#65A30D'],
+        available: true,
+        category: "chinese"
+    }
 ];
