@@ -182,7 +182,8 @@ export const StatStrip: React.FC<StatStripProps> = ({
 const styles = StyleSheet.create({
     container: {
         backgroundColor: STATS_CARD_COLORS.bg,
-        paddingVertical: 16
+        paddingVertical: 16,
+        paddingHorizontal: 8
     },
     header: {
         flexDirection: 'row',

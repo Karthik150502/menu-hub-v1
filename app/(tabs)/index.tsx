@@ -1,10 +1,7 @@
-import Sidebar from '@/components/global/sidebar';
-import { useSidebar } from '@/components/global/sidebar-context';
+import Sidebar from '@/components/global/sidebar/sidebar';
+import { useSidebar } from '@/components/global/sidebar/sidebar-context';
 import DishesDisplay from '@/components/interactive/dishes-display';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { Colors } from '@/constants/theme';
-import { Image } from 'expo-image';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 
@@ -16,17 +13,7 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <Sidebar />
       {/* ── Main content ─────────────────────────────────────────────────── */}
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: Colors.light.headerBackgroundColor, dark: Colors.dark.headerBackgroundColor }}
-        headerImage={
-          <Image
-            source={require('@/assets/images/partial-react-logo.png')}
-            style={styles.reactLogo}
-          />
-        }
-      >
-        <ScrollableStatsStrip />
-
+      <View style={styles.statsContainer}>
         <TouchableOpacity
           style={styles.menuButton}
           onPress={openSidebar}
@@ -36,14 +23,12 @@ export default function HomeScreen() {
           <View style={[styles.menuLine, { width: 18 }]} />
           <View style={styles.menuLine} />
         </TouchableOpacity>
-
         {/* ── Dishes in a fixed-height box ─────────────────────────────── */}
-        <View style={styles.dishesContainer}>
-          <DishesDisplay />
-        </View>
-
-
-      </ParallaxScrollView>
+        <ScrollableStatsStrip />
+      </View>
+      <View style={styles.dishesContainer}>
+        <DishesDisplay />
+      </View>
     </View>
   );
 }
@@ -80,12 +65,19 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
 
-  // ── Dishes container ──────────────────────────────────────────────────────
+  // ── Index container ──────────────────────────────────────────────────────
   dishesContainer: {
     width: "100%",
     height: 580,        // ~60% of a typical screen
     marginBottom: 16,
     borderRadius: 20,
-    overflow: 'hidden', // clips the FlatList scroll within rounded corners
+    overflow: 'hidden', // clips the FlatList scroll within rounded corners,
+    padding: 16
   },
+  statsContainer: {
+    width: "100%",
+    height: "auto",        // ~60% of a typical screen
+    borderRadius: 20,
+    padding: 16
+  }
 });

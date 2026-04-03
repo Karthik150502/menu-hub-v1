@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 // eslint-disable-next-line import/no-named-as-default
-import StatStrip, { StatCard } from "../stat-strip";
+import StatStrip, { StatCard } from "./stat-strip";
 
 
 // ─── Mock data fetcher (replace with real API call) ─────────────────────

@@ -4,13 +4,13 @@ import { Category } from "@/components/interactive/filter-chip";
 
 export const CATEGORIES: Category[] = [
     { key: "all", label: "All" },
-    { key: "non-veg", label: "Non Veg", filter: (d: Dish) => d.category === "non-veg" },
-    { key: "veg", label: "Veg", filter: (d: Dish) => d.category === "veg" },
-    { key: "beverages", label: "Beverages", filter: (d: Dish) => d.category === "beverages" },
-    { key: "deserts", label: "Deserts", filter: (d: Dish) => d.category === "deserts" },
-    { key: "chats", label: "chats", filter: (d: Dish) => d.category === "chats" },
-    { key: "liqour", label: "Liqour/ Alcholol", filter: (d: Dish) => d.category === "liqour" },
-    { key: "chinese", label: "Chinese", filter: (d: Dish) => d.category === "chinese" },
+    { key: "non-veg", label: "Non Veg" },
+    { key: "veg", label: "Veg" },
+    { key: "beverages", label: "Beverages" },
+    { key: "deserts", label: "Deserts" },
+    { key: "chats", label: "chats" },
+    { key: "liqour", label: "Liqour/ Alcholol", },
+    { key: "chinese", label: "Chinese" },
 ];
 
 // ─── Initial  data ─────────────────────────────────────────────────────────────
