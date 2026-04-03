@@ -1,8 +1,8 @@
 import { DESIGN_TOKENS } from '@/constants/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import SidebarBuilder from '../sidebar-builder';
-import Icon from '../ui/icon.example';
+import Icon from '../../ui/icon.example';
+import SidebarBuilder from './sidebar-builder';
 import { useSidebar } from './sidebar-context';
 
 

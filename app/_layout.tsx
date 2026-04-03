@@ -3,8 +3,8 @@ import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import Sidebar from '@/components/global/sidebar';
-import { SidebarProvider } from '@/components/global/sidebar-context';
+import Sidebar from '@/components/global/sidebar/sidebar';
+import { SidebarProvider } from '@/components/global/sidebar/sidebar-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 import { useEffect } from 'react';
