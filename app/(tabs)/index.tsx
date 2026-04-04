@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 8,
     flex: 1,           // fills remaining screen height
-    marginHorizontal: 4,
     marginBottom: 16,
     borderRadius: 20,
     overflow: 'hidden',

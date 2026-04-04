@@ -1,8 +1,9 @@
-import React, { useRef, useState, useCallback } from 'react';
+import { DESIGN_TOKENS } from '@/constants/theme';
+import React, { useCallback, useRef, useState } from 'react';
 import {
     Animated,
-    LayoutChangeEvent,
     Dimensions,
+    LayoutChangeEvent,
     ScrollView,
     StyleSheet,
     Switch,
@@ -15,8 +16,8 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const H_PADDING  = 16;
-const GAP        = 12;
+const H_PADDING = 8;
+const GAP = 16;
 const MIN_CARD_W = 260;
 const MAX_CARD_W = 520;
 const CARD_RADIUS = 20;
@@ -38,6 +39,7 @@ export interface Dish {
     badge?: string;
     imageUrl?: string;
     category: string;
+    veg: boolean
 }
 
 export interface DishListProps {
@@ -46,16 +48,6 @@ export interface DishListProps {
     onDishPress?: (dish: Dish) => void;
     style?: ViewStyle;
 }
-
-const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
-    starters: { bg: 'rgba(251,191,36,0.15)', text: '#FBBF24' },
-    mains:    { bg: 'rgba(249,115,22,0.15)', text: '#F97316' },
-    drinks:   { bg: 'rgba(59,130,246,0.15)', text: '#60A5FA' },
-    desserts: { bg: 'rgba(168,85,247,0.15)', text: '#C084FC' },
-    sides:    { bg: 'rgba(34,197,94,0.15)',  text: '#4ADE80' },
-};
-const DEFAULT_CAT = { bg: 'rgba(255,255,255,0.08)', text: 'rgba(255,255,255,0.5)' };
-function getCategoryColor(c: string) { return CATEGORY_COLORS[c.toLowerCase()] ?? DEFAULT_CAT; }
 
 // ─── Dish Card ────────────────────────────────────────────────────────────────
 
@@ -66,8 +58,8 @@ const DishCard: React.FC<{
     onToggle?: (key: string, val: boolean) => void;
     onPress?: (dish: Dish) => void;
 }> = ({ dish, index, onLayout, onToggle, onPress }) => {
-    const mountAnim  = useRef(new Animated.Value(0)).current;
-    const pressAnim  = useRef(new Animated.Value(1)).current;
+    const mountAnim = useRef(new Animated.Value(0)).current;
+    const pressAnim = useRef(new Animated.Value(1)).current;
     const switchAnim = useRef(new Animated.Value(dish.available ? 1 : 0)).current;
 
     React.useEffect(() => {
@@ -77,16 +69,15 @@ const DishCard: React.FC<{
         }).start();
     }, []);
 
-    const onPressIn  = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
-    const onPressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 30, bounciness: 5 }).start();
+    const onPressIn = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
+    const onPressOut = () => Animated.spring(pressAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 5 }).start();
 
     const handleToggle = (val: boolean) => {
         Animated.spring(switchAnim, { toValue: val ? 1 : 0, useNativeDriver: false, speed: 20, bounciness: 8 }).start();
         onToggle?.(dish.key, val);
     };
 
-    const bannerColors  = Array.isArray(dish.color) ? dish.color : [dish.color, dish.color];
-    const catColor      = getCategoryColor(dish.category);
+    const bannerColors = Array.isArray(dish.color) ? dish.color : [dish.color, dish.color];
     const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] });
 
     return (
@@ -129,8 +120,8 @@ const DishCard: React.FC<{
                         <View style={styles.infoLeft}>
                             <View style={styles.nameRow}>
                                 <Text style={styles.dishName} numberOfLines={1}>{dish.name}</Text>
-                                <View style={[styles.categoryPill, { backgroundColor: catColor.bg }]}>
-                                    <Text style={[styles.categoryText, { color: catColor.text }]}>{dish.category}</Text>
+                                <View style={[styles.categoryPill, { backgroundColor: dish.veg ? DESIGN_TOKENS.subPositiveDarkFade : DESIGN_TOKENS.subNegativeDarkFade }]}>
+                                    <Text style={[styles.categoryText, { color: DESIGN_TOKENS.titleText }]}>{dish.category}</Text>
                                 </View>
                             </View>
                             <Text style={styles.dishDesc} numberOfLines={2}>{dish.description}</Text>
@@ -164,8 +155,8 @@ export const DishList: React.FC<DishListProps> = ({
     dishes, onToggleAvailability, onDishPress, style,
 }) => {
     const { width: screenWidth } = useWindowDimensions();
-    const columns    = getColumns(screenWidth);
-    const remainder  = dishes.length % columns;
+    const columns = getColumns(screenWidth);
+    const remainder = dishes.length % columns;
     const ghostCount = remainder === 0 ? 0 : columns - remainder;
 
     // Measure the real rendered height of the first card, then apply it to ghosts.
@@ -226,7 +217,7 @@ const styles = StyleSheet.create({
         gap: GAP,
         paddingHorizontal: H_PADDING,
         paddingTop: 12,
-        paddingBottom: 24,
+        paddingBottom: 24
     },
 
     // Both real cards and ghosts use this — identical flex behaviour
@@ -264,7 +255,7 @@ const styles = StyleSheet.create({
     },
     decorCircle: { position: 'absolute', borderWidth: 1, borderRadius: 999 },
     decorCircleLg: { width: 140, height: 140, bottom: -50, right: -30 },
-    decorCircleSm: { width: 80,  height: 80,  top: -20,   right: 60  },
+    decorCircleSm: { width: 80, height: 80, top: -20, right: 60 },
 
     badge: {
         position: 'absolute', top: 12, left: 12,

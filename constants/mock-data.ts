@@ -24,7 +24,8 @@ export const INITIAL_DISHES: Dish[] = [
         color: ['#F97316', '#EA580C'],
         available: true,
         badge: 'Bestseller 🔥',
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'chicken-tikka',
@@ -33,7 +34,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 280,
         color: ['#FB7185', '#E11D48'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'mutton-rogan-josh',
@@ -42,7 +44,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 420,
         color: ['#7C2D12', '#B91C1C'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'fish-fry',
@@ -51,7 +54,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 300,
         color: ['#38BDF8', '#0EA5E9'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'prawn-curry',
@@ -60,7 +64,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 350,
         color: ['#F97316', '#FB923C'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'chicken-65',
@@ -69,7 +74,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 260,
         color: ['#DC2626', '#991B1B'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'egg-curry',
@@ -78,7 +84,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 180,
         color: ['#FACC15', '#EAB308'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'chicken-korma',
@@ -87,7 +94,9 @@ export const INITIAL_DISHES: Dish[] = [
         price: 340,
         color: ['#FDE68A', '#F59E0B'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
+
     },
     {
         key: 'keema-pav',
@@ -96,7 +105,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 220,
         color: ['#A16207', '#78350F'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
     {
         key: 'chicken-lollipop',
@@ -105,7 +115,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 280,
         color: ['#EF4444', '#B91C1C'],
         available: true,
-        category: "non-veg"
+        category: "non-veg",
+        veg: false
     },
 
     // ─── VEG ─────────────────────────────────────────────
@@ -116,7 +127,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 260,
         color: ['#F97316', '#EA580C'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'veg-biryani',
@@ -125,7 +137,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 240,
         color: ['#EAB308', '#CA8A04'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'palak-paneer',
@@ -134,7 +147,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 230,
         color: ['#16A34A', '#15803D'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'aloo-gobi',
@@ -143,7 +157,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 180,
         color: ['#FACC15', '#EAB308'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'veg-korma',
@@ -152,7 +167,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 210,
         color: ['#FDE68A', '#F59E0B'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'chole-bhature',
@@ -161,7 +177,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 200,
         color: ['#92400E', '#78350F'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'rajma-chawal',
@@ -170,7 +187,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 190,
         color: ['#7F1D1D', '#991B1B'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'veg-fried-rice',
@@ -179,7 +197,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 170,
         color: ['#86EFAC', '#22C55E'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'paneer-bhurji',
@@ -188,7 +207,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 210,
         color: ['#FCD34D', '#F59E0B'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
     {
         key: 'veg-noodles',
@@ -197,7 +217,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 160,
         color: ['#A7F3D0', '#34D399'],
         available: true,
-        category: "veg"
+        category: "veg",
+        veg: true
     },
 
     // ─── BEVERAGES ──────────────────────────────────────
@@ -208,7 +229,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 140,
         color: ['#7C2D12', '#92400E'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'fresh-lime-soda',
@@ -217,7 +239,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 90,
         color: ['#4ADE80', '#22C55E'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'oreo-shake',
@@ -226,7 +249,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 160,
         color: ['#1F2937', '#111827'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'banana-shake',
@@ -235,7 +259,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 130,
         color: ['#FACC15', '#EAB308'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'masala-chai',
@@ -244,7 +269,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 40,
         color: ['#92400E', '#78350F'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'green-tea',
@@ -253,7 +279,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 60,
         color: ['#16A34A', '#15803D'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'buttermilk',
@@ -262,7 +289,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 50,
         color: ['#E0F2FE', '#BAE6FD'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
     {
         key: 'watermelon-juice',
@@ -271,7 +299,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 110,
         color: ['#F87171', '#DC2626'],
         available: true,
-        category: "beverages"
+        category: "beverages",
+        veg: true
     },
 
     // ─── DESSERTS (your key: deserts) ───────────────────
@@ -282,7 +311,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 90,
         color: ['#7C2D12', '#991B1B'],
         available: true,
-        category: "deserts"
+        category: "deserts",
+        veg: true
     },
     {
         key: 'rasmalai',
@@ -291,7 +321,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 120,
         color: ['#FDE68A', '#FACC15'],
         available: true,
-        category: "deserts"
+        category: "deserts",
+        veg: true
     },
     {
         key: 'chocolate-brownie',
@@ -300,7 +331,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 150,
         color: ['#451A03', '#78350F'],
         available: true,
-        category: "deserts"
+        category: "deserts",
+        veg: true
     },
     {
         key: 'ice-cream-sundae',
@@ -309,7 +341,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 140,
         color: ['#FBCFE8', '#F472B6'],
         available: true,
-        category: "deserts"
+        category: "deserts",
+        veg: true
     },
     {
         key: 'kheer',
@@ -318,7 +351,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 100,
         color: ['#FEF3C7', '#FDE68A'],
         available: true,
-        category: "deserts"
+        category: "deserts",
+        veg: true
     },
 
     // ─── CHATS ─────────────────────────────────────────
@@ -329,7 +363,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 50,
         color: ['#FBBF24', '#F59E0B'],
         available: true,
-        category: "chats"
+        category: "chats",
+        veg: true
     },
     {
         key: 'bhel-puri',
@@ -338,7 +373,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 60,
         color: ['#F59E0B', '#D97706'],
         available: true,
-        category: "chats"
+        category: "chats",
+        veg: true
     },
     {
         key: 'sev-puri',
@@ -347,7 +383,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 70,
         color: ['#FACC15', '#CA8A04'],
         available: true,
-        category: "chats"
+        category: "chats",
+        veg: true
     },
     {
         key: 'dahi-puri',
@@ -356,7 +393,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 80,
         color: ['#E0F2FE', '#38BDF8'],
         available: true,
-        category: "chats"
+        category: "chats",
+        veg: true
     },
 
     // ─── LIQUOR (typo preserved: liqour) ────────────────
@@ -367,7 +405,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 200,
         color: ['#FACC15', '#CA8A04'],
         available: true,
-        category: "liqour"
+        category: "liqour",
+        veg: true
     },
     {
         key: 'whiskey',
@@ -376,7 +415,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 350,
         color: ['#92400E', '#78350F'],
         available: true,
-        category: "liqour"
+        category: "liqour",
+        veg: true
     },
     {
         key: 'vodka',
@@ -385,7 +425,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 300,
         color: ['#E5E7EB', '#9CA3AF'],
         available: true,
-        category: "liqour"
+        category: "liqour",
+        veg: true
     },
 
     // ─── CHINESE ───────────────────────────────────────
@@ -396,7 +437,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 180,
         color: ['#DC2626', '#991B1B'],
         available: true,
-        category: "chinese"
+        category: "chinese",
+        veg: true
     },
     {
         key: 'chicken-manchurian',
@@ -405,7 +447,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 220,
         color: ['#EF4444', '#B91C1C'],
         available: true,
-        category: "chinese"
+        category: "chinese",
+        veg: false
     },
     {
         key: 'hakka-noodles',
@@ -414,7 +457,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 170,
         color: ['#FDE68A', '#F59E0B'],
         available: true,
-        category: "chinese"
+        category: "chinese",
+        veg: true
     },
     {
         key: 'schezwan-rice',
@@ -423,7 +467,8 @@ export const INITIAL_DISHES: Dish[] = [
         price: 190,
         color: ['#F97316', '#EA580C'],
         available: true,
-        category: "chinese"
+        category: "chinese",
+        veg: true
     },
     {
         key: 'spring-rolls',
@@ -432,6 +477,7 @@ export const INITIAL_DISHES: Dish[] = [
         price: 150,
         color: ['#A3E635', '#65A30D'],
         available: true,
-        category: "chinese"
+        category: "chinese",
+        veg: true
     }
 ];
