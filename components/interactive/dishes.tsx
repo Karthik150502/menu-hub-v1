@@ -1,17 +1,31 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import {
     Animated,
+    LayoutChangeEvent,
     Dimensions,
-    FlatList,
+    ScrollView,
     StyleSheet,
     Switch,
     Text,
     TouchableOpacity,
     View,
     ViewStyle,
+    useWindowDimensions,
 } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+const H_PADDING  = 16;
+const GAP        = 12;
+const MIN_CARD_W = 260;
+const MAX_CARD_W = 520;
+const CARD_RADIUS = 20;
+const BANNER_HEIGHT = 130;
+
+function getColumns(screenWidth: number): number {
+    const usable = screenWidth - H_PADDING * 2;
+    return Math.max(1, Math.floor((usable + GAP) / (MIN_CARD_W + GAP)));
+}
 
 export interface Dish {
     key: string;
@@ -41,69 +55,50 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
     sides:    { bg: 'rgba(34,197,94,0.15)',  text: '#4ADE80' },
 };
 const DEFAULT_CAT = { bg: 'rgba(255,255,255,0.08)', text: 'rgba(255,255,255,0.5)' };
+function getCategoryColor(c: string) { return CATEGORY_COLORS[c.toLowerCase()] ?? DEFAULT_CAT; }
 
-function getCategoryColor(category: string) {
-    return CATEGORY_COLORS[category.toLowerCase()] ?? DEFAULT_CAT;
-}
+// ─── Dish Card ────────────────────────────────────────────────────────────────
 
 const DishCard: React.FC<{
     dish: Dish;
     index: number;
+    onLayout?: (e: LayoutChangeEvent) => void;
     onToggle?: (key: string, val: boolean) => void;
     onPress?: (dish: Dish) => void;
-}> = ({ dish, index, onToggle, onPress }) => {
-    // Native driver — transform + mount opacity
-    const mountAnim = useRef(new Animated.Value(0)).current;
-    const pressAnim = useRef(new Animated.Value(1)).current;
-
-    // JS driver — availability fade opacity (never mix with native nodes)
+}> = ({ dish, index, onLayout, onToggle, onPress }) => {
+    const mountAnim  = useRef(new Animated.Value(0)).current;
+    const pressAnim  = useRef(new Animated.Value(1)).current;
     const switchAnim = useRef(new Animated.Value(dish.available ? 1 : 0)).current;
 
     React.useEffect(() => {
         Animated.spring(mountAnim, {
-            toValue: 1,
-            delay: index * 70,
-            useNativeDriver: true,
-            tension: 60,
-            friction: 10,
+            toValue: 1, delay: index * 70,
+            useNativeDriver: true, tension: 60, friction: 10,
         }).start();
     }, []);
 
-    const onPressIn = () =>
-        Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
-
-    const onPressOut = () =>
-        Animated.spring(pressAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 5 }).start();
+    const onPressIn  = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
+    const onPressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 30, bounciness: 5 }).start();
 
     const handleToggle = (val: boolean) => {
-        Animated.spring(switchAnim, {
-            toValue: val ? 1 : 0,
-            useNativeDriver: false,  // must stay false — never mix with native nodes above
-            speed: 20,
-            bounciness: 8,
-        }).start();
+        Animated.spring(switchAnim, { toValue: val ? 1 : 0, useNativeDriver: false, speed: 20, bounciness: 8 }).start();
         onToggle?.(dish.key, val);
     };
 
-    const bannerColors = Array.isArray(dish.color) ? dish.color : [dish.color, dish.color];
-    const catColor = getCategoryColor(dish.category);
-
-    // switchAnim only ever touches this one Animated.View (JS driver)
+    const bannerColors  = Array.isArray(dish.color) ? dish.color : [dish.color, dish.color];
+    const catColor      = getCategoryColor(dish.category);
     const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] });
 
     return (
-        // Outer: JS-driven opacity (availability fade) — isolated from native nodes
-        <Animated.View style={{ opacity: switchOpacity }}>
-            {/* Inner: native-driven transform + mount fade — no JS nodes here */}
-            <Animated.View
-                style={{
-                    opacity: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
-                    transform: [
-                        { scale: pressAnim },
-                        { translateY: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) },
-                    ],
-                }}
-            >
+        <Animated.View style={[styles.cardWrapper, { opacity: switchOpacity }]} onLayout={onLayout}>
+            <Animated.View style={{
+                flex: 1,
+                opacity: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
+                transform: [
+                    { scale: pressAnim },
+                    { translateY: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) },
+                ],
+            }}>
                 <TouchableOpacity
                     onPress={() => onPress?.(dish)}
                     onPressIn={onPressIn}
@@ -111,7 +106,6 @@ const DishCard: React.FC<{
                     activeOpacity={1}
                     style={styles.card}
                 >
-                    {/* Banner */}
                     <View style={styles.bannerWrapper}>
                         <View style={[styles.banner, { backgroundColor: bannerColors[0] }]} />
                         {bannerColors[0] !== bannerColors[1] && (
@@ -131,20 +125,16 @@ const DishCard: React.FC<{
                         )}
                     </View>
 
-                    {/* Info row */}
                     <View style={styles.infoRow}>
                         <View style={styles.infoLeft}>
                             <View style={styles.nameRow}>
                                 <Text style={styles.dishName} numberOfLines={1}>{dish.name}</Text>
                                 <View style={[styles.categoryPill, { backgroundColor: catColor.bg }]}>
-                                    <Text style={[styles.categoryText, { color: catColor.text }]}>
-                                        {dish.category}
-                                    </Text>
+                                    <Text style={[styles.categoryText, { color: catColor.text }]}>{dish.category}</Text>
                                 </View>
                             </View>
                             <Text style={styles.dishDesc} numberOfLines={2}>{dish.description}</Text>
                         </View>
-
                         <View style={styles.infoRight}>
                             <Text style={styles.price}>
                                 <Text style={styles.currencySymbol}>{dish.currency ?? '₹'}</Text>
@@ -161,7 +151,6 @@ const DishCard: React.FC<{
                         </View>
                     </View>
 
-                    {/* Left accent bar */}
                     <View style={[styles.accentBar, { backgroundColor: bannerColors[0] }]} />
                 </TouchableOpacity>
             </Animated.View>
@@ -169,39 +158,94 @@ const DishCard: React.FC<{
     );
 };
 
+// ─── DishList ─────────────────────────────────────────────────────────────────
+
 export const DishList: React.FC<DishListProps> = ({
-    dishes,
-    onToggleAvailability,
-    onDishPress,
-    style,
+    dishes, onToggleAvailability, onDishPress, style,
 }) => {
-    const renderItem = useCallback(
-        ({ item, index }: { item: Dish; index: number }) => (
-            <DishCard dish={item} index={index} onToggle={onToggleAvailability} onPress={onDishPress} />
-        ),
-        [onToggleAvailability, onDishPress],
-    );
+    const { width: screenWidth } = useWindowDimensions();
+    const columns    = getColumns(screenWidth);
+    const remainder  = dishes.length % columns;
+    const ghostCount = remainder === 0 ? 0 : columns - remainder;
+
+    // Measure the real rendered height of the first card, then apply it to ghosts.
+    // This guarantees ghosts are pixel-perfect matches regardless of content/font size.
+    const [cardHeight, setCardHeight] = useState<number | null>(null);
+    const measured = useRef(false);
+
+    const onFirstCardLayout = useCallback((e: LayoutChangeEvent) => {
+        if (!measured.current) {
+            measured.current = true;
+            setCardHeight(e.nativeEvent.layout.height);
+        }
+    }, []);
 
     return (
-        <FlatList
-            data={dishes}
-            keyExtractor={(d) => d.key}
-            renderItem={renderItem}
-            contentContainerStyle={styles.listContent}
+        <ScrollView
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.grid}
             style={[styles.list, style]}
-        />
+        >
+            {dishes.map((dish, index) => (
+                <DishCard
+                    key={dish.key}
+                    dish={dish}
+                    index={index}
+                    onLayout={index === 0 ? onFirstCardLayout : undefined}
+                    onToggle={onToggleAvailability}
+                    onPress={onDishPress}
+                />
+            ))}
+
+            {/*
+              Ghost cards rendered only once we know the real card height.
+              They are exact clones of the card shell, same wrapper flex props,
+              same dark background, same border radius, same measured height.
+              No content inside. Completely hidden visually but hold their space
+              in the flex row so real cards never stretch.
+            */}
+            {cardHeight !== null && Array.from({ length: ghostCount }).map((_, i) => (
+                <View
+                    key={`ghost-${i}`}
+                    style={[styles.cardWrapper, { height: cardHeight }]}
+                >
+                    <View style={[styles.ghostCard, { height: cardHeight }]} />
+                </View>
+            ))}
+        </ScrollView>
     );
 };
 
-const CARD_RADIUS = 20;
-const BANNER_HEIGHT = 130;
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
     list: { flex: 1 },
-    listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24, gap: 14 },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: GAP,
+        paddingHorizontal: H_PADDING,
+        paddingTop: 12,
+        paddingBottom: 24,
+    },
+
+    // Both real cards and ghosts use this — identical flex behaviour
+    cardWrapper: {
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: MIN_CARD_W,
+        maxWidth: MAX_CARD_W,
+    },
+
+    // Ghost: same shape as card, no content, no shadow, invisible
+    ghostCard: {
+        flex: 1,
+        borderRadius: CARD_RADIUS,
+        backgroundColor: 'transparent',
+    },
 
     card: {
+        flex: 1,
         backgroundColor: '#1C1C26',
         borderRadius: CARD_RADIUS,
         overflow: 'hidden',
@@ -220,47 +264,36 @@ const styles = StyleSheet.create({
     },
     decorCircle: { position: 'absolute', borderWidth: 1, borderRadius: 999 },
     decorCircleLg: { width: 140, height: 140, bottom: -50, right: -30 },
-    decorCircleSm: { width: 80, height: 80, top: -20, right: 60 },
+    decorCircleSm: { width: 80,  height: 80,  top: -20,   right: 60  },
 
     badge: {
-        position: 'absolute',
-        top: 12, left: 12,
+        position: 'absolute', top: 12, left: 12,
         backgroundColor: 'rgba(0,0,0,0.38)',
         paddingHorizontal: 10, paddingVertical: 4,
-        borderRadius: 20,
-        borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+        borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
     },
     badgeText: { color: '#fff', fontSize: 10, fontWeight: '700', letterSpacing: 0.6 },
-
     unavailableScrim: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0,0,0,0.52)',
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: 'center', justifyContent: 'center',
     },
     unavailableText: { color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '800', letterSpacing: 3 },
 
     infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
     infoLeft: { flex: 1 },
-
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' },
     dishName: { color: '#F0F0F5', fontSize: 16, fontWeight: '700', letterSpacing: 0.1, flexShrink: 1 },
-
     categoryPill: { paddingHorizontal: 9, paddingVertical: 3, borderRadius: 999 },
     categoryText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5, textTransform: 'capitalize' },
-
     dishDesc: { color: 'rgba(255,255,255,0.42)', fontSize: 12, lineHeight: 17 },
     infoRight: { alignItems: 'flex-end', gap: 8 },
     price: { color: '#ffffff', fontSize: 22, fontWeight: '800', letterSpacing: -0.5 },
     currencySymbol: { fontSize: 14, fontWeight: '700' },
     switch: { transform: [{ scaleX: 0.88 }, { scaleY: 0.88 }] },
-
     accentBar: {
-        position: 'absolute',
-        left: 0, top: 0, bottom: 0,
-        width: 3,
-        borderTopLeftRadius: CARD_RADIUS,
-        borderBottomLeftRadius: CARD_RADIUS,
+        position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
+        borderTopLeftRadius: CARD_RADIUS, borderBottomLeftRadius: CARD_RADIUS,
     },
 });
 
