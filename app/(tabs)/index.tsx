@@ -4,7 +4,6 @@ import DishesDisplay from '@/components/interactive/dishes-display';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-
 export default function HomeScreen() {
 
   const { openSidebar } = useSidebar();
@@ -12,6 +11,7 @@ export default function HomeScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Sidebar />
+
       {/* ── Main content ─────────────────────────────────────────────────── */}
       <View style={styles.statsContainer}>
         <TouchableOpacity
@@ -26,6 +26,7 @@ export default function HomeScreen() {
         {/* ── Dishes in a fixed-height box ─────────────────────────────── */}
         <ScrollableStatsStrip />
       </View>
+
       <View style={styles.dishesContainer}>
         <DishesDisplay />
       </View>
@@ -68,11 +69,12 @@ const styles = StyleSheet.create({
   // ── Index container ──────────────────────────────────────────────────────
   dishesContainer: {
     width: "100%",
-    height: 580,        // ~60% of a typical screen
+    padding: 8,
+    flex: 1,           // fills remaining screen height
+    marginHorizontal: 4,
     marginBottom: 16,
     borderRadius: 20,
-    overflow: 'hidden', // clips the FlatList scroll within rounded corners,
-    padding: 16
+    overflow: 'hidden',
   },
   statsContainer: {
     width: "100%",
