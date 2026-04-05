@@ -1,8 +1,8 @@
 import { CATEGORIES } from "@/constants/mock-data";
+import { Colors } from "@/constants/theme";
 import React, { useRef } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Dish } from "./dishes";
-import { Colors } from "@/constants/theme";
 
 export interface Category {
     key: string;

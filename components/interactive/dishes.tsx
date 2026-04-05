@@ -13,6 +13,8 @@ import {
     ViewStyle,
     useWindowDimensions,
 } from 'react-native';
+// eslint-disable-next-line import/no-named-as-default
+import DishFormModal from './DishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -49,6 +51,31 @@ export interface DishListProps {
     style?: ViewStyle;
 }
 
+// ─── Edit icon ────────────────────────────────────────────────────────────────
+
+const EditIcon: React.FC<{ onPress: () => void }> = ({ onPress }) => {
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+
+    const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.88, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
+    const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
+
+    return (
+        <Animated.View style={[styles.editBtnWrap, { transform: [{ scale: scaleAnim }] }]}>
+            <TouchableOpacity
+                onPress={onPress}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
+                activeOpacity={1}
+                style={styles.editBtn}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+            >
+                {/* Pencil icon drawn with text — no icon library needed */}
+                <Text style={styles.editBtnText}>✎</Text>
+            </TouchableOpacity>
+        </Animated.View>
+    );
+};
+
 // ─── Dish Card ────────────────────────────────────────────────────────────────
 
 const DishCard: React.FC<{
@@ -61,6 +88,7 @@ const DishCard: React.FC<{
     const mountAnim = useRef(new Animated.Value(0)).current;
     const pressAnim = useRef(new Animated.Value(1)).current;
     const switchAnim = useRef(new Animated.Value(dish.available ? 1 : 0)).current;
+    const [editModalVisible, setEditModalVisible] = useState(false);
 
     React.useEffect(() => {
         Animated.spring(mountAnim, {
@@ -80,7 +108,7 @@ const DishCard: React.FC<{
     const bannerColors = Array.isArray(dish.color) ? dish.color : [dish.color, dish.color];
     const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] });
 
-    return (
+    return <>
         <Animated.View style={[styles.cardWrapper, { opacity: switchOpacity }]} onLayout={onLayout}>
             <Animated.View style={{
                 flex: 1,
@@ -109,6 +137,10 @@ const DishCard: React.FC<{
                                 <Text style={styles.badgeText}>{dish.badge}</Text>
                             </View>
                         )}
+
+                        {/* ── Edit icon — top right of banner ── */}
+                        <EditIcon onPress={() => setEditModalVisible(true)} />
+
                         {!dish.available && (
                             <View style={styles.unavailableScrim}>
                                 <Text style={styles.unavailableText}>UNAVAILABLE</Text>
@@ -146,7 +178,13 @@ const DishCard: React.FC<{
                 </TouchableOpacity>
             </Animated.View>
         </Animated.View>
-    );
+        <DishFormModal
+            visible={editModalVisible}
+            onClose={() => { setEditModalVisible(false) }}
+            onSubmit={(updatedDish: Omit<Dish, 'key'>) => { }}
+            defaultValues={dish}
+        />
+    </>
 };
 
 // ─── DishList ─────────────────────────────────────────────────────────────────
@@ -245,6 +283,28 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
         shadowRadius: 14,
         elevation: 10,
+    },
+
+    // ── Edit button ────────────────────────────────────────────────────────────
+    editBtnWrap: {
+        position: 'absolute',
+        top: 6,
+        right: 6,
+    },
+    editBtn: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: 'rgba(0,0,0,0.40)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    editBtnText: {
+        color: '#fff',
+        fontSize: 16,
+        lineHeight: 20,
     },
 
     bannerWrapper: { height: BANNER_HEIGHT, overflow: 'hidden', position: 'relative' },

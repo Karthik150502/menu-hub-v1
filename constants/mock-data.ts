@@ -8,7 +8,7 @@ export const CATEGORIES: Category[] = [
     { key: "veg", label: "Veg" },
     { key: "beverages", label: "Beverages" },
     { key: "deserts", label: "Deserts" },
-    { key: "chats", label: "chats" },
+    { key: "chats", label: "Chats" },
     { key: "liqour", label: "Liqour/ Alcholol", },
     { key: "chinese", label: "Chinese" },
 ];
