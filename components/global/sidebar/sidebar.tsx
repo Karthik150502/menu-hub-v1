@@ -1,4 +1,4 @@
-import { DESIGN_TOKENS } from '@/constants/theme';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Icon from '../../ui/icon.example';

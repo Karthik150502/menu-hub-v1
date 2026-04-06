@@ -1,4 +1,4 @@
-import { DESIGN_TOKENS } from '@/constants/theme';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useCallback, useRef, useState } from 'react';
 import {
     Animated,
@@ -41,8 +41,10 @@ export interface Dish {
     badge?: string;
     imageUrl?: string;
     category: string;
-    veg: boolean
+    veg: boolean;
+    showInMenu?: boolean;
 }
+
 
 export interface DishListProps {
     dishes: Dish[];
@@ -166,7 +168,7 @@ const DishCard: React.FC<{
                             <Switch
                                 value={dish.available}
                                 onValueChange={handleToggle}
-                                trackColor={{ false: '#2E2E38', true: '#22C55E' }}
+                                trackColor={{ false: '#2E2E38', true: DESIGN_TOKENS.subPositive }}
                                 thumbColor="#fff"
                                 ios_backgroundColor="#2E2E38"
                                 style={styles.switch}

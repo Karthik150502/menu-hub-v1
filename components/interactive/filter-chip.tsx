@@ -1,5 +1,5 @@
 import { CATEGORIES } from "@/constants/mock-data";
-import { Colors } from "@/constants/theme";
+import { Colors } from "@/constants/themes/theme";
 import React, { useRef } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useBottomToast } from "../feedback/BottomToast";
@@ -50,12 +50,16 @@ const CategoryBar: React.FC<{
     onSelect: React.Dispatch<React.SetStateAction<string[]>>;
 }> = ({ selected, onSelect }) => {
     const { info } = useBottomToast();
+
     return <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.barContent}
         style={styles.bar}
     >
+
+
+
         {CATEGORIES.map((cat) => {
             const isSelected = selected.includes(cat.key)
 
@@ -66,7 +70,7 @@ const CategoryBar: React.FC<{
                 onPress={() => onSelect(prev => {
                     if (isSelected) {
                         if (prev.length === 1) {
-                            info('Need a category always selected');
+                            info('Atleast select one category');
                             return prev;
                         }
                         return prev.filter(key => key !== cat.key)
