@@ -1,4 +1,4 @@
-import { DESIGN_TOKENS } from '@/constants/theme';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {

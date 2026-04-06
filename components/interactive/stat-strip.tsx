@@ -1,4 +1,4 @@
-import { STATS_CARD_COLORS } from '@/constants/theme';
+import { STATS_CARD_COLORS } from '@/constants/themes/theme';
 import React, { useRef } from 'react';
 import {
     Animated,

@@ -1,5 +1,5 @@
 import { CATEGORIES } from '@/constants/mock-data';
-import { DESIGN_TOKENS } from '@/constants/theme';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
 import {
     Controller,
@@ -20,26 +20,14 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { useBottomToast } from '../feedback/BottomToast';
+import { Dish } from './dishes';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Category {
     key: string;
     label: string;
-}
-
-export interface Dish {
-    key: string;
-    name: string;
-    description: string;
-    price: number;
-    currency?: string;
-    color: string | [string, string];
-    available: boolean;
-    badge?: string;
-    imageUrl?: string;
-    category: string;
-    veg: boolean;
 }
 
 interface DishFormValues {
@@ -51,6 +39,7 @@ interface DishFormValues {
     imageUrl: string;
     available: boolean;
     veg: boolean;
+    showInMenu?: boolean;
 }
 
 export interface DishFormModalProps {
@@ -61,6 +50,51 @@ export interface DishFormModalProps {
     submitLabel?: string;
     isSubmitting?: boolean;
 }
+
+// ─── Theme tokens (local aliases for readability) ─────────────────────────────
+// All color values come from @/constants/theme/theme — zero hardcoded hex here.
+
+const T = {
+    // Surfaces
+    screenBg: DESIGN_TOKENS.background_1,
+    cardBg: DESIGN_TOKENS.cardBg,
+    cardBorder: DESIGN_TOKENS.cardBorder,
+    inputBg: DESIGN_TOKENS.inputBg,
+    inputBorder: DESIGN_TOKENS.inputBorder,
+
+    // Accent
+    accent: DESIGN_TOKENS.accentDefault,
+    accentFaint: DESIGN_TOKENS.accentFaint,
+
+    // Text
+    textPrimary: DESIGN_TOKENS.primaryText,
+    textSecondary: DESIGN_TOKENS.secondaryText,
+    textLabel: DESIGN_TOKENS.textLabel,
+    textPlaceholder: DESIGN_TOKENS.textPlaceholder,
+    textMuted: DESIGN_TOKENS.textMuted,
+    textHint: DESIGN_TOKENS.textHint,
+    textSubtle: DESIGN_TOKENS.textSubtle,
+    textSectionTitle: DESIGN_TOKENS.textSectionTitle,
+
+    // Semantic
+    error: DESIGN_TOKENS.subNegativeDark,
+    errorFaint: DESIGN_TOKENS.subNegativeDarkFade,
+    success: DESIGN_TOKENS.subPositive,
+
+    // UI chrome
+    divider: DESIGN_TOKENS.divider,
+    closeBtn: DESIGN_TOKENS.chromeBtnBg,
+    closeBtnText: DESIGN_TOKENS.textDismiss,
+    dragPill: DESIGN_TOKENS.dragPill,
+    toggleBg: DESIGN_TOKENS.inputBg,
+    toggleBorder: DESIGN_TOKENS.inputBorder,
+    switchTrackOff: DESIGN_TOKENS.switchTrackOff,
+
+    // Price field
+    currencyBadgeBg: DESIGN_TOKENS.currencyBadgeBg,
+    currencyText: DESIGN_TOKENS.accentDefault,
+    priceDivider: DESIGN_TOKENS.inputBorder,
+} as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -75,6 +109,7 @@ function dishToFormValues(dish?: Partial<Dish>): Partial<DishFormValues> {
         imageUrl: dish.imageUrl ?? '',
         available: dish.available ?? true,
         veg: dish.veg ?? false,
+        showInMenu: true
     };
 }
 
@@ -89,6 +124,7 @@ function formValuesToDish(values: DishFormValues): Omit<Dish, 'key'> {
         color: '#F97316',
         available: values.available,
         veg: values.veg,
+        showInMenu: values.showInMenu
     };
 }
 
@@ -112,33 +148,57 @@ const Field: React.FC<FieldProps> = ({
     keyboardType = 'default', multiline, error, hint, optional,
 }) => {
     const borderAnim = useRef(new Animated.Value(0)).current;
+    const isFocused = useRef(false);
 
-    const handleFocus = () => Animated.spring(borderAnim, {
-        toValue: 1, useNativeDriver: false, speed: 22, bounciness: 4,
-    }).start();
+    const { info } = useBottomToast()
+
+    // Re-evaluate border color whenever `error` changes.
+    // If the field isn't focused, snap back to the error/neutral resting color.
+    useEffect(() => {
+        if (!isFocused.current) {
+            Animated.spring(borderAnim, {
+                toValue: 0,
+                useNativeDriver: false,
+                speed: 22,
+                bounciness: 0,
+            }).start();
+        }
+    }, [error]);
+
+    const handleFocus = () => {
+        isFocused.current = true;
+        Animated.spring(borderAnim, {
+            toValue: 1, useNativeDriver: false, speed: 22, bounciness: 4,
+        }).start();
+    };
 
     const handleBlur = () => {
+        isFocused.current = false;
         onBlur();
         Animated.spring(borderAnim, {
             toValue: 0, useNativeDriver: false, speed: 22, bounciness: 0,
         }).start();
     };
 
+    // Interpolation reads `error` at call time — inside the component body,
+    // so it gets the latest value on every render.
     const borderColor = borderAnim.interpolate({
         inputRange: [0, 1],
-        outputRange: [error ? DESIGN_TOKENS.subNegativeDark : 'rgba(255,255,255,0.08)', DESIGN_TOKENS.accentDefault],
+        outputRange: [T.inputBorder, T.accent],
     });
 
     return (
         <View style={fieldStyles.wrapper}>
+            {/* Label row */}
             <View style={fieldStyles.labelRow}>
                 <Text style={fieldStyles.label}>{label}</Text>
                 {optional && <Text style={fieldStyles.optional}>optional</Text>}
             </View>
+
+            {/* Input */}
             <Animated.View style={[
                 fieldStyles.inputWrap,
                 { borderColor },
-                error && fieldStyles.inputWrapError,
             ]}>
                 <TextInput
                     value={value}
@@ -146,7 +206,7 @@ const Field: React.FC<FieldProps> = ({
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     placeholder={placeholder}
-                    placeholderTextColor="rgba(255,255,255,0.2)"
+                    placeholderTextColor={T.textPlaceholder}
                     keyboardType={keyboardType}
                     multiline={multiline}
                     underlineColorAndroid="transparent"
@@ -156,6 +216,8 @@ const Field: React.FC<FieldProps> = ({
                     style={[fieldStyles.input, multiline && fieldStyles.inputMulti]}
                 />
             </Animated.View>
+
+            {/* Error takes priority over hint */}
             {error
                 ? <Text style={fieldStyles.error}>⚠ {error}</Text>
                 : hint
@@ -169,17 +231,16 @@ const Field: React.FC<FieldProps> = ({
 const fieldStyles = StyleSheet.create({
     wrapper: { marginBottom: 20 },
     labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-    label: { color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '700', letterSpacing: 1.1, textTransform: 'uppercase' },
-    optional: { marginLeft: 8, color: 'rgba(255,255,255,0.25)', fontSize: 10, fontWeight: '500' },
-    inputWrap: { borderWidth: 1.5, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.04)', paddingHorizontal: 14 },
-    inputWrapError: { backgroundColor: 'rgba(248,113,113,0.05)' },
-    input: { color: '#F0F0F5', fontSize: 15, paddingVertical: 13, },
+    label: { color: T.textLabel, fontSize: 11, fontWeight: '700', letterSpacing: 1.1, textTransform: 'uppercase' },
+    optional: { marginLeft: 8, color: T.textMuted, fontSize: 10, fontWeight: '500' },
+    inputWrap: { borderWidth: 1.5, borderRadius: 12, backgroundColor: T.inputBg, paddingHorizontal: 14 },
+    input: { color: T.textPrimary, fontSize: 15, paddingVertical: 13 },
     inputMulti: { minHeight: 80, textAlignVertical: 'top', paddingTop: 12 },
-    error: { color: DESIGN_TOKENS.subNegativeDark, fontSize: 11, fontWeight: '500', marginTop: 6 },
-    hint: { color: 'rgba(255,255,255,0.28)', fontSize: 11, marginTop: 6 },
+    error: { color: T.error, fontSize: 16, fontWeight: '500', marginTop: 6 },
+    hint: { color: T.textHint, fontSize: 13, marginTop: 6 },
 });
 
-// ─── Price Field (fixed ₹ prefix) ─────────────────────────────────────────────
+// ─── Price Field ──────────────────────────────────────────────────────────────
 
 interface PriceFieldProps {
     value: string;
@@ -204,7 +265,7 @@ const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error 
 
     const borderColor = borderAnim.interpolate({
         inputRange: [0, 1],
-        outputRange: [error ? DESIGN_TOKENS.subNegativeDark : 'rgba(255,255,255,0.08)', DESIGN_TOKENS.accentDefault],
+        outputRange: [T.inputBorder, T.accent],
     });
 
     return (
@@ -216,9 +277,7 @@ const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error 
                 fieldStyles.inputWrap,
                 priceStyles.inputWrap,
                 { borderColor },
-                error && fieldStyles.inputWrapError,
             ]}>
-                {/* Fixed currency badge */}
                 <View style={priceStyles.currencyBadge}>
                     <Text style={priceStyles.currencyText}>₹</Text>
                 </View>
@@ -229,7 +288,7 @@ const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error 
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     placeholder="0.00"
-                    placeholderTextColor="rgba(255,255,255,0.2)"
+                    placeholderTextColor={T.textPlaceholder}
                     keyboardType="decimal-pad"
                     style={[fieldStyles.input, priceStyles.input]}
                 />
@@ -240,33 +299,11 @@ const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error 
 };
 
 const priceStyles = StyleSheet.create({
-    inputWrap: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 0,
-        overflow: 'hidden',
-    },
-    currencyBadge: {
-        paddingHorizontal: 14,
-        paddingVertical: 13,
-        backgroundColor: 'rgba(249,115,22,0.10)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    currencyText: {
-        color: DESIGN_TOKENS.accentDefault,
-        fontSize: 16,
-        fontWeight: '700',
-    },
-    divider: {
-        width: 1,
-        alignSelf: 'stretch',
-        backgroundColor: 'rgba(255,255,255,0.08)',
-    },
-    input: {
-        flex: 1,
-        paddingHorizontal: 14,
-    },
+    inputWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 0, overflow: 'hidden' },
+    currencyBadge: { paddingHorizontal: 14, paddingVertical: 13, backgroundColor: T.currencyBadgeBg, alignItems: 'center', justifyContent: 'center' },
+    currencyText: { color: T.currencyText, fontSize: 16, fontWeight: '700' },
+    divider: { width: 1, alignSelf: 'stretch', backgroundColor: T.priceDivider },
+    input: { flex: 1, paddingHorizontal: 14 },
 });
 
 // ─── Category Select ──────────────────────────────────────────────────────────
@@ -278,7 +315,6 @@ interface CategorySelectProps {
 }
 
 const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, error }) => {
-    // Filter out "all" from the selectable options in a form context
     const options = CATEGORIES.filter(c => c.key !== 'all');
 
     return (
@@ -286,8 +322,6 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, error 
             <View style={fieldStyles.labelRow}>
                 <Text style={fieldStyles.label}>Category</Text>
             </View>
-
-            {/* Chip grid */}
             <View style={catStyles.grid}>
                 {options.map(cat => {
                     const active = cat.key === value;
@@ -305,7 +339,6 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, error 
                     );
                 })}
             </View>
-
             {error && <Text style={fieldStyles.error}>⚠ {error}</Text>}
         </View>
     );
@@ -314,26 +347,10 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, error 
 const catStyles = StyleSheet.create({
     wrapper: { marginBottom: 20 },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    chip: {
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        borderRadius: 20,
-        borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.10)',
-        backgroundColor: 'rgba(255,255,255,0.04)',
-    },
-    chipActive: {
-        borderColor: DESIGN_TOKENS.accentDefault,
-        backgroundColor: 'rgba(249,115,22,0.15)',
-    },
-    chipText: {
-        color: '#F0F0F5',
-        fontSize: 13,
-        fontWeight: '600',
-    },
-    chipTextActive: {
-        color: DESIGN_TOKENS.accentDefault,
-    },
+    chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
+    chipActive: { borderColor: T.accent, backgroundColor: T.accentFaint },
+    chipText: { color: T.textPrimary, fontSize: 13, fontWeight: '600' },
+    chipTextActive: { color: T.accent },
 });
 
 // ─── Toggle Row ───────────────────────────────────────────────────────────────
@@ -344,18 +361,13 @@ interface ToggleRowProps {
     value: boolean;
     onChange: (v: boolean) => void;
     activeColor?: string;
-    disabled?: boolean
+    disabled?: boolean;
 }
 
 const ToggleRow: React.FC<ToggleRowProps> = ({
-    label, subLabel, value, onChange, activeColor = '#22C55E',
-    disabled
-}) => {
-    return <View style={{
-        ...toggleStyles.row, ...(disabled && {
-            opacity: 0.55
-        })
-    }}>
+    label, subLabel, value, onChange, activeColor = T.success, disabled,
+}) => (
+    <View style={[toggleStyles.row, disabled && toggleStyles.rowDisabled]}>
         <View style={toggleStyles.text}>
             <Text style={toggleStyles.label}>{label}</Text>
             <Text style={toggleStyles.sub}>{subLabel}</Text>
@@ -364,18 +376,19 @@ const ToggleRow: React.FC<ToggleRowProps> = ({
             disabled={disabled}
             value={value}
             onValueChange={onChange}
-            trackColor={{ false: '#2E2E38', true: activeColor }}
-            thumbColor="#fff"
-            ios_backgroundColor="#2E2E38"
+            trackColor={{ false: T.switchTrackOff, true: activeColor }}
+            thumbColor={T.textPrimary}
+            ios_backgroundColor={T.switchTrackOff}
         />
     </View>
-}
+);
 
 const toggleStyles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(255,255,255,0.04)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 14 },
+    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 14 },
+    rowDisabled: { opacity: 0.55 },
     text: { flex: 1, marginRight: 12 },
-    label: { color: '#F0F0F5', fontSize: 14, fontWeight: '600' },
-    sub: { color: 'rgba(255,255,255,0.38)', fontSize: 12, marginTop: 2 },
+    label: { color: T.textPrimary, fontSize: 14, fontWeight: '600' },
+    sub: { color: T.textSubtle, fontSize: 12, marginTop: 2 },
 });
 
 // ─── Section Header ───────────────────────────────────────────────────────────
@@ -389,8 +402,8 @@ const Section: React.FC<{ title: string }> = ({ title }) => (
 
 const sectionStyles = StyleSheet.create({
     wrap: { flexDirection: 'row', alignItems: 'center', marginBottom: 18, marginTop: 6 },
-    title: { color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: '700', letterSpacing: 1.4, textTransform: 'uppercase', marginRight: 10 },
-    line: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.06)' },
+    title: { color: T.textSectionTitle, fontSize: 10, fontWeight: '700', letterSpacing: 1.4, textTransform: 'uppercase', marginRight: 10 },
+    line: { flex: 1, height: 1, backgroundColor: T.divider },
 });
 
 // ─── DishFormModal ────────────────────────────────────────────────────────────
@@ -403,7 +416,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
     submitLabel = 'Save Dish',
     isSubmitting = false,
 }) => {
-
     const {
         control,
         handleSubmit,
@@ -419,13 +431,14 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
             imageUrl: '',
             available: true,
             veg: false,
+            showInMenu: true,
             ...dishToFormValues(defaultValues),
         },
         mode: 'onBlur',
         reValidateMode: 'onChange',
     });
 
-    const [category] = useWatch({ control, name: ["category"] });
+    const [category] = useWatch({ control, name: ['category'] });
 
     useEffect(() => {
         if (defaultValues) {
@@ -435,7 +448,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
 
     const onValid: SubmitHandler<DishFormValues> = (values) => {
         onSubmit(formValuesToDish(values));
-        onClose()
+        onClose();
     };
 
     const onInvalid: SubmitErrorHandler<DishFormValues> = (errs) => {
@@ -474,7 +487,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* Basic Info */}
                     <Section title="Basic Info" />
 
                     <Controller
@@ -518,7 +530,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                         )}
                     />
 
-                    {/* Pricing */}
                     <Section title="Pricing" />
 
                     <Controller
@@ -544,7 +555,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                         )}
                     />
 
-                    {/* Classification */}
                     <Section title="Classification" />
 
                     <Controller
@@ -560,7 +570,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                         )}
                     />
 
-                    {/* Media */}
                     <Section title="Media" />
 
                     <Controller
@@ -586,7 +595,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                         )}
                     />
 
-                    {/* Settings */}
                     <Section title="Settings" />
 
                     <Controller
@@ -598,11 +606,9 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                                 subLabel={value ? 'Visible to customers' : 'Hidden from menu'}
                                 value={value}
                                 onChange={onChange}
-                                activeColor="#22C55E"
                             />
                         )}
                     />
-
 
                     <Controller
                         control={control}
@@ -611,25 +617,35 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                             <ToggleRow
                                 label="Vegetarian"
                                 subLabel={value ? 'Marked as veg 🟢' : 'Marked as non-veg 🔴'}
-                                value={category === "non-veg" ? false : category === "veg" ? true : value}
+                                value={category === 'non-veg' ? false : category === 'veg' ? true : value}
                                 onChange={onChange}
-                                disabled={category === "non-veg" || category === "veg"}
-                                activeColor="#22C55E"
+                                disabled={category === 'non-veg' || category === 'veg'}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="showInMenu"
+                        render={({ field: { value, onChange } }) => (
+                            <ToggleRow
+                                label="Show in Menu"
+                                subLabel={value ? 'Customers can see this Item in Menu' : 'Hidden for Customers'}
+                                value={value || false}
+                                onChange={onChange}
                             />
                         )}
                     />
 
-                    {/* Submit */}
                     <TouchableOpacity
                         style={[
-                            styles.submitBtn,
-                            (!isDirty || isSubmitting) && styles.submitBtnDisabled,
+                            submitStyles.btn,
+                            (!isDirty || isSubmitting) && submitStyles.btnDisabled,
                         ]}
                         onPress={handleSubmit(onValid, onInvalid)}
                         activeOpacity={0.85}
                         disabled={!isDirty || isSubmitting}
                     >
-                        <Text style={styles.submitBtnText}>
+                        <Text style={submitStyles.btnText}>
                             {isSubmitting ? 'Saving…' : submitLabel}
                         </Text>
                     </TouchableOpacity>
@@ -642,81 +658,21 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const modalStyles = StyleSheet.create({
-    root: {
-        flex: 1,
-        backgroundColor: '#12121A',
-    },
-    header: {
-        paddingTop: 12,
-        paddingHorizontal: 24,
-        paddingBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(255,255,255,0.06)',
-    },
-    dragPill: {
-        alignSelf: 'center',
-        width: 36,
-        height: 4,
-        borderRadius: 2,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        marginBottom: 16,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    title: {
-        color: '#F0F0F5',
-        fontSize: 18,
-        fontWeight: '700',
-        letterSpacing: 0.2,
-    },
-    closeBtn: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: 'rgba(255,255,255,0.08)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    closeBtnText: {
-        color: 'rgba(255,255,255,0.5)',
-        fontSize: 13,
-        fontWeight: '700',
-    },
+    root: { flex: 1, backgroundColor: T.screenBg },
+    header: { paddingTop: 12, paddingHorizontal: 24, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: T.divider },
+    dragPill: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: T.dragPill, marginBottom: 16 },
+    headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    title: { color: T.textPrimary, fontSize: 18, fontWeight: '700', letterSpacing: 0.2 },
+    closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: T.closeBtn, alignItems: 'center', justifyContent: 'center' },
+    closeBtnText: { color: T.closeBtnText, fontSize: 13, fontWeight: '700' },
     scroll: { flex: 1 },
-    content: {
-        paddingHorizontal: 24,
-        paddingTop: 24,
-        paddingBottom: Platform.OS === 'ios' ? 48 : 32,
-    },
+    content: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: Platform.OS === 'ios' ? 48 : 32 },
 });
 
-const styles = StyleSheet.create({
-    submitBtn: {
-        marginTop: 8,
-        paddingVertical: 16,
-        borderRadius: 14,
-        backgroundColor: DESIGN_TOKENS.accentDefault,
-        alignItems: 'center',
-        shadowColor: DESIGN_TOKENS.accentDefault,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.4,
-        shadowRadius: 12,
-        elevation: 8,
-    },
-    submitBtnDisabled: {
-        opacity: 0.45,
-        shadowOpacity: 0,
-        elevation: 0,
-    },
-    submitBtnText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '700',
-        letterSpacing: 0.3,
-    },
+const submitStyles = StyleSheet.create({
+    btn: { marginTop: 8, paddingVertical: 16, borderRadius: 14, backgroundColor: T.accent, alignItems: 'center', shadowColor: T.accent, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 8 },
+    btnDisabled: { opacity: 0.45, shadowOpacity: 0, elevation: 0 },
+    btnText: { color: T.textPrimary, fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
 });
 
 export default DishFormModal;
