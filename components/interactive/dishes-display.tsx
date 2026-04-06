@@ -20,7 +20,6 @@ const DishesDisplay: React.FC = () => {
         );
     };
 
-
     return (
         <View style={styles.container}>
             <CategoryBar selected={activeCategories} onSelect={setActiveCategories} />

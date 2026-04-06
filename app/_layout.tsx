@@ -10,6 +10,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useEffect } from 'react';
 import { Text, TextInput } from 'react-native';
 
+import { BottomToastProvider } from '@/components/feedback/BottomToast';
+import { ToastProvider } from '@/components/feedback/Toast';
 import {
   Montserrat_300Light,
   Montserrat_400Regular,
@@ -59,14 +61,18 @@ export default function RootLayout() {
 
   return (
     <SidebarProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Sidebar />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <ToastProvider>
+        <BottomToastProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Sidebar />
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </BottomToastProvider>
+      </ToastProvider>
     </SidebarProvider>
   );
 }

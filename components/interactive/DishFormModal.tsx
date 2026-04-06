@@ -6,6 +6,7 @@ import {
     SubmitErrorHandler,
     SubmitHandler,
     useForm,
+    useWatch,
 } from 'react-hook-form';
 import {
     Animated,
@@ -349,8 +350,12 @@ interface ToggleRowProps {
 const ToggleRow: React.FC<ToggleRowProps> = ({
     label, subLabel, value, onChange, activeColor = '#22C55E',
     disabled
-}) => (
-    <View style={toggleStyles.row}>
+}) => {
+    return <View style={{
+        ...toggleStyles.row, ...(disabled && {
+            opacity: 0.55
+        })
+    }}>
         <View style={toggleStyles.text}>
             <Text style={toggleStyles.label}>{label}</Text>
             <Text style={toggleStyles.sub}>{subLabel}</Text>
@@ -364,7 +369,7 @@ const ToggleRow: React.FC<ToggleRowProps> = ({
             ios_backgroundColor="#2E2E38"
         />
     </View>
-);
+}
 
 const toggleStyles = StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(255,255,255,0.04)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 14 },
@@ -398,6 +403,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
     submitLabel = 'Save Dish',
     isSubmitting = false,
 }) => {
+
     const {
         control,
         handleSubmit,
@@ -418,6 +424,8 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
         mode: 'onBlur',
         reValidateMode: 'onChange',
     });
+
+    const [category] = useWatch({ control, name: ["category"] });
 
     useEffect(() => {
         if (defaultValues) {
@@ -603,8 +611,9 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                             <ToggleRow
                                 label="Vegetarian"
                                 subLabel={value ? 'Marked as veg 🟢' : 'Marked as non-veg 🔴'}
-                                value={value}
+                                value={category === "non-veg" ? false : category === "veg" ? true : value}
                                 onChange={onChange}
+                                disabled={category === "non-veg" || category === "veg"}
                                 activeColor="#22C55E"
                             />
                         )}
@@ -618,7 +627,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                         ]}
                         onPress={handleSubmit(onValid, onInvalid)}
                         activeOpacity={0.85}
-                        disabled={isSubmitting}
+                        disabled={!isDirty || isSubmitting}
                     >
                         <Text style={styles.submitBtnText}>
                             {isSubmitting ? 'Saving…' : submitLabel}
