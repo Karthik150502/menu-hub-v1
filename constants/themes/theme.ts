@@ -43,6 +43,8 @@ export const DESIGN_TOKENS: Record<string, string> = {
   subNeutral: 'rgba(234, 186, 255, 0.35)',
   subNeutralDark: 'rgba(193, 79, 242, 0.35)',
 
+  errorWarn: "#f56e6e81",
+
   // ── Text ──────────────────────────────────────────────────────────────────
   primaryText: '#FFFFFF',
   primaryWhite: '#FFFFFF',
@@ -90,7 +92,6 @@ export const DESIGN_TOKENS: Record<string, string> = {
   /** ~15% opacity tint of accentDefault for chip/badge backgrounds */
   accentFaint: 'rgba(148,0,171,0.15)',
 
-  // ── Price field ───────────────────────────────────────────────────────────
   /** Warm tint behind the ₹ badge — intentional brand warmth */
   currencyBadgeBg: 'rgba(249,115,22,0.10)',
 };

@@ -1,5 +1,7 @@
 import { CATEGORIES } from '@/constants/mock-data';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { dishSchema } from '@/types/zod/validations/dish';
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useRef } from 'react';
 import {
     Controller,
@@ -14,13 +16,13 @@ import {
     Platform,
     ScrollView,
     StyleSheet,
-    Switch,
     Text,
     TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
 import Field, { fieldStyles } from '../custom/inputField';
+import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
 import { Dish } from './dishes';
 
@@ -31,13 +33,13 @@ export interface Category {
     label: string;
 }
 
-interface DishFormValues {
+export interface DishFormValues {
     name: string;
     description: string;
     price: string;
     currency: string;
     category: string;
-    imageUrl: string;
+    imageUrl?: string;
     available: boolean;
     veg: boolean;
     showInMenu?: boolean;
@@ -58,8 +60,6 @@ export interface DishFormModalProps {
 const T = {
     // Surfaces
     screenBg: DESIGN_TOKENS.background_1,
-    cardBg: DESIGN_TOKENS.cardBg,
-    cardBorder: DESIGN_TOKENS.cardBorder,
     inputBg: DESIGN_TOKENS.inputBg,
     inputBorder: DESIGN_TOKENS.inputBorder,
 
@@ -77,19 +77,11 @@ const T = {
     textSubtle: DESIGN_TOKENS.textSubtle,
     textSectionTitle: DESIGN_TOKENS.textSectionTitle,
 
-    // Semantic
-    error: DESIGN_TOKENS.subNegativeDark,
-    errorFaint: DESIGN_TOKENS.subNegativeDarkFade,
-    success: DESIGN_TOKENS.subPositive,
-
     // UI chrome
     divider: DESIGN_TOKENS.divider,
     closeBtn: DESIGN_TOKENS.chromeBtnBg,
     closeBtnText: DESIGN_TOKENS.textDismiss,
     dragPill: DESIGN_TOKENS.dragPill,
-    toggleBg: DESIGN_TOKENS.inputBg,
-    toggleBorder: DESIGN_TOKENS.inputBorder,
-    switchTrackOff: DESIGN_TOKENS.switchTrackOff,
 
     // Price field
     currencyBadgeBg: DESIGN_TOKENS.currencyBadgeBg,
@@ -109,8 +101,8 @@ function dishToFormValues(dish?: Partial<Dish>): Partial<DishFormValues> {
         category: dish.category ?? '',
         imageUrl: dish.imageUrl ?? '',
         available: dish.available ?? true,
-        veg: dish.veg ?? false,
-        showInMenu: true
+        veg: dish.veg,
+        showInMenu: dish.showInMenu,
     };
 }
 
@@ -121,7 +113,7 @@ function formValuesToDish(values: DishFormValues): Omit<Dish, 'key'> {
         price: parseFloat(values.price),
         currency: '₹',
         category: values.category,
-        imageUrl: values.imageUrl.trim() || undefined,
+        imageUrl: values.imageUrl?.trim() || undefined,
         color: '#F97316',
         available: values.available,
         veg: values.veg,
@@ -131,14 +123,14 @@ function formValuesToDish(values: DishFormValues): Omit<Dish, 'key'> {
 
 // ─── Price Field ──────────────────────────────────────────────────────────────
 
-interface PriceFieldProps {
+export interface PriceFieldProps {
     value: string;
     onChange: (v: string) => void;
     onBlur: () => void;
     error?: string;
 }
 
-const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error }) => {
+export const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error }) => {
     const borderAnim = useRef(new Animated.Value(0)).current;
 
     const handleFocus = () => Animated.spring(borderAnim, {
@@ -203,7 +195,7 @@ interface CategorySelectProps {
     error?: string;
 }
 
-const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, error }) => {
+export const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, error }) => {
     const options = CATEGORIES.filter(c => c.key !== 'all');
 
     return (
@@ -242,47 +234,8 @@ const catStyles = StyleSheet.create({
     chipTextActive: { color: T.accent },
 });
 
-// ─── Toggle Row ───────────────────────────────────────────────────────────────
-
-interface ToggleRowProps {
-    label: string;
-    subLabel: string;
-    value: boolean;
-    onChange: (v: boolean) => void;
-    activeColor?: string;
-    disabled?: boolean;
-}
-
-const ToggleRow: React.FC<ToggleRowProps> = ({
-    label, subLabel, value, onChange, activeColor = T.success, disabled,
-}) => (
-    <View style={[toggleStyles.row, disabled && toggleStyles.rowDisabled]}>
-        <View style={toggleStyles.text}>
-            <Text style={toggleStyles.label}>{label}</Text>
-            <Text style={toggleStyles.sub}>{subLabel}</Text>
-        </View>
-        <Switch
-            disabled={disabled}
-            value={value}
-            onValueChange={onChange}
-            trackColor={{ false: T.switchTrackOff, true: activeColor }}
-            thumbColor={T.textPrimary}
-            ios_backgroundColor={T.switchTrackOff}
-        />
-    </View>
-);
-
-const toggleStyles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 14 },
-    rowDisabled: { opacity: 0.55 },
-    text: { flex: 1, marginRight: 12 },
-    label: { color: T.textPrimary, fontSize: 14, fontWeight: '600' },
-    sub: { color: T.textSubtle, fontSize: 12, marginTop: 2 },
-});
-
 // ─── Section Header ───────────────────────────────────────────────────────────
-
-const Section: React.FC<{ title: string }> = ({ title }) => (
+export const Section: React.FC<{ title: string }> = ({ title }) => (
     <View style={sectionStyles.wrap}>
         <Text style={sectionStyles.title}>{title}</Text>
         <View style={sectionStyles.line} />
@@ -314,6 +267,8 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
         reset,
         formState: { errors, isDirty },
     } = useForm<DishFormValues>({
+        // ✅ Zod resolver — all validation rules live in dishSchema above
+        resolver: zodResolver(dishSchema),
         defaultValues: {
             name: '',
             description: '',
@@ -346,7 +301,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
     const onInvalid: SubmitErrorHandler<DishFormValues> = (errs) => {
         console.warn('[DishFormModal] Validation failed', errs);
         info('Resolve all the errors before submitting');
-
     };
 
     return (
@@ -386,11 +340,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <Controller
                         control={control}
                         name="name"
-                        rules={{
-                            required: 'Dish name is required',
-                            minLength: { value: 2, message: 'Name must be at least 2 characters' },
-                            maxLength: { value: 60, message: 'Name must be 60 characters or fewer' },
-                        }}
                         render={({ field: { value, onChange, onBlur } }) => (
                             <Field
                                 label="Dish Name"
@@ -406,11 +355,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <Controller
                         control={control}
                         name="description"
-                        rules={{
-                            required: 'Description is required',
-                            minLength: { value: 10, message: 'Add a bit more detail (min 10 chars)' },
-                            maxLength: { value: 200, message: 'Keep it under 200 characters' },
-                        }}
                         render={({ field: { value, onChange, onBlur } }) => (
                             <Field
                                 label="Description"
@@ -429,16 +373,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <Controller
                         control={control}
                         name="price"
-                        rules={{
-                            required: 'Price is required',
-                            validate: (v) => {
-                                const n = parseFloat(v);
-                                if (isNaN(n)) return 'Must be a number';
-                                if (n <= 0) return 'Price must be greater than 0';
-                                if (n > 100000) return 'Price seems too high';
-                                return true;
-                            },
-                        }}
                         render={({ field: { value, onChange, onBlur } }) => (
                             <PriceField
                                 value={value}
@@ -454,7 +388,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <Controller
                         control={control}
                         name="category"
-                        rules={{ required: 'Please select a category' }}
                         render={({ field: { value, onChange } }) => (
                             <CategorySelect
                                 value={value}
@@ -469,12 +402,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <Controller
                         control={control}
                         name="imageUrl"
-                        rules={{
-                            pattern: {
-                                value: /^(https?:\/\/).+/,
-                                message: 'Must be a valid URL starting with http(s)://',
-                            },
-                        }}
                         render={({ field: { value, onChange, onBlur } }) => (
                             <Field
                                 label="Image URL"

@@ -24,12 +24,12 @@ const T = {
     textHint: DESIGN_TOKENS.textHint,
 
     // Semantic
-    error: DESIGN_TOKENS.subNegativeDark,
+    error: DESIGN_TOKENS.errorWarn,
 } as const;
 
 interface FieldProps {
     label: string;
-    value: string;
+    value?: string;
     onChange: (v: string) => void;
     onBlur: () => void;
     placeholder?: string;
