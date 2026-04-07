@@ -19,7 +19,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface BottomToastOptions {
     message: string;
-    /** Duration in ms. Defaults to 3000. Pass 0 to pin until dismissed. */
     duration?: number;
 }
 
@@ -29,8 +28,10 @@ interface BottomToastEntry extends BottomToastOptions {
 
 interface BottomToastContextValue {
     show: (opts: BottomToastOptions) => void;
-    /** Shorthand — just pass a message string */
     info: (message: string, duration?: number) => void;
+    // ↓ Exposed so BottomToastPortal can render the same toasts inside a Modal
+    toasts: BottomToastEntry[];
+    dismiss: (id: number) => void;
 }
 
 const DEFAULT_DURATION = 3000;
@@ -51,32 +52,22 @@ const BottomToastItem: React.FC<{
         dismissed.current = true;
         Animated.parallel([
             Animated.timing(translateY, {
-                toValue: SLIDE_FROM,
-                duration: 260,
-                easing: Easing.in(Easing.quad),
-                useNativeDriver: true,
+                toValue: SLIDE_FROM, duration: 260,
+                easing: Easing.in(Easing.quad), useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-                toValue: 0,
-                duration: 200,
-                useNativeDriver: true,
+                toValue: 0, duration: 200, useNativeDriver: true,
             }),
         ]).start(() => onDismiss(entry.id));
     }, [entry.id, onDismiss, opacity, translateY]);
 
     React.useEffect(() => {
-        // Slide up + fade in
         Animated.parallel([
             Animated.spring(translateY, {
-                toValue: 0,
-                tension: 80,
-                friction: 12,
-                useNativeDriver: true,
+                toValue: 0, tension: 80, friction: 12, useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-                toValue: 1,
-                duration: 200,
-                useNativeDriver: true,
+                toValue: 1, duration: 200, useNativeDriver: true,
             }),
         ]).start();
 
@@ -97,22 +88,45 @@ const BottomToastItem: React.FC<{
     );
 };
 
-// ─── Container ────────────────────────────────────────────────────────────────
+// ─── Shared container — used by both Provider and Portal ─────────────────────
 
-const BottomToastContainer: React.FC<{
+export const BottomToastContainer: React.FC<{
     toasts: BottomToastEntry[];
     onDismiss: (id: number) => void;
-}> = ({ toasts, onDismiss }) => {
+    /** Pass inset manually when used inside a Modal (safe area context may differ) */
+    bottomInset?: number;
+}> = ({ toasts, onDismiss, bottomInset }) => {
     const insets = useSafeAreaInsets();
+    const bottom = (bottomInset ?? insets.bottom) + 16;
+
     return (
         <View
-            style={[styles.container, { bottom: insets.bottom + 16 }]}
+            style={[styles.container, { bottom }]}
             pointerEvents="box-none"
         >
             {toasts.map(entry => (
                 <BottomToastItem key={entry.id} entry={entry} onDismiss={onDismiss} />
             ))}
         </View>
+    );
+};
+
+// ─── Portal — drop this inside any Modal to show toasts above it ──────────────
+//
+// Usage inside your Modal:
+//   <BottomToastPortal />
+//
+// It reads from the same context as useBottomToast(), so calling
+// info('...') anywhere will show the toast inside the modal automatically.
+
+export const BottomToastPortal: React.FC<{ bottomInset?: number }> = ({ bottomInset }) => {
+    const { toasts, dismiss } = useBottomToast();
+    return (
+        <BottomToastContainer
+            toasts={toasts}
+            onDismiss={dismiss}
+            bottomInset={bottomInset}
+        />
     );
 };
 
@@ -137,8 +151,9 @@ export const BottomToastProvider: React.FC<{ children: React.ReactNode }> = ({ c
         show({ message, duration }), [show]);
 
     return (
-        <BottomToastContext.Provider value={{ show, info }}>
+        <BottomToastContext.Provider value={{ show, info, toasts, dismiss }}>
             {children}
+            {/* Default container — visible on all normal screens */}
             <BottomToastContainer toasts={toasts} onDismiss={dismiss} />
         </BottomToastContext.Provider>
     );
@@ -164,7 +179,6 @@ const styles = StyleSheet.create({
         zIndex: 9999,
         pointerEvents: 'box-none',
     },
-
     pill: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -184,7 +198,6 @@ const styles = StyleSheet.create({
         elevation: 14,
         maxWidth: 360,
     },
-
     message: {
         flex: 1,
         color: 'rgba(255,255,255,0.82)',
@@ -193,7 +206,6 @@ const styles = StyleSheet.create({
         letterSpacing: 0.1,
         lineHeight: 18,
     },
-
     closeBtn: {
         width: 20,
         height: 20,
