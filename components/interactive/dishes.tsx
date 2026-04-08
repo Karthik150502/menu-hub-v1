@@ -1,4 +1,5 @@
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useRef, useState } from 'react';
 import {
     Animated,
@@ -13,7 +14,9 @@ import {
     ViewStyle,
     useWindowDimensions,
 } from 'react-native';
-// eslint-disable-next-line import/no-named-as-default
+import dishSplashIcon from "../../assets/images/web/dish/dish-splash-icon.png";
+
+import { Image } from 'expo-image';
 import DishFormModal from './DishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -36,7 +39,6 @@ export interface Dish {
     description: string;
     price: number;
     currency?: string;
-    color: string | [string, string];
     available: boolean;
     badge?: string;
     imageUrl?: string;
@@ -45,11 +47,11 @@ export interface Dish {
     showInMenu?: boolean;
 }
 
-
 export interface DishListProps {
     dishes: Dish[];
     onToggleAvailability?: (key: string, newValue: boolean) => void;
     onDishPress?: (dish: Dish) => void;
+    onDishEdit?: (updated: Dish) => void;
     style?: ViewStyle;
 }
 
@@ -71,9 +73,49 @@ const EditIcon: React.FC<{ onPress: () => void }> = ({ onPress }) => {
                 style={styles.editBtn}
                 hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
             >
-                {/* Pencil icon drawn with text — no icon library needed */}
                 <Text style={styles.editBtnText}>✎</Text>
             </TouchableOpacity>
+        </Animated.View>
+    );
+};
+
+// ─── Menu visibility badge ────────────────────────────────────────────────────
+// Shows in the bottom-left of the banner.
+// Green eye = visible in menu | Red eye-off = hidden from menu
+
+const MenuVisibilityBadge: React.FC<{ showInMenu: boolean }> = ({ showInMenu }) => {
+    const pulseAnim = useRef(new Animated.Value(1)).current;
+
+    // Subtle pulse when hidden to draw attention
+    React.useEffect(() => {
+        if (!showInMenu) {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(pulseAnim, { toValue: 0.6, duration: 900, useNativeDriver: true }),
+                    Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
+                ])
+            ).start();
+        } else {
+            pulseAnim.stopAnimation();
+            pulseAnim.setValue(1);
+        }
+    }, [showInMenu]);
+
+    const bg = showInMenu ? 'rgba(0,255,13,0.15)' : 'rgba(255,0,0,0.15)';
+    const border = showInMenu ? 'rgba(0,255,13,0.35)' : 'rgba(255,0,0,0.35)';
+    const color = showInMenu ? DESIGN_TOKENS.subPositive : DESIGN_TOKENS.subNegative;
+    const icon = showInMenu ? 'eye-outline' : 'eye-off-outline';
+    const label = showInMenu ? 'In Menu' : 'Hidden';
+
+    return (
+        <Animated.View
+            style={[
+                styles.menuBadge,
+                { backgroundColor: bg, borderColor: border, opacity: pulseAnim },
+            ]}
+        >
+            <Ionicons name={icon as any} size={11} color={color} />
+            <Text style={[styles.menuBadgeText, { color }]}>{label}</Text>
         </Animated.View>
     );
 };
@@ -86,7 +128,8 @@ const DishCard: React.FC<{
     onLayout?: (e: LayoutChangeEvent) => void;
     onToggle?: (key: string, val: boolean) => void;
     onPress?: (dish: Dish) => void;
-}> = ({ dish, index, onLayout, onToggle, onPress }) => {
+    onEdit?: (updated: Dish) => void;
+}> = ({ dish, index, onLayout, onToggle, onPress, onEdit }) => {
     const mountAnim = useRef(new Animated.Value(0)).current;
     const pressAnim = useRef(new Animated.Value(1)).current;
     const switchAnim = useRef(new Animated.Value(dish.available ? 1 : 0)).current;
@@ -107,100 +150,116 @@ const DishCard: React.FC<{
         onToggle?.(dish.key, val);
     };
 
-    const bannerColors = Array.isArray(dish.color) ? dish.color : [dish.color, dish.color];
-    const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] });
+    const bannerColors = ["#440246", "#650368"];
+    const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] });
 
-    return <>
-        <Animated.View style={[styles.cardWrapper, { opacity: switchOpacity }]} onLayout={onLayout}>
-            <Animated.View style={{
-                flex: 1,
-                opacity: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
-                transform: [
-                    { scale: pressAnim },
-                    { translateY: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) },
-                ],
-            }}>
-                <TouchableOpacity
-                    onPress={() => onPress?.(dish)}
-                    onPressIn={onPressIn}
-                    onPressOut={onPressOut}
-                    activeOpacity={1}
-                    style={styles.card}
-                >
-                    <View style={styles.bannerWrapper}>
-                        <View style={[styles.banner, { backgroundColor: bannerColors[0] }]} />
-                        {bannerColors[0] !== bannerColors[1] && (
-                            <View style={[styles.banner, styles.bannerOverlay, { backgroundColor: bannerColors[1] }]} />
-                        )}
-                        <View style={[styles.decorCircle, styles.decorCircleLg, { borderColor: 'rgba(255,255,255,0.12)' }]} />
-                        <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: 'rgba(255,255,255,0.08)' }]} />
-                        {dish.badge && (
-                            <View style={styles.badge}>
-                                <Text style={styles.badgeText}>{dish.badge}</Text>
-                            </View>
-                        )}
+    return (
+        <>
+            <Animated.View style={[styles.cardWrapper, { opacity: switchOpacity }]} onLayout={onLayout}>
+                <Animated.View style={{
+                    flex: 1,
+                    opacity: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
+                    transform: [
+                        { scale: pressAnim },
+                        { translateY: mountAnim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) },
+                    ],
+                }}>
+                    <TouchableOpacity
+                        onPress={() => onPress?.(dish)}
+                        onPressIn={onPressIn}
+                        onPressOut={onPressOut}
+                        activeOpacity={1}
+                        style={styles.card}
+                    >
+                        {/* ── Banner ── */}
+                        <View style={styles.bannerWrapper}>
+                            {/* <View style={[styles.banner, { backgroundColor: bannerColors[0] }]} />
+                            {bannerColors[0] !== bannerColors[1] && (
+                                <View style={[styles.banner, styles.bannerOverlay, { backgroundColor: bannerColors[1] }]} />
+                            )} */}
+                            <Image source={dishSplashIcon} style={[styles.banner]} />
+                            <View style={[styles.decorCircle, styles.decorCircleLg, { borderColor: 'rgba(255,255,255,0.12)' }]} />
+                            <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: 'rgba(255,255,255,0.08)' }]} />
 
-                        {/* ── Edit icon — top right of banner ── */}
-                        <EditIcon onPress={() => setEditModalVisible(true)} />
-
-                        {!dish.available && (
-                            <View style={styles.unavailableScrim}>
-                                <Text style={styles.unavailableText}>UNAVAILABLE</Text>
-                            </View>
-                        )}
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <View style={styles.infoLeft}>
-                            <View style={styles.nameRow}>
-                                <Text style={styles.dishName} numberOfLines={1}>{dish.name}</Text>
-                                <View style={[styles.categoryPill, { backgroundColor: dish.veg ? DESIGN_TOKENS.subPositiveDarkFade : DESIGN_TOKENS.subNegativeDarkFade }]}>
-                                    <Text style={[styles.categoryText, { color: DESIGN_TOKENS.titleText }]}>{dish.category}</Text>
+                            {dish.badge && (
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>{dish.badge}</Text>
                                 </View>
-                            </View>
-                            <Text style={styles.dishDesc} numberOfLines={2}>{dish.description}</Text>
-                        </View>
-                        <View style={styles.infoRight}>
-                            <Text style={styles.price}>
-                                <Text style={styles.currencySymbol}>{dish.currency ?? '₹'}</Text>
-                                {dish.price}
-                            </Text>
-                            <Switch
-                                value={dish.available}
-                                onValueChange={handleToggle}
-                                trackColor={{ false: '#2E2E38', true: DESIGN_TOKENS.subPositive }}
-                                thumbColor="#fff"
-                                ios_backgroundColor="#2E2E38"
-                                style={styles.switch}
-                            />
-                        </View>
-                    </View>
+                            )}
 
-                    <View style={[styles.accentBar, { backgroundColor: bannerColors[0] }]} />
-                </TouchableOpacity>
+                            {/* Menu visibility — bottom left of banner */}
+                            <MenuVisibilityBadge showInMenu={dish.showInMenu ?? true} />
+
+                            {/* Edit — top right of banner */}
+                            <EditIcon onPress={() => setEditModalVisible(true)} />
+
+                            {!dish.available && (
+                                <View style={styles.unavailableScrim}>
+                                    <Text style={styles.unavailableText}>UNAVAILABLE</Text>
+                                </View>
+                            )}
+                        </View>
+
+                        {/* ── Info row ── */}
+                        <View style={styles.infoRow}>
+                            <View style={styles.infoLeft}>
+                                <View style={styles.nameRow}>
+                                    <Text style={styles.dishName} numberOfLines={1}>{dish.name}</Text>
+                                    <View style={[
+                                        styles.categoryPill,
+                                        { backgroundColor: dish.veg ? DESIGN_TOKENS.subPositiveDarkFade : DESIGN_TOKENS.subNegativeDarkFade },
+                                    ]}>
+                                        <Text style={[styles.categoryText, { color: DESIGN_TOKENS.titleText }]}>
+                                            {dish.category}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Text style={styles.dishDesc} numberOfLines={2}>{dish.description}</Text>
+                            </View>
+                            <View style={styles.infoRight}>
+                                <Text style={styles.price}>
+                                    <Text style={styles.currencySymbol}>{dish.currency ?? '₹'}</Text>
+                                    {dish.price}
+                                </Text>
+                                <Switch
+                                    value={dish.available}
+                                    onValueChange={handleToggle}
+                                    trackColor={{ false: '#2E2E38', true: DESIGN_TOKENS.subPositive }}
+                                    thumbColor="#fff"
+                                    ios_backgroundColor="#2E2E38"
+                                    style={styles.switch}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={[styles.accentBar, { backgroundColor: bannerColors[0] }]} />
+                    </TouchableOpacity>
+                </Animated.View>
             </Animated.View>
-        </Animated.View>
-        <DishFormModal
-            visible={editModalVisible}
-            onClose={() => { setEditModalVisible(false) }}
-            onSubmit={(updatedDish: Omit<Dish, 'key'>) => { }}
-            defaultValues={dish}
-        />
-    </>
+
+            <DishFormModal
+                visible={editModalVisible}
+                onClose={() => setEditModalVisible(false)}
+                defaultValues={dish}
+                onSubmit={(updatedDish) => {
+                    onEdit?.({ ...dish, ...updatedDish });
+                    setEditModalVisible(false);
+                }}
+            />
+        </>
+    );
 };
 
 // ─── DishList ─────────────────────────────────────────────────────────────────
 
 export const DishList: React.FC<DishListProps> = ({
-    dishes, onToggleAvailability, onDishPress, style,
+    dishes, onToggleAvailability, onDishPress, onDishEdit, style,
 }) => {
     const { width: screenWidth } = useWindowDimensions();
     const columns = getColumns(screenWidth);
     const remainder = dishes.length % columns;
     const ghostCount = remainder === 0 ? 0 : columns - remainder;
 
-    // Measure the real rendered height of the first card, then apply it to ghosts.
-    // This guarantees ghosts are pixel-perfect matches regardless of content/font size.
     const [cardHeight, setCardHeight] = useState<number | null>(null);
     const measured = useRef(false);
 
@@ -225,21 +284,12 @@ export const DishList: React.FC<DishListProps> = ({
                     onLayout={index === 0 ? onFirstCardLayout : undefined}
                     onToggle={onToggleAvailability}
                     onPress={onDishPress}
+                    onEdit={onDishEdit}
                 />
             ))}
 
-            {/*
-              Ghost cards rendered only once we know the real card height.
-              They are exact clones of the card shell, same wrapper flex props,
-              same dark background, same border radius, same measured height.
-              No content inside. Completely hidden visually but hold their space
-              in the flex row so real cards never stretch.
-            */}
             {cardHeight !== null && Array.from({ length: ghostCount }).map((_, i) => (
-                <View
-                    key={`ghost-${i}`}
-                    style={[styles.cardWrapper, { height: cardHeight }]}
-                >
+                <View key={`ghost-${i}`} style={[styles.cardWrapper, { height: cardHeight }]}>
                     <View style={[styles.ghostCard, { height: cardHeight }]} />
                 </View>
             ))}
@@ -257,23 +307,11 @@ const styles = StyleSheet.create({
         gap: GAP,
         paddingHorizontal: H_PADDING,
         paddingTop: 12,
-        paddingBottom: 24
+        paddingBottom: 24,
     },
 
-    // Both real cards and ghosts use this — identical flex behaviour
-    cardWrapper: {
-        flexGrow: 1,
-        flexShrink: 1,
-        flexBasis: MIN_CARD_W,
-        maxWidth: MAX_CARD_W,
-    },
-
-    // Ghost: same shape as card, no content, no shadow, invisible
-    ghostCard: {
-        flex: 1,
-        borderRadius: CARD_RADIUS,
-        backgroundColor: 'transparent',
-    },
+    cardWrapper: { flexGrow: 1, flexShrink: 1, flexBasis: MIN_CARD_W, maxWidth: MAX_CARD_W },
+    ghostCard: { flex: 1, borderRadius: CARD_RADIUS, backgroundColor: 'transparent' },
 
     card: {
         flex: 1,
@@ -287,12 +325,8 @@ const styles = StyleSheet.create({
         elevation: 10,
     },
 
-    // ── Edit button ────────────────────────────────────────────────────────────
-    editBtnWrap: {
-        position: 'absolute',
-        top: 6,
-        right: 6,
-    },
+    // Edit button
+    editBtnWrap: { position: 'absolute', top: 6, right: 6 },
     editBtn: {
         width: 32,
         height: 32,
@@ -303,10 +337,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    editBtnText: {
-        color: '#fff',
-        fontSize: 16,
-        lineHeight: 20,
+    editBtnText: { color: '#fff', fontSize: 16, lineHeight: 20 },
+
+    // ── Menu visibility badge ─────────────────────────────────────────────────
+    menuBadge: {
+        position: 'absolute',
+        bottom: 10,
+        left: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 20,
+        borderWidth: 1,
+    },
+    menuBadgeText: {
+        fontSize: 10,
+        fontWeight: '700',
+        letterSpacing: 0.4,
     },
 
     bannerWrapper: { height: BANNER_HEIGHT, overflow: 'hidden', position: 'relative' },
@@ -320,16 +369,22 @@ const styles = StyleSheet.create({
     decorCircleSm: { width: 80, height: 80, top: -20, right: 60 },
 
     badge: {
-        position: 'absolute', top: 12, left: 12,
+        position: 'absolute',
+        top: 12,
+        left: 12,
         backgroundColor: 'rgba(0,0,0,0.38)',
-        paddingHorizontal: 10, paddingVertical: 4,
-        borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.18)',
     },
     badgeText: { color: '#fff', fontSize: 10, fontWeight: '700', letterSpacing: 0.6 },
     unavailableScrim: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0,0,0,0.52)',
-        alignItems: 'center', justifyContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     unavailableText: { color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '800', letterSpacing: 3 },
 
@@ -345,8 +400,11 @@ const styles = StyleSheet.create({
     currencySymbol: { fontSize: 14, fontWeight: '700' },
     switch: { transform: [{ scaleX: 0.88 }, { scaleY: 0.88 }] },
     accentBar: {
-        position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
-        borderTopLeftRadius: CARD_RADIUS, borderBottomLeftRadius: CARD_RADIUS,
+        position: 'absolute',
+        left: 0, top: 0, bottom: 0,
+        width: 3,
+        borderTopLeftRadius: CARD_RADIUS,
+        borderBottomLeftRadius: CARD_RADIUS,
     },
 });
 
