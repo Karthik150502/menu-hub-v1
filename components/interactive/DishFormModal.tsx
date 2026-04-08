@@ -114,7 +114,6 @@ function formValuesToDish(values: DishFormValues): Omit<Dish, 'key'> {
         currency: '₹',
         category: values.category,
         imageUrl: values.imageUrl?.trim() || undefined,
-        color: '#F97316',
         available: values.available,
         veg: values.veg,
         showInMenu: values.showInMenu
