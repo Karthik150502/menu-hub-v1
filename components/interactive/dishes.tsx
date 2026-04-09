@@ -1,10 +1,14 @@
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import React, { useCallback, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
+    Easing,
     LayoutChangeEvent,
+    Modal,
+    Pressable,
     ScrollView,
     StyleSheet,
     Switch,
@@ -15,8 +19,7 @@ import {
     useWindowDimensions,
 } from 'react-native';
 import dishSplashIcon from "../../assets/images/web/dish/dish-splash-icon.png";
-
-import { Image } from 'expo-image';
+// eslint-disable-next-line import/no-named-as-default
 import DishFormModal from './DishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -52,41 +55,160 @@ export interface DishListProps {
     onToggleAvailability?: (key: string, newValue: boolean) => void;
     onDishPress?: (dish: Dish) => void;
     onDishEdit?: (updated: Dish) => void;
+    onDishDelete?: (key: string) => void;
     style?: ViewStyle;
 }
 
-// ─── Edit icon ────────────────────────────────────────────────────────────────
+// ─── Card settings dropdown ───────────────────────────────────────────────────
 
-const EditIcon: React.FC<{ onPress: () => void }> = ({ onPress }) => {
+interface DropdownItem {
+    key: string;
+    label: string;
+    icon: string;
+    danger?: boolean;
+}
+
+const DROPDOWN_ITEMS: DropdownItem[] = [
+    { key: 'edit', label: 'Edit Dish', icon: 'create-outline' },
+    { key: 'info', label: 'Info', icon: 'information-circle-outline' },
+    { key: 'delete', label: 'Delete', icon: 'trash-outline', danger: true },
+];
+
+interface CardSettingsProps {
+    onEdit: () => void;
+    onInfo: () => void;
+    onDelete: () => void;
+}
+
+const CardSettings: React.FC<CardSettingsProps> = ({ onEdit, onInfo, onDelete }) => {
+    const [open, setOpen] = useState(false);
     const scaleAnim = useRef(new Animated.Value(1)).current;
+    const dropdownAnim = useRef(new Animated.Value(0)).current;
+    const btnRef = useRef<View>(null);
+    const [anchor, setAnchor] = useState({ x: 0, y: 0, width: 0 });
 
     const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.88, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
     const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
 
+    const openDropdown = () => {
+        btnRef.current?.measureInWindow((x, y, width, height) => {
+            setAnchor({ x, y: y + height + 4, width });
+            setOpen(true);
+            dropdownAnim.setValue(0);
+            Animated.timing(dropdownAnim, {
+                toValue: 1,
+                duration: 180,
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
+            }).start();
+        });
+    };
+
+    const closeDropdown = () => {
+        Animated.timing(dropdownAnim, {
+            toValue: 0,
+            duration: 130,
+            easing: Easing.in(Easing.quad),
+            useNativeDriver: true,
+        }).start(() => setOpen(false));
+    };
+
+    const handleSelect = (key: string) => {
+        closeDropdown();
+        // Small delay so close animation plays before action
+        setTimeout(() => {
+            if (key === 'edit') onEdit();
+            if (key === 'info') onInfo();
+            if (key === 'delete') onDelete();
+        }, 250);
+    };
+
+    const dropdownStyle = {
+        opacity: dropdownAnim,
+        transform: [
+            {
+                translateY: dropdownAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-8, 0],
+                }),
+            },
+            {
+                scale: dropdownAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.92, 1],
+                }),
+            },
+        ],
+    };
+
     return (
-        <Animated.View style={[styles.editBtnWrap, { transform: [{ scale: scaleAnim }] }]}>
-            <TouchableOpacity
-                onPress={onPress}
-                onPressIn={onPressIn}
-                onPressOut={onPressOut}
-                activeOpacity={1}
-                style={styles.editBtn}
-                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+        <>
+            {/* Settings button */}
+            <Animated.View
+                ref={btnRef as any}
+                style={[styles.settingsBtnWrap, { transform: [{ scale: scaleAnim }] }]}
             >
-                <Text style={styles.editBtnText}>✎</Text>
-            </TouchableOpacity>
-        </Animated.View>
+                <TouchableOpacity
+                    onPress={open ? closeDropdown : openDropdown}
+                    onPressIn={onPressIn}
+                    onPressOut={onPressOut}
+                    activeOpacity={1}
+                    style={styles.settingsBtn}
+                    hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+                >
+                    <Ionicons
+                        name={open ? 'close' : "options-outline"}
+                        size={15}
+                        color="rgba(255,255,255,0.75)"
+                    />
+                </TouchableOpacity>
+            </Animated.View>
+
+            {/* Dropdown rendered in a Modal so it escapes card overflow:hidden */}
+            {open && (
+                <Modal transparent animationType="none" onRequestClose={closeDropdown}>
+                    {/* Backdrop — tap outside to close */}
+                    <Pressable style={StyleSheet.absoluteFill} onPress={closeDropdown} />
+
+                    <Animated.View
+                        style={[
+                            styles.dropdown,
+                            dropdownStyle,
+                            { top: anchor.y, right: SCREEN_WIDTH - anchor.x - anchor.width },
+                        ]}
+                    >
+                        {DROPDOWN_ITEMS.map((item, i) => (
+                            <React.Fragment key={item.key}>
+                                <TouchableOpacity
+                                    style={styles.dropdownItem}
+                                    onPress={() => handleSelect(item.key)}
+                                    activeOpacity={0.7}
+                                >
+                                    <Text style={[
+                                        styles.dropdownLabel,
+                                        item.danger && styles.dropdownLabelDanger,
+                                    ]}>
+                                        {item.label}
+                                    </Text>
+                                </TouchableOpacity>
+                                {/* Divider between items, not after last */}
+                                {i < DROPDOWN_ITEMS.length - 1 && (
+                                    <View style={styles.dropdownDivider} />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </Animated.View>
+                </Modal>
+            )}
+        </>
     );
 };
 
 // ─── Menu visibility badge ────────────────────────────────────────────────────
-// Shows in the bottom-left of the banner.
-// Green eye = visible in menu | Red eye-off = hidden from menu
 
 const MenuVisibilityBadge: React.FC<{ showInMenu: boolean }> = ({ showInMenu }) => {
     const pulseAnim = useRef(new Animated.Value(1)).current;
 
-    // Subtle pulse when hidden to draw attention
     React.useEffect(() => {
         if (!showInMenu) {
             Animated.loop(
@@ -129,7 +251,8 @@ const DishCard: React.FC<{
     onToggle?: (key: string, val: boolean) => void;
     onPress?: (dish: Dish) => void;
     onEdit?: (updated: Dish) => void;
-}> = ({ dish, index, onLayout, onToggle, onPress, onEdit }) => {
+    onDelete?: (key: string) => void;
+}> = ({ dish, index, onLayout, onToggle, onPress, onEdit, onDelete }) => {
     const mountAnim = useRef(new Animated.Value(0)).current;
     const pressAnim = useRef(new Animated.Value(1)).current;
     const switchAnim = useRef(new Animated.Value(dish.available ? 1 : 0)).current;
@@ -173,11 +296,7 @@ const DishCard: React.FC<{
                     >
                         {/* ── Banner ── */}
                         <View style={styles.bannerWrapper}>
-                            {/* <View style={[styles.banner, { backgroundColor: bannerColors[0] }]} />
-                            {bannerColors[0] !== bannerColors[1] && (
-                                <View style={[styles.banner, styles.bannerOverlay, { backgroundColor: bannerColors[1] }]} />
-                            )} */}
-                            <Image source={dishSplashIcon} style={[styles.banner]} />
+                            <Image source={dishSplashIcon} style={styles.banner} />
                             <View style={[styles.decorCircle, styles.decorCircleLg, { borderColor: 'rgba(255,255,255,0.12)' }]} />
                             <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: 'rgba(255,255,255,0.08)' }]} />
 
@@ -190,8 +309,12 @@ const DishCard: React.FC<{
                             {/* Menu visibility — bottom left of banner */}
                             <MenuVisibilityBadge showInMenu={dish.showInMenu ?? true} />
 
-                            {/* Edit — top right of banner */}
-                            <EditIcon onPress={() => setEditModalVisible(true)} />
+                            {/* Top-right: settings dropdown */}
+                            <CardSettings
+                                onEdit={() => setEditModalVisible(true)}
+                                onInfo={() => { /* hook up an info sheet here */ }}
+                                onDelete={() => onDelete?.(dish.key)}
+                            />
 
                             {!dish.available && (
                                 <View style={styles.unavailableScrim}>
@@ -253,7 +376,7 @@ const DishCard: React.FC<{
 // ─── DishList ─────────────────────────────────────────────────────────────────
 
 export const DishList: React.FC<DishListProps> = ({
-    dishes, onToggleAvailability, onDishPress, onDishEdit, style,
+    dishes, onToggleAvailability, onDishPress, onDishEdit, onDishDelete, style,
 }) => {
     const { width: screenWidth } = useWindowDimensions();
     const columns = getColumns(screenWidth);
@@ -285,6 +408,7 @@ export const DishList: React.FC<DishListProps> = ({
                     onToggle={onToggleAvailability}
                     onPress={onDishPress}
                     onEdit={onDishEdit}
+                    onDelete={onDishDelete}
                 />
             ))}
 
@@ -315,31 +439,68 @@ const styles = StyleSheet.create({
 
     card: {
         flex: 1,
-        backgroundColor: '#1C1C26',
+        backgroundColor: DESIGN_TOKENS.cardBg,
         borderRadius: CARD_RADIUS,
         overflow: 'hidden',
         shadowColor: '#000',
+        borderWidth: 0.25,
+        borderColor: "#ffffff41",
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.4,
         shadowRadius: 14,
         elevation: 10,
     },
 
-    // Edit button
-    editBtnWrap: { position: 'absolute', top: 6, right: 6 },
-    editBtn: {
+    // ── Settings button ────────────────────────────────────────────────────────
+    settingsBtnWrap: { position: 'absolute', top: 6, right: 6 },
+    settingsBtn: {
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: 'rgba(0,0,0,0.40)',
+        backgroundColor: 'rgba(0,0,0,0.45)',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.2)',
+        borderColor: 'rgba(255,255,255,0.18)',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    editBtnText: { color: '#fff', fontSize: 16, lineHeight: 20 },
+    // ── Dropdown ──────────────────────────────────────────────────────────────
+    dropdown: {
+        position: 'absolute',
+        minWidth: 160,
+        backgroundColor: '#1E1E2A',
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.10)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.55,
+        shadowRadius: 20,
+        elevation: 20,
+        overflow: 'hidden',
+    },
+    dropdownItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+    },
+    dropdownLabel: {
+        color: 'rgba(255,255,255,0.82)',
+        fontSize: 15,
+        fontWeight: '500',
+        letterSpacing: 0.1,
+    },
+    dropdownLabelDanger: {
+        color: '#F87171',
+    },
+    dropdownDivider: {
+        height: 1,
+        backgroundColor: 'rgba(255,255,255,0.06)',
+        marginHorizontal: 12,
+    },
 
-    // ── Menu visibility badge ─────────────────────────────────────────────────
+    // ── Menu visibility badge ──────────────────────────────────────────────────
     menuBadge: {
         position: 'absolute',
         bottom: 10,

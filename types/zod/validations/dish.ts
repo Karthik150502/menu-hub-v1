@@ -23,7 +23,7 @@ export const dishSchema = z.object({
         .refine(v => parseFloat(v) > 0, { message: 'Price must be greater than 0' })
         .refine(v => parseFloat(v) <= 100_000, { message: 'Price seems too high' }),
 
-    currency: z.string().min(1, 'Currency is required'),
+    currency: z.string(),
 
     category: z
         .string()
