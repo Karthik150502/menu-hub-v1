@@ -19,6 +19,8 @@ import {
     useWindowDimensions,
 } from 'react-native';
 import dishSplashIcon from "../../assets/images/web/dish/dish-splash-icon.png";
+
+import { FONT_SIZES } from '@/constants/themes/font';
 // eslint-disable-next-line import/no-named-as-default
 import DishFormModal from './DishFormModal';
 
@@ -69,7 +71,7 @@ interface DropdownItem {
 }
 
 const DROPDOWN_ITEMS: DropdownItem[] = [
-    { key: 'edit', label: 'Edit Dish', icon: 'create-outline' },
+    { key: 'edit', label: 'Edit Item', icon: 'create-outline' },
     { key: 'info', label: 'Info', icon: 'information-circle-outline' },
     { key: 'delete', label: 'Delete', icon: 'trash-outline', danger: true },
 ];
@@ -159,7 +161,7 @@ const CardSettings: React.FC<CardSettingsProps> = ({ onEdit, onInfo, onDelete })
                     <Ionicons
                         name={open ? 'close' : "options-outline"}
                         size={15}
-                        color="rgba(255,255,255,0.75)"
+                        color={DESIGN_TOKENS.titleText}
                     />
                 </TouchableOpacity>
             </Animated.View>
@@ -223,8 +225,12 @@ const MenuVisibilityBadge: React.FC<{ showInMenu: boolean }> = ({ showInMenu }) 
         }
     }, [showInMenu]);
 
-    const bg = showInMenu ? 'rgba(0,255,13,0.15)' : 'rgba(255,0,0,0.15)';
-    const border = showInMenu ? 'rgba(0,255,13,0.35)' : 'rgba(255,0,0,0.35)';
+    const bg = showInMenu
+        ? DESIGN_TOKENS.menuBadgePositiveBg
+        : DESIGN_TOKENS.menuBadgeNegativeBg;
+    const border = showInMenu
+        ? DESIGN_TOKENS.menuBadgePositiveBorder
+        : DESIGN_TOKENS.menuBadgeNegativeBorder;
     const color = showInMenu ? DESIGN_TOKENS.subPositive : DESIGN_TOKENS.subNegative;
     const icon = showInMenu ? 'eye-outline' : 'eye-off-outline';
     const label = showInMenu ? 'In Menu' : 'Hidden';
@@ -236,7 +242,7 @@ const MenuVisibilityBadge: React.FC<{ showInMenu: boolean }> = ({ showInMenu }) 
                 { backgroundColor: bg, borderColor: border, opacity: pulseAnim },
             ]}
         >
-            <Ionicons name={icon as any} size={11} color={color} />
+            <Ionicons name={icon as any} size={FONT_SIZES.xs} color={color} />
             <Text style={[styles.menuBadgeText, { color }]}>{label}</Text>
         </Animated.View>
     );
@@ -273,7 +279,10 @@ const DishCard: React.FC<{
         onToggle?.(dish.key, val);
     };
 
-    const bannerColors = ["#440246", "#650368"];
+    const bannerColors = [
+        DESIGN_TOKENS.bannerAccent1,
+        DESIGN_TOKENS.bannerAccent2,
+    ];
     const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] });
 
     return (
@@ -297,8 +306,8 @@ const DishCard: React.FC<{
                         {/* ── Banner ── */}
                         <View style={styles.bannerWrapper}>
                             <Image source={dishSplashIcon} style={styles.banner} />
-                            <View style={[styles.decorCircle, styles.decorCircleLg, { borderColor: 'rgba(255,255,255,0.12)' }]} />
-                            <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: 'rgba(255,255,255,0.08)' }]} />
+                            <View style={[styles.decorCircle, styles.decorCircleLg, { borderColor: DESIGN_TOKENS.decorCircleStrong }]} />
+                            <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: DESIGN_TOKENS.decorCircleSoft }]} />
 
                             {dish.badge && (
                                 <View style={styles.badge}>
@@ -347,9 +356,9 @@ const DishCard: React.FC<{
                                 <Switch
                                     value={dish.available}
                                     onValueChange={handleToggle}
-                                    trackColor={{ false: '#2E2E38', true: DESIGN_TOKENS.subPositive }}
-                                    thumbColor="#fff"
-                                    ios_backgroundColor="#2E2E38"
+                                    trackColor={{ false: DESIGN_TOKENS.switchTrackOff, true: DESIGN_TOKENS.subPositive }}
+                                    ios_backgroundColor={DESIGN_TOKENS.switchTrackOff}
+                                    thumbColor={DESIGN_TOKENS.primaryWhite}
                                     style={styles.switch}
                                 />
                             </View>
@@ -442,9 +451,9 @@ const styles = StyleSheet.create({
         backgroundColor: DESIGN_TOKENS.cardBg,
         borderRadius: CARD_RADIUS,
         overflow: 'hidden',
-        shadowColor: '#000',
-        borderWidth: 0.25,
-        borderColor: "#ffffff41",
+        shadowColor: DESIGN_TOKENS.shadowColor,
+        borderWidth: 1,
+        borderColor: DESIGN_TOKENS.cardBorder,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.4,
         shadowRadius: 14,
@@ -457,9 +466,9 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: 'rgba(0,0,0,0.45)',
+        backgroundColor: DESIGN_TOKENS.settingsBtnBg,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.18)',
+        borderColor: DESIGN_TOKENS.settingsBtnBorder,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -467,11 +476,11 @@ const styles = StyleSheet.create({
     dropdown: {
         position: 'absolute',
         minWidth: 160,
-        backgroundColor: '#1E1E2A',
+        backgroundColor: DESIGN_TOKENS.cardBg,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.10)',
-        shadowColor: '#000',
+        borderColor: DESIGN_TOKENS.dropdownBorder,
+        shadowColor: DESIGN_TOKENS.black,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.55,
         shadowRadius: 20,
@@ -486,17 +495,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     dropdownLabel: {
-        color: 'rgba(255,255,255,0.82)',
-        fontSize: 15,
+        color: DESIGN_TOKENS.dropdownText,
+        fontSize: FONT_SIZES.md,
         fontWeight: '500',
         letterSpacing: 0.1,
     },
     dropdownLabelDanger: {
-        color: '#F87171',
+        color: DESIGN_TOKENS.subNegativeDark
     },
     dropdownDivider: {
         height: 1,
-        backgroundColor: 'rgba(255,255,255,0.06)',
+        backgroundColor: DESIGN_TOKENS.divider,
         marginHorizontal: 12,
     },
 
@@ -514,7 +523,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     menuBadgeText: {
-        fontSize: 10,
+        fontSize: FONT_SIZES.xs,
         fontWeight: '700',
         letterSpacing: 0.4,
     },
@@ -533,32 +542,32 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 12,
         left: 12,
-        backgroundColor: 'rgba(0,0,0,0.38)',
+        backgroundColor: DESIGN_TOKENS.badgeBg,
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.18)',
+        borderColor: DESIGN_TOKENS.badgeBorder,
     },
-    badgeText: { color: '#fff', fontSize: 10, fontWeight: '700', letterSpacing: 0.6 },
+    badgeText: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.6 },
     unavailableScrim: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.52)',
+        backgroundColor: DESIGN_TOKENS.unavailableScrim,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    unavailableText: { color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '800', letterSpacing: 3 },
+    unavailableText: { color: DESIGN_TOKENS.unavailableText, fontSize: FONT_SIZES.sm, fontWeight: '800', letterSpacing: 3 },
 
     infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
     infoLeft: { flex: 1 },
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' },
-    dishName: { color: '#F0F0F5', fontSize: 16, fontWeight: '700', letterSpacing: 0.1, flexShrink: 1 },
+    dishName: { color: DESIGN_TOKENS.primaryText, fontSize: FONT_SIZES.lg, fontWeight: '700', letterSpacing: 0.1, flexShrink: 1 },
     categoryPill: { paddingHorizontal: 9, paddingVertical: 3, borderRadius: 999 },
-    categoryText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5, textTransform: 'capitalize' },
-    dishDesc: { color: 'rgba(255,255,255,0.42)', fontSize: 12, lineHeight: 17 },
+    categoryText: { fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.5, textTransform: 'capitalize' },
+    dishDesc: { color: DESIGN_TOKENS.textLabel, fontSize: FONT_SIZES.xs, lineHeight: 17 },
     infoRight: { alignItems: 'flex-end', gap: 8 },
-    price: { color: '#ffffff', fontSize: 22, fontWeight: '800', letterSpacing: -0.5 },
-    currencySymbol: { fontSize: 14, fontWeight: '700' },
+    price: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.lg, fontWeight: '800', letterSpacing: -0.5 },
+    currencySymbol: { fontSize: FONT_SIZES.md, fontWeight: '700' },
     switch: { transform: [{ scaleX: 0.88 }, { scaleY: 0.88 }] },
     accentBar: {
         position: 'absolute',

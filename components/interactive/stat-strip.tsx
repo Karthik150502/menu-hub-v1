@@ -1,4 +1,5 @@
-import { STATS_CARD_COLORS } from '@/constants/themes/theme';
+import { FONT_SIZES } from '@/constants/themes/font';
+import { DESIGN_TOKENS, STATS_CARD_COLORS } from '@/constants/themes/theme';
 import React, { useRef } from 'react';
 import {
     Animated,
@@ -182,8 +183,7 @@ export const StatStrip: React.FC<StatStripProps> = ({
 const styles = StyleSheet.create({
     container: {
         backgroundColor: STATS_CARD_COLORS.bg,
-        paddingVertical: 16,
-        paddingHorizontal: 8
+        paddingVertical: 16
     },
     header: {
         flexDirection: 'row',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     title: {
-        fontSize: 11,
+        fontSize: FONT_SIZES.xs,
         fontWeight: '700',
         letterSpacing: 1.6,
         color: STATS_CARD_COLORS.title,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         padding: 4,
     },
     refreshIcon: {
-        fontSize: 20,
+        fontSize: FONT_SIZES.xxl,
         color: STATS_CARD_COLORS.refreshIcon,
         lineHeight: 24,
     },
@@ -227,14 +227,14 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         justifyContent: 'space-between',
         // shadow
-        shadowColor: '#000',
+        shadowColor: DESIGN_TOKENS.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.35,
         shadowRadius: 10,
         elevation: 6,
     },
     cardLabel: {
-        fontSize: 11,
+        fontSize: FONT_SIZES.xs,
         fontWeight: '600',
         letterSpacing: 0.8,
         color: STATS_CARD_COLORS.label,
@@ -242,14 +242,14 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     cardValue: {
-        fontSize: 18,
+        fontSize: FONT_SIZES.xl,
         fontWeight: '500',
         color: STATS_CARD_COLORS.value,
         letterSpacing: -0.5,
         flex: 1,
     },
     cardSub: {
-        fontSize: 11,
+        fontSize: FONT_SIZES.xs,
         fontWeight: '500',
         marginTop: 4,
     },

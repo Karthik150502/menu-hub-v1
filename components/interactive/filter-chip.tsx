@@ -1,5 +1,6 @@
 import { CATEGORIES } from "@/constants/mock-data";
-import { Colors } from "@/constants/themes/theme";
+import { FONT_SIZES } from "@/constants/themes/font";
+import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import React, { useRef } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useBottomToast } from "../feedback/BottomToast";
@@ -90,7 +91,7 @@ const CategoryBar: React.FC<{
 }
 
 
-const ACCENT = Colors.light.primary;
+const ACCENT = DESIGN_TOKENS.accentDefault;
 
 const styles = StyleSheet.create({
     // ── Filter bar ────────────────────────────────────────────────────────────
@@ -111,9 +112,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 7,
         borderRadius: 999,
-        backgroundColor: "#1C1C26",
+        backgroundColor: DESIGN_TOKENS.cardBg,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.08)",
+        borderColor: DESIGN_TOKENS.cardBorder,
     },
     chipSelected: {
         backgroundColor: ACCENT,
@@ -125,13 +126,13 @@ const styles = StyleSheet.create({
         elevation: 6,
     },
     chipText: {
-        color: "rgba(255,255,255,0.5)",
-        fontSize: 13,
+        color: DESIGN_TOKENS.textLabel,
+        fontSize: FONT_SIZES.md,
         fontWeight: "600",
         letterSpacing: 0.2,
     },
     chipTextSelected: {
-        color: "#fff",
+        color: DESIGN_TOKENS.primaryText,
     },
 
 });

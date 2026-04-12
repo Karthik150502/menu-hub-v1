@@ -1,5 +1,6 @@
 // ─── Toggle Row ───────────────────────────────────────────────────────────────
 
+import { FONT_SIZES } from "@/constants/themes/font";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { StyleSheet, Switch, Text, View } from "react-native";
 
@@ -55,8 +56,8 @@ const toggleStyles = StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 14 },
     rowDisabled: { opacity: 0.55 },
     text: { flex: 1, marginRight: 12 },
-    label: { color: T.textPrimary, fontSize: 14, fontWeight: '600' },
-    sub: { color: T.textSubtle, fontSize: 12, marginTop: 2 },
+    label: { color: T.textPrimary, fontSize: FONT_SIZES.md, fontWeight: '600' },
+    sub: { color: T.textSubtle, fontSize: FONT_SIZES.sm, marginTop: 2 },
 });
 
 export default ToggleRow;

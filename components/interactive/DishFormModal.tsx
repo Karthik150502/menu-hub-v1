@@ -1,4 +1,5 @@
 import { CATEGORIES } from '@/constants/mock-data';
+import { FONT_SIZES } from '@/constants/themes/font';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { dishSchema } from '@/types/zod/validations/dish';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -181,7 +182,7 @@ export const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur,
 const priceStyles = StyleSheet.create({
     inputWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 0, overflow: 'hidden' },
     currencyBadge: { paddingHorizontal: 14, paddingVertical: 13, backgroundColor: T.currencyBadgeBg, alignItems: 'center', justifyContent: 'center' },
-    currencyText: { color: T.currencyText, fontSize: 16, fontWeight: '700' },
+    currencyText: { color: T.currencyText, fontSize: FONT_SIZES.lg, fontWeight: '700' },
     divider: { width: 1, alignSelf: 'stretch', backgroundColor: T.priceDivider },
     input: { flex: 1, paddingHorizontal: 14 },
 });
@@ -229,7 +230,7 @@ const catStyles = StyleSheet.create({
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
     chipActive: { borderColor: T.accent, backgroundColor: T.accentFaint },
-    chipText: { color: T.textPrimary, fontSize: 13, fontWeight: '600' },
+    chipText: { color: T.textPrimary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
     chipTextActive: { color: T.accent },
 });
 
@@ -243,7 +244,14 @@ export const Section: React.FC<{ title: string }> = ({ title }) => (
 
 const sectionStyles = StyleSheet.create({
     wrap: { flexDirection: 'row', alignItems: 'center', marginBottom: 18, marginTop: 6 },
-    title: { color: T.textSectionTitle, fontSize: 10, fontWeight: '700', letterSpacing: 1.4, textTransform: 'uppercase', marginRight: 10 },
+    title: {
+        color: T.textSectionTitle,
+        fontSize: FONT_SIZES.xs,
+        fontWeight: '700',
+        letterSpacing: 1.4,
+        textTransform: 'uppercase',
+        marginRight: 10
+    },
     line: { flex: 1, height: 1, backgroundColor: T.divider },
 });
 
@@ -254,7 +262,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
     onClose,
     defaultValues,
     onSubmit,
-    submitLabel = 'Save Dish',
+    submitLabel = 'Save Item',
     isSubmitting = false,
 }) => {
 
@@ -315,7 +323,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <View style={modalStyles.dragPill} />
                     <View style={modalStyles.headerRow}>
                         <Text style={modalStyles.title}>
-                            {defaultValues?.key ? 'Edit Dish' : 'New Dish'}
+                            {defaultValues?.key ? 'Edit Item' : 'New Item'}
                         </Text>
                         <TouchableOpacity
                             onPress={onClose}
@@ -482,17 +490,28 @@ const modalStyles = StyleSheet.create({
     header: { paddingTop: 12, paddingHorizontal: 24, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: T.divider },
     dragPill: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: T.dragPill, marginBottom: 16 },
     headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    title: { color: T.textPrimary, fontSize: 18, fontWeight: '700', letterSpacing: 0.2 },
+    title: { color: T.textPrimary, fontSize: FONT_SIZES.xl, fontWeight: '700', letterSpacing: 0.2 },
     closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: T.closeBtn, alignItems: 'center', justifyContent: 'center' },
-    closeBtnText: { color: T.closeBtnText, fontSize: 13, fontWeight: '700' },
+    closeBtnText: { color: T.closeBtnText, fontSize: FONT_SIZES.sm, fontWeight: '700' },
     scroll: { flex: 1 },
     content: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: Platform.OS === 'ios' ? 48 : 32 },
 });
 
 const submitStyles = StyleSheet.create({
-    btn: { marginTop: 8, paddingVertical: 16, borderRadius: 14, backgroundColor: T.accent, alignItems: 'center', shadowColor: T.accent, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 8 },
+    btn: {
+        marginTop: 8,
+        paddingVertical: 16,
+        borderRadius: 14,
+        backgroundColor: T.accent,
+        alignItems: 'center',
+        shadowColor: T.accent,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+        elevation: 8
+    },
     btnDisabled: { opacity: 0.45, shadowOpacity: 0, elevation: 0 },
-    btnText: { color: T.textPrimary, fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
+    btnText: { color: T.textPrimary, fontSize: FONT_SIZES.lg, fontWeight: '700', letterSpacing: 0.3 },
 });
 
 export default DishFormModal;
