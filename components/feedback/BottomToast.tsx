@@ -1,3 +1,5 @@
+import { FONT_SIZES } from '@/constants/themes/font';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
     createContext,
     useCallback,
@@ -183,15 +185,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'center',
-        backgroundColor: 'rgba(22,22,32,0.96)',
+        backgroundColor: DESIGN_TOKENS.bottomToastBg,
         borderRadius: 100,
         paddingVertical: 12,
         paddingLeft: 20,
         paddingRight: 14,
         gap: 12,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.10)',
-        shadowColor: '#000',
+        borderColor: DESIGN_TOKENS.cardBorder,
+        shadowColor: DESIGN_TOKENS.black,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.45,
         shadowRadius: 20,
@@ -200,8 +202,8 @@ const styles = StyleSheet.create({
     },
     message: {
         flex: 1,
-        color: 'rgba(255,255,255,0.82)',
-        fontSize: 13,
+        color: DESIGN_TOKENS.secondaryText,
+        fontSize: FONT_SIZES.md,
         fontWeight: '500',
         letterSpacing: 0.1,
         lineHeight: 18,
@@ -214,8 +216,8 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
     closeText: {
-        color: 'rgba(255,255,255,0.3)',
-        fontSize: 10,
+        color: DESIGN_TOKENS.textMuted,
+        fontSize: FONT_SIZES.xs,
         fontWeight: '700',
     },
 });

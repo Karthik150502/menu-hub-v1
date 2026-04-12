@@ -1,3 +1,5 @@
+import { FONT_SIZES } from '@/constants/themes/font';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
     createContext,
     useCallback,
@@ -43,28 +45,28 @@ interface ToastContextValue {
 
 const TOAST_CONFIG: Record<ToastType, { accent: string; bg: string; icon: string; iconBg: string }> = {
     success: {
-        accent: '#bf06dc',
-        bg: 'rgba(97, 6, 111, 0.91)',
+        accent: DESIGN_TOKENS.primaryBright,
+        bg: DESIGN_TOKENS.toastSuccessBg,
         icon: '✓',
-        iconBg: 'rgba(148,0,171,0.25)',
+        iconBg: DESIGN_TOKENS.accentFaint,
     },
     error: {
-        accent: '#ff0000',
-        bg: 'rgba(88, 6, 6, 0.91)',
+        accent: DESIGN_TOKENS.subNegative,
+        bg: DESIGN_TOKENS.toastErrorBg,
         icon: '✕',
-        iconBg: 'rgba(248,113,113,0.22)',
+        iconBg: DESIGN_TOKENS.errorWarn,
     },
     warning: {
-        accent: '#dfa30b',
-        bg: 'rgba(122, 89, 5, 0.85)',
+        accent: DESIGN_TOKENS.toastWarningAccent,
+        bg: DESIGN_TOKENS.toastWarningBg,
         icon: '⚠',
-        iconBg: 'rgba(251,191,36,0.20)',
+        iconBg: DESIGN_TOKENS.toastWarningIconBg,
     },
     info: {
-        accent: '#0565dbfc',
-        bg: 'rgba(4, 38, 80, 0.97)',
+        accent: DESIGN_TOKENS.toastInfoAccent,
+        bg: DESIGN_TOKENS.toastInfoBg,
         icon: 'i',
-        iconBg: 'rgba(96,165,250,0.20)',
+        iconBg: DESIGN_TOKENS.toastInfoIconBg,
     },
 };
 
@@ -262,12 +264,12 @@ const styles = StyleSheet.create({
         paddingLeft: 0,
         gap: 12,
         // shadow
-        shadowColor: '#000',
+        shadowColor: DESIGN_TOKENS.black,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.35,
         shadowRadius: 16,
         elevation: 12,
-        backgroundColor: '#16161F',
+        backgroundColor: DESIGN_TOKENS.bottomToastBg,
     },
 
     accentBar: {
@@ -287,22 +289,22 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
     iconText: {
-        fontSize: 15,
+        fontSize: FONT_SIZES.lg,
         fontWeight: '800',
         lineHeight: 18,
     },
 
     textWrap: { flex: 1 },
     title: {
-        color: '#F0F0F5',
-        fontSize: 13,
+        color: DESIGN_TOKENS.primaryText,
+        fontSize: FONT_SIZES.md,
         fontWeight: '700',
         letterSpacing: 0.1,
         marginBottom: 2,
     },
     message: {
-        color: 'rgba(255, 255, 255, 0.52)',
-        fontSize: 13,
+        color: DESIGN_TOKENS.textSubtle,
+        fontSize: FONT_SIZES.md,
         lineHeight: 18,
         fontWeight: '500'
     },
@@ -315,8 +317,8 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
     closeText: {
-        color: 'rgba(255,255,255,0.3)',
-        fontSize: 11,
+        color: DESIGN_TOKENS.textMuted,
+        fontSize: FONT_SIZES.sm,
         fontWeight: '700',
     },
 

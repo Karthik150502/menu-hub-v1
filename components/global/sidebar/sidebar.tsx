@@ -1,3 +1,4 @@
+import { FONT_SIZES } from '@/constants/themes/font';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -128,17 +129,17 @@ const headerStyles = StyleSheet.create({
     avatarText: {
         color: DESIGN_TOKENS.primaryWhite,
         fontWeight: '700',
-        fontSize: 16,
+        fontSize: FONT_SIZES.lg,
     },
     name: {
         color: DESIGN_TOKENS.primaryWhite,
         fontWeight: '600',
-        fontSize: 16,
+        fontSize: FONT_SIZES.lg,
         letterSpacing: 0.2,
     },
     email: {
         color: DESIGN_TOKENS.subNeutral,
-        fontSize: 12,
+        fontSize: FONT_SIZES.sm,
         marginTop: 2,
     },
 });
@@ -151,11 +152,11 @@ const footerStyles = StyleSheet.create({
     },
     version: {
         color: DESIGN_TOKENS.subNeutral,
-        fontSize: 12,
+        fontSize: FONT_SIZES.sm,
     },
     help: {
         color: DESIGN_TOKENS.subNeutral,
-        fontSize: 13,
+        fontSize: FONT_SIZES.sm,
         fontWeight: '500',
     },
 });

@@ -1,3 +1,4 @@
+import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -128,13 +129,13 @@ const Field: React.FC<FieldProps> = ({
 export const fieldStyles = StyleSheet.create({
     wrapper: { marginBottom: 20 },
     labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-    label: { color: T.textLabel, fontSize: 11, fontWeight: '700', letterSpacing: 1.1, textTransform: 'uppercase' },
-    optional: { marginLeft: 8, color: T.textMuted, fontSize: 10, fontWeight: '500' },
+    label: { color: T.textLabel, ...TYPOGRAPHY.caption_sm_700, letterSpacing: 1.1, textTransform: 'uppercase' },
+    optional: { marginLeft: 8, color: T.textMuted, ...TYPOGRAPHY.overline_xs_500 },
     inputWrap: { borderWidth: 1.5, borderRadius: 12, backgroundColor: T.inputBg, paddingHorizontal: 14 },
-    input: { color: T.textPrimary, fontSize: 15, paddingVertical: 13 },
+    input: { color: T.textPrimary, fontSize: FONT_SIZES.lg, paddingVertical: 13 },
     inputMulti: { minHeight: 80, textAlignVertical: 'top', paddingTop: 12 },
-    error: { color: T.error, fontSize: 16, fontWeight: '500', marginTop: 6 },
-    hint: { color: T.textHint, fontSize: 13, marginTop: 6 },
+    error: { color: T.error, ...TYPOGRAPHY.heading_lg_500, marginTop: 6 },
+    hint: { color: T.textHint, fontSize: FONT_SIZES.sm, marginTop: 6 },
 });
 
 

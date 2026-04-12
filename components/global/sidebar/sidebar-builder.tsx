@@ -1,3 +1,4 @@
+import { FONT_SIZES } from '@/constants/themes/font';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -283,14 +284,14 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPr
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000',
+    backgroundColor: DESIGN_TOKENS.sidebarBackdrop
   },
   sidebar: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     width: SIDEBAR_WIDTH,
-    shadowColor: '#000',
+    shadowColor: DESIGN_TOKENS.black,
     shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 24,
@@ -302,7 +303,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 1,
-    backgroundColor: 'rgba(99,179,237,0.18)',
+    backgroundColor: DESIGN_TOKENS.sidebarAccentLine,
   },
   accentRight: { right: 0 },
   accentLeft: { left: 0 },
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
   },
   headerDivider: {
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: DESIGN_TOKENS.sidebarDivider,
     marginTop: 16,
   },
 
@@ -326,15 +327,15 @@ const styles = StyleSheet.create({
   groupSpacing: { marginTop: 4 },
   groupDivider: {
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: DESIGN_TOKENS.sidebarDividerSoft,
     marginHorizontal: 20,
     marginVertical: 8,
   },
   groupLabel: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontWeight: '700',
     letterSpacing: 1.4,
-    color: 'rgba(255,255,255,0.3)',
+    color: DESIGN_TOKENS.textSectionTitle,
     paddingHorizontal: 24,
     paddingTop: 8,
     paddingBottom: 4,
@@ -354,15 +355,15 @@ const styles = StyleSheet.create({
   optionIcon: { marginRight: 14, width: 22, alignItems: 'center' },
   optionLabel: {
     flex: 1,
-    fontSize: 15,
+    fontSize: FONT_SIZES.md,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.87)',
+    color: DESIGN_TOKENS.sidebarOptionText,
     letterSpacing: 0.2,
   },
-  optionLabelDisabled: { color: 'rgba(255,255,255,0.35)' },
+  optionLabelDisabled: { color: DESIGN_TOKENS.sidebarOptionDisabled },
   optionDanger: { color: DESIGN_TOKENS.subNegativeDark },
   optionChevron: { marginLeft: 8 },
-  chevronText: { fontSize: 20, color: 'rgba(255,255,255,0.2)', lineHeight: 22 },
+  chevronText: { fontSize: FONT_SIZES.xxl, color: DESIGN_TOKENS.sidebarChevron, lineHeight: 22 },
 
   // Footer
   footerSlot: {
@@ -371,7 +372,7 @@ const styles = StyleSheet.create({
   },
   footerDivider: {
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: DESIGN_TOKENS.sidebarDivider,
     marginBottom: 16,
   },
 });
