@@ -1,5 +1,6 @@
 import { CATEGORIES } from '@/constants/mock-data';
 import { FONT_SIZES } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { dishSchema } from '@/types/zod/validations/dish';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +10,6 @@ import {
     SubmitErrorHandler,
     SubmitHandler,
     useForm,
-    useWatch,
 } from 'react-hook-form';
 import {
     Animated,
@@ -22,12 +22,11 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import AppButton from '../custom/AppButton';
 import Field, { fieldStyles } from '../custom/inputField';
 import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
 import { Dish } from './dishes';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Category {
     key: string;
@@ -36,7 +35,7 @@ export interface Category {
 
 export interface DishFormValues {
     name: string;
-    description: string;
+    description?: string;
     price: string;
     currency: string;
     category: string;
@@ -44,13 +43,14 @@ export interface DishFormValues {
     available: boolean;
     veg: boolean;
     showInMenu?: boolean;
+    tag?: string;
 }
 
 export interface DishFormModalProps {
     visible: boolean;
     onClose: () => void;
     defaultValues?: Partial<Dish>;
-    onSubmit: (dish: Omit<Dish, 'key'>) => void;
+    onSubmit: (dish: Omit<Dish, 'id'>) => void;
     submitLabel?: string;
     isSubmitting?: boolean;
 }
@@ -62,32 +62,27 @@ const T = {
     // Surfaces
     screenBg: DESIGN_TOKENS.background_1,
     inputBg: DESIGN_TOKENS.inputBg,
-    inputBorder: DESIGN_TOKENS.inputBorder,
+    inputBorder: DESIGN_TOKENS.whiteFadeXs,
 
     // Accent
     accent: DESIGN_TOKENS.accentDefault,
     accentFaint: DESIGN_TOKENS.accentFaint,
 
     // Text
-    textPrimary: DESIGN_TOKENS.primaryText,
-    textSecondary: DESIGN_TOKENS.secondaryText,
-    textLabel: DESIGN_TOKENS.textLabel,
+    textPrimary: DESIGN_TOKENS.primaryWhite,
     textPlaceholder: DESIGN_TOKENS.textPlaceholder,
-    textMuted: DESIGN_TOKENS.textMuted,
-    textHint: DESIGN_TOKENS.textHint,
-    textSubtle: DESIGN_TOKENS.textSubtle,
     textSectionTitle: DESIGN_TOKENS.textSectionTitle,
 
     // UI chrome
     divider: DESIGN_TOKENS.divider,
-    closeBtn: DESIGN_TOKENS.chromeBtnBg,
+    closeBtn: DESIGN_TOKENS.whiteFadeXs,
     closeBtnText: DESIGN_TOKENS.textDismiss,
     dragPill: DESIGN_TOKENS.dragPill,
 
     // Price field
     currencyBadgeBg: DESIGN_TOKENS.currencyBadgeBg,
     currencyText: DESIGN_TOKENS.accentDefault,
-    priceDivider: DESIGN_TOKENS.inputBorder,
+    priceDivider: DESIGN_TOKENS.whiteFadeXs,
 } as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -104,20 +99,22 @@ function dishToFormValues(dish?: Partial<Dish>): Partial<DishFormValues> {
         available: dish.available ?? true,
         veg: dish.veg,
         showInMenu: dish.showInMenu,
+        tag: dish.tag ?? ""
     };
 }
 
-function formValuesToDish(values: DishFormValues): Omit<Dish, 'key'> {
+function formValuesToDish(values: DishFormValues): Omit<Dish, 'id'> {
     return {
         name: values.name.trim(),
-        description: values.description.trim(),
+        description: values.description?.trim() ?? "",
         price: parseFloat(values.price),
         currency: '₹',
         category: values.category,
-        imageUrl: values.imageUrl?.trim() || undefined,
+        imageUrl: values.imageUrl?.trim() ?? undefined,
         available: values.available,
         veg: values.veg,
-        showInMenu: values.showInMenu
+        showInMenu: values.showInMenu,
+        tag: values.tag ?? ""
     };
 }
 
@@ -180,11 +177,11 @@ export const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur,
 };
 
 const priceStyles = StyleSheet.create({
-    inputWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 0, overflow: 'hidden' },
-    currencyBadge: { paddingHorizontal: 14, paddingVertical: 13, backgroundColor: T.currencyBadgeBg, alignItems: 'center', justifyContent: 'center' },
+    inputWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.none, overflow: 'hidden' },
+    currencyBadge: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.bg, backgroundColor: T.currencyBadgeBg, alignItems: 'center', justifyContent: 'center' },
     currencyText: { color: T.currencyText, fontSize: FONT_SIZES.lg, fontWeight: '700' },
     divider: { width: 1, alignSelf: 'stretch', backgroundColor: T.priceDivider },
-    input: { flex: 1, paddingHorizontal: 14 },
+    input: { flex: 1, paddingHorizontal: SPACING.bg },
 });
 
 // ─── Category Select ──────────────────────────────────────────────────────────
@@ -228,7 +225,7 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange,
 const catStyles = StyleSheet.create({
     wrapper: { marginBottom: 20 },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
+    chip: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.sm, borderRadius: 20, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
     chipActive: { borderColor: T.accent, backgroundColor: T.accentFaint },
     chipText: { color: T.textPrimary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
     chipTextActive: { color: T.accent },
@@ -292,13 +289,11 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
         reValidateMode: 'onChange',
     });
 
-    const [category] = useWatch({ control, name: ['category'] });
-
     useEffect(() => {
         if (defaultValues) {
             reset({ ...dishToFormValues(defaultValues) } as DishFormValues);
         }
-    }, [defaultValues?.key]);
+    }, [defaultValues?.id]);
 
     const onValid: SubmitHandler<DishFormValues> = (values) => {
         onSubmit(formValuesToDish(values));
@@ -323,7 +318,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                     <View style={modalStyles.dragPill} />
                     <View style={modalStyles.headerRow}>
                         <Text style={modalStyles.title}>
-                            {defaultValues?.key ? 'Edit Item' : 'New Item'}
+                            {defaultValues?.id ? 'Edit Item' : 'New Item'}
                         </Text>
                         <TouchableOpacity
                             onPress={onClose}
@@ -349,7 +344,7 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                         name="name"
                         render={({ field: { value, onChange, onBlur } }) => (
                             <Field
-                                label="Dish Name"
+                                label="Item Name"
                                 value={value}
                                 onChange={onChange}
                                 onBlur={onBlur}
@@ -370,6 +365,20 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                                 onBlur={onBlur}
                                 placeholder="A short, appetising description"
                                 multiline
+                                error={errors.description?.message}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="tag"
+                        render={({ field: { value, onChange, onBlur } }) => (
+                            <Field
+                                label="Tag"
+                                value={value}
+                                onChange={onChange}
+                                onBlur={onBlur}
+                                placeholder="Latest information on the dish"
                                 error={errors.description?.message}
                             />
                         )}
@@ -445,9 +454,8 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                             <ToggleRow
                                 label="Vegetarian"
                                 subLabel={value ? 'Marked as veg 🟢' : 'Marked as non-veg 🔴'}
-                                value={category === 'non-veg' ? false : category === 'veg' ? true : value}
+                                value={value}
                                 onChange={onChange}
-                                disabled={category === 'non-veg' || category === 'veg'}
                             />
                         )}
                     />
@@ -463,20 +471,12 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
                             />
                         )}
                     />
-
-                    <TouchableOpacity
-                        style={[
-                            submitStyles.btn,
-                            (!isDirty || isSubmitting) && submitStyles.btnDisabled,
-                        ]}
-                        onPress={handleSubmit(onValid, onInvalid)}
-                        activeOpacity={0.85}
+                    <AppButton
+                        label={isSubmitting ? 'Saving…' : submitLabel}
                         disabled={!isDirty || isSubmitting}
-                    >
-                        <Text style={submitStyles.btnText}>
-                            {isSubmitting ? 'Saving…' : submitLabel}
-                        </Text>
-                    </TouchableOpacity>
+                        onPress={handleSubmit(onValid, onInvalid)}
+                        fullWidth 
+                        />
                 </ScrollView>
             </View>
         </Modal>
@@ -487,21 +487,21 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
 
 const modalStyles = StyleSheet.create({
     root: { flex: 1, backgroundColor: T.screenBg },
-    header: { paddingTop: 12, paddingHorizontal: 24, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: T.divider },
+    header: { paddingTop: SPACING.md, paddingHorizontal: SPACING.xxl, paddingBottom: SPACING.lg, borderBottomWidth: 1, borderBottomColor: T.divider },
     dragPill: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: T.dragPill, marginBottom: 16 },
     headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     title: { color: T.textPrimary, fontSize: FONT_SIZES.xl, fontWeight: '700', letterSpacing: 0.2 },
     closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: T.closeBtn, alignItems: 'center', justifyContent: 'center' },
     closeBtnText: { color: T.closeBtnText, fontSize: FONT_SIZES.sm, fontWeight: '700' },
     scroll: { flex: 1 },
-    content: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: Platform.OS === 'ios' ? 48 : 32 },
+    content: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl, paddingBottom: Platform.OS === 'ios' ? SPACING.giant : SPACING.xxxl },
 });
 
 const submitStyles = StyleSheet.create({
     btn: {
         marginTop: 8,
-        paddingVertical: 16,
-        borderRadius: 14,
+        paddingVertical: SPACING.lg,
+        borderRadius: SPACING.bg,
         backgroundColor: T.accent,
         alignItems: 'center',
         shadowColor: T.accent,

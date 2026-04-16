@@ -42,11 +42,20 @@ export const DESIGN_TOKENS: Record<string, string> = {
   subPositiveDarkFade: '#00ff0d41',
   subNeutral: 'rgba(234, 186, 255, 0.35)',
   subNeutralDark: 'rgba(193, 79, 242, 0.35)',
+  dangerGlow: 'rgba(248,113,113,0.30)',
+  dangerFaint: 'rgba(248,113,113,0.10)',
+  dangerBorder: 'rgba(248,113,113,0.40)',
+  textDisabled: 'rgba(255,255,255,0.28)',
+
+  disabled: 'rgba(255,255,255,0.06)',
+  disabledBorder: 'rgba(255,255,255,0.08)',
+
+  ghostBorder: 'rgba(255,255,255,0.14)',
+  ghostBg: 'rgba(255,255,255,0.05)',
 
   errorWarn: "#f56e6e81",
 
   // ── Text ──────────────────────────────────────────────────────────────────
-  primaryText: '#FFFFFF',
   primaryWhite: '#FFFFFF',
   secondaryText: '#E0E0E0',
   textLabel: 'rgba(255,255,255,0.42)',
@@ -72,15 +81,10 @@ export const DESIGN_TOKENS: Record<string, string> = {
 
   /** Form input background */
   inputBg: 'rgba(255,255,255,0.04)',
-  /** Form input default border */
-  inputBorder: 'rgba(255,255,255,0.08)',
 
   // ── Dividers & chrome ─────────────────────────────────────────────────────
   divider: 'rgba(255,255,255,0.06)',
   dragPill: 'rgba(255,255,255,0.15)',
-
-  /** Icon-button background (close, dismiss) */
-  chromeBtnBg: 'rgba(255,255,255,0.08)',
 
   // ── Switch / toggle ───────────────────────────────────────────────────────
   switchTrackOff: '#2E2E38',
@@ -114,8 +118,6 @@ export const DESIGN_TOKENS: Record<string, string> = {
 
 
   // ── Sidebar specific ───────────────────────────────────────────────
-  sidebarBackdrop: 'rgba(0,0,0,1)',
-
   sidebarAccentLine: 'rgba(99,179,237,0.18)',
 
   sidebarDivider: 'rgba(255,255,255,0.07)',
@@ -127,45 +129,35 @@ export const DESIGN_TOKENS: Record<string, string> = {
 
 
 
-  // ── Dish Card specific ─────────────────────────────────────────────
-  cardShadow: '#000',
+  whiteFadeSm: "rgba(255,255,255,0.18)",
+  whiteFadeXs: "rgba(255,255,255,0.08)",
 
+
+  // ── Dish Card specific ─────────────────────────────────────────────
   settingsBtnBg: 'rgba(0,0,0,0.45)',
-  settingsBtnBorder: 'rgba(255,255,255,0.18)',
 
   dropdownBorder: 'rgba(255,255,255,0.10)',
-  dropdownText: 'rgba(255,255,255,0.82)',
+  textOnGhost: 'rgba(255,255,255,0.82)',
 
   badgeBg: 'rgba(0,0,0,0.38)',
-  badgeBorder: 'rgba(255,255,255,0.18)',
 
   unavailableScrim: 'rgba(0,0,0,0.52)',
   unavailableText: 'rgba(255,255,255,0.55)',
 
   decorCircleStrong: 'rgba(255,255,255,0.12)',
-  decorCircleSoft: 'rgba(255,255,255,0.08)',
 
   menuBadgePositiveBg: 'rgba(0,255,13,0.15)',
   menuBadgePositiveBorder: 'rgba(0,255,13,0.35)',
   menuBadgeNegativeBg: 'rgba(255,0,0,0.15)',
   menuBadgeNegativeBorder: 'rgba(255,0,0,0.35)',
 
-  bannerAccent1: '#440246',
-  bannerAccent2: '#650368',
-};
-
-export const STATS_CARD_COLORS = {
-  bg: DESIGN_TOKENS.background_1,
-  cardBg: DESIGN_TOKENS.cardBg,
-  cardBorder: DESIGN_TOKENS.cardBorder,
-  label: DESIGN_TOKENS.textLabel,
-  value: DESIGN_TOKENS.primaryText,
-  subPositive: DESIGN_TOKENS.subPositive,
-  subNegative: DESIGN_TOKENS.subNegative,
-  subNeutral: DESIGN_TOKENS.subNeutral,
-  accentDefault: DESIGN_TOKENS.accentDefault,
-  refreshIcon: DESIGN_TOKENS.subNeutral,
-  title: DESIGN_TOKENS.titleText,
+  primaryAccent1: '#440246',
+  primaryAccent2: '#650368',
+  primaryAccent3: '#261c26',
+  primaryAccent4: '#f916d7',
+  primaryGlow: 'rgba(148,0,171,0.35)',
+  primaryFaint: 'rgba(148,0,171,0.12)',
+  primaryBorder: 'rgba(148,0,171,0.45)',
 };
 
 export const Fonts = Platform.select({

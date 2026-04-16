@@ -1,4 +1,5 @@
 import { FONT_SIZES } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
     createContext,
@@ -187,9 +188,9 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: DESIGN_TOKENS.bottomToastBg,
         borderRadius: 100,
-        paddingVertical: 12,
-        paddingLeft: 20,
-        paddingRight: 14,
+        paddingVertical: SPACING.md,
+        paddingLeft: SPACING.xl,
+        paddingRight: SPACING.bg,
         gap: 12,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.cardBorder,

@@ -12,8 +12,8 @@ export const dishSchema = z.object({
 
     description: z
         .string()
-        .min(10, 'Add a bit more detail (min 10 chars)')
-        .max(200, 'Keep it under 200 characters'),
+        .max(200, 'Keep it under 200 characters')
+        .optional(),
 
     // Price is a string in the form — coerce and validate as a number
     price: z
@@ -24,7 +24,7 @@ export const dishSchema = z.object({
         .refine(v => parseFloat(v) <= 100_000, { message: 'Price seems too high' }),
 
     currency: z.string(),
-
+    tag: z.string().optional(),
     category: z
         .string()
         .min(1, 'Please select a category'),

@@ -1,6 +1,7 @@
 // ─── Toggle Row ───────────────────────────────────────────────────────────────
 
 import { FONT_SIZES } from "@/constants/themes/font";
+import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { StyleSheet, Switch, Text, View } from "react-native";
 
@@ -18,7 +19,7 @@ interface ToggleRowProps {
 
 const T = {
     // Text
-    textPrimary: DESIGN_TOKENS.primaryText,
+    textPrimary: DESIGN_TOKENS.primaryWhite,
     textSubtle: DESIGN_TOKENS.textSubtle,
 
     // Semantic
@@ -26,7 +27,7 @@ const T = {
 
     // UI chrome
     toggleBg: DESIGN_TOKENS.inputBg,
-    toggleBorder: DESIGN_TOKENS.inputBorder,
+    toggleBorder: DESIGN_TOKENS.whiteFadeXs,
     switchTrackOff: DESIGN_TOKENS.switchTrackOff,
 
 } as const;
@@ -53,7 +54,7 @@ const ToggleRow: React.FC<ToggleRowProps> = ({
 
 
 const toggleStyles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 14 },
+    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: 12, paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, marginBottom: 14 },
     rowDisabled: { opacity: 0.55 },
     text: { flex: 1, marginRight: 12 },
     label: { color: T.textPrimary, fontSize: FONT_SIZES.md, fontWeight: '600' },
