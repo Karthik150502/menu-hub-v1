@@ -5,6 +5,7 @@ import React, { useRef } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useBottomToast } from "../feedback/BottomToast";
 import { Dish } from "./dishes";
+import { SPACING } from "@/constants/themes/spacing";
 
 export interface Category {
     key: string;
@@ -100,8 +101,8 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
     barContent: {
-        paddingHorizontal: 12,
-        paddingVertical: 10,
+        paddingHorizontal: SPACING.md,
+        paddingVertical: SPACING.ssm,
         gap: 8,
         flexDirection: "row",
         alignItems: "center",
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
 
     // ── Chips ─────────────────────────────────────────────────────────────────
     chip: {
-        paddingHorizontal: 16,
-        paddingVertical: 7,
+        paddingHorizontal: SPACING.lg,
+        paddingVertical: SPACING.sm,
         borderRadius: 999,
         backgroundColor: DESIGN_TOKENS.cardBg,
         borderWidth: 1,
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.2,
     },
     chipTextSelected: {
-        color: DESIGN_TOKENS.primaryText,
+        color: DESIGN_TOKENS.primaryWhite,
     },
 
 });

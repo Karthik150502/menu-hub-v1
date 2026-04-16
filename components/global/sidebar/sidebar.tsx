@@ -2,7 +2,6 @@ import { FONT_SIZES } from '@/constants/themes/font';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Icon from '../../ui/icon.example';
 import SidebarBuilder from './sidebar-builder';
 import { useSidebar } from './sidebar-context';
 
@@ -15,19 +14,16 @@ const optionGroups: SidebarOptionGroup[] = [
             {
                 key: 'home',
                 label: 'Home',
-                icon: <Icon char="🏠" />,
                 onPress: () => console.log('Home pressed'),
             },
             {
                 key: 'explore',
                 label: 'Explore',
-                icon: <Icon char="🔍" />,
                 onPress: () => console.log('Explore pressed'),
             },
             {
                 key: 'notifications',
                 label: 'Notifications',
-                icon: <Icon char="🔔" />,
                 onPress: () => console.log('Notifications pressed'),
             },
         ],
@@ -38,19 +34,16 @@ const optionGroups: SidebarOptionGroup[] = [
             {
                 key: 'profile',
                 label: 'My Profile',
-                icon: <Icon char="👤" />,
                 onPress: () => console.log('Profile pressed'),
             },
             {
                 key: 'settings',
                 label: 'Settings',
-                icon: <Icon char="⚙️" />,
                 onPress: () => console.log('Settings pressed'),
             },
             {
                 key: 'billing',
                 label: 'Billing',
-                icon: <Icon char="💳" />,
                 onPress: () => console.log('Billing pressed'),
             },
         ],
@@ -61,7 +54,6 @@ const optionGroups: SidebarOptionGroup[] = [
             {
                 key: 'logout',
                 label: 'Log Out',
-                icon: <Icon char="❌" />,
                 onPress: () => console.log('Logout pressed'),
                 danger: true,
                 // disabled:true,

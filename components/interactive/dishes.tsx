@@ -18,20 +18,17 @@ import {
     ViewStyle,
     useWindowDimensions,
 } from 'react-native';
-import dishSplashIcon from "../../assets/images/web/dish/dish-splash-icon.png";
 
 import { FONT_SIZES } from '@/constants/themes/font';
-// eslint-disable-next-line import/no-named-as-default
+
+import { BANNER_HEIGHT, CARD_RADIUS, GAP, H_PADDING, MAX_CARD_W, MIN_CARD_W } from '@/constants/dimensions';
+
+import { dishSplashIcon } from '@/constants/images';
+import { SPACING } from '@/constants/themes/spacing';
 import DishFormModal from './DishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const H_PADDING = 8;
-const GAP = 16;
-const MIN_CARD_W = 260;
-const MAX_CARD_W = 520;
-const CARD_RADIUS = 20;
-const BANNER_HEIGHT = 130;
 
 function getColumns(screenWidth: number): number {
     const usable = screenWidth - H_PADDING * 2;
@@ -39,17 +36,17 @@ function getColumns(screenWidth: number): number {
 }
 
 export interface Dish {
-    key: string;
+    id: string;
     name: string;
-    description: string;
+    description?: string;
     price: number;
     currency?: string;
     available: boolean;
-    badge?: string;
     imageUrl?: string;
     category: string;
     veg: boolean;
     showInMenu?: boolean;
+    tag?: string;
 }
 
 export interface DishListProps {
@@ -276,12 +273,12 @@ const DishCard: React.FC<{
 
     const handleToggle = (val: boolean) => {
         Animated.spring(switchAnim, { toValue: val ? 1 : 0, useNativeDriver: false, speed: 20, bounciness: 8 }).start();
-        onToggle?.(dish.key, val);
+        onToggle?.(dish.id, val);
     };
 
     const bannerColors = [
-        DESIGN_TOKENS.bannerAccent1,
-        DESIGN_TOKENS.bannerAccent2,
+        DESIGN_TOKENS.primaryAccent1,
+        DESIGN_TOKENS.primaryAccent2,
     ];
     const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] });
 
@@ -307,11 +304,11 @@ const DishCard: React.FC<{
                         <View style={styles.bannerWrapper}>
                             <Image source={dishSplashIcon} style={styles.banner} />
                             <View style={[styles.decorCircle, styles.decorCircleLg, { borderColor: DESIGN_TOKENS.decorCircleStrong }]} />
-                            <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: DESIGN_TOKENS.decorCircleSoft }]} />
+                            <View style={[styles.decorCircle, styles.decorCircleSm, { borderColor: DESIGN_TOKENS.whiteFadeXs }]} />
 
-                            {dish.badge && (
-                                <View style={styles.badge}>
-                                    <Text style={styles.badgeText}>{dish.badge}</Text>
+                            {dish.tag && (
+                                <View style={styles.tag}>
+                                    <Text style={styles.tagText}>{dish.tag}</Text>
                                 </View>
                             )}
 
@@ -322,7 +319,7 @@ const DishCard: React.FC<{
                             <CardSettings
                                 onEdit={() => setEditModalVisible(true)}
                                 onInfo={() => { /* hook up an info sheet here */ }}
-                                onDelete={() => onDelete?.(dish.key)}
+                                onDelete={() => onDelete?.(dish.id)}
                             />
 
                             {!dish.available && (
@@ -410,7 +407,7 @@ export const DishList: React.FC<DishListProps> = ({
         >
             {dishes.map((dish, index) => (
                 <DishCard
-                    key={dish.key}
+                    key={dish.id}
                     dish={dish}
                     index={index}
                     onLayout={index === 0 ? onFirstCardLayout : undefined}
@@ -439,8 +436,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: GAP,
         paddingHorizontal: H_PADDING,
-        paddingTop: 12,
-        paddingBottom: 24,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.xxl,
     },
 
     cardWrapper: { flexGrow: 1, flexShrink: 1, flexBasis: MIN_CARD_W, maxWidth: MAX_CARD_W },
@@ -468,7 +465,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         backgroundColor: DESIGN_TOKENS.settingsBtnBg,
         borderWidth: 1,
-        borderColor: DESIGN_TOKENS.settingsBtnBorder,
+        borderColor: DESIGN_TOKENS.whiteFadeSm,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -491,11 +488,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
+        paddingVertical: SPACING.md,
+        paddingHorizontal: SPACING.lg,
     },
     dropdownLabel: {
-        color: DESIGN_TOKENS.dropdownText,
+        color: DESIGN_TOKENS.textOnGhost,
         fontSize: FONT_SIZES.md,
         fontWeight: '500',
         letterSpacing: 0.1,
@@ -538,18 +535,18 @@ const styles = StyleSheet.create({
     decorCircleLg: { width: 140, height: 140, bottom: -50, right: -30 },
     decorCircleSm: { width: 80, height: 80, top: -20, right: 60 },
 
-    badge: {
+    tag: {
         position: 'absolute',
         top: 12,
         left: 12,
         backgroundColor: DESIGN_TOKENS.badgeBg,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
+        paddingHorizontal: SPACING.ssm,
+        paddingVertical: SPACING.xs,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: DESIGN_TOKENS.badgeBorder,
+        borderColor: DESIGN_TOKENS.whiteFadeSm,
     },
-    badgeText: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.6 },
+    tagText: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.6 },
     unavailableScrim: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: DESIGN_TOKENS.unavailableScrim,
@@ -558,11 +555,11 @@ const styles = StyleSheet.create({
     },
     unavailableText: { color: DESIGN_TOKENS.unavailableText, fontSize: FONT_SIZES.sm, fontWeight: '800', letterSpacing: 3 },
 
-    infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
+    infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, gap: 12 },
     infoLeft: { flex: 1 },
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' },
-    dishName: { color: DESIGN_TOKENS.primaryText, fontSize: FONT_SIZES.lg, fontWeight: '700', letterSpacing: 0.1, flexShrink: 1 },
-    categoryPill: { paddingHorizontal: 9, paddingVertical: 3, borderRadius: 999 },
+    dishName: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.lg, fontWeight: '700', letterSpacing: 0.1, flexShrink: 1 },
+    categoryPill: { paddingHorizontal: SPACING.sm, paddingVertical: SPACING.xs, borderRadius: 999 },
     categoryText: { fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.5, textTransform: 'capitalize' },
     dishDesc: { color: DESIGN_TOKENS.textLabel, fontSize: FONT_SIZES.xs, lineHeight: 17 },
     infoRight: { alignItems: 'flex-end', gap: 8 },

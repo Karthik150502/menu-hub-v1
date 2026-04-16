@@ -1,4 +1,5 @@
 import { FONT_SIZES } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
     createContext,
@@ -259,9 +260,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 16,
         overflow: 'hidden',
-        paddingVertical: 14,
-        paddingRight: 14,
-        paddingLeft: 0,
+        paddingVertical: SPACING.bg,
+        paddingRight: SPACING.bg,
+        paddingLeft: SPACING.none,
         gap: 12,
         // shadow
         shadowColor: DESIGN_TOKENS.black,
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
 
     textWrap: { flex: 1 },
     title: {
-        color: DESIGN_TOKENS.primaryText,
+        color: DESIGN_TOKENS.primaryWhite,
         fontSize: FONT_SIZES.md,
         fontWeight: '700',
         letterSpacing: 0.1,

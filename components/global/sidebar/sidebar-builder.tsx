@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.78, 320);
+const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.78, 300);
 
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -271,9 +271,6 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPr
         >
           {option.label}
         </Text>
-        <View style={styles.optionChevron}>
-          <Text style={styles.chevronText}>›</Text>
-        </View>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -284,7 +281,7 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPr
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: DESIGN_TOKENS.sidebarBackdrop
+    backgroundColor: DESIGN_TOKENS.black
   },
   sidebar: {
     position: 'absolute',
@@ -332,11 +329,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   groupLabel: {
+    textAlign: "left",
     fontSize: FONT_SIZES.xs,
     fontWeight: '700',
     letterSpacing: 1.4,
     color: DESIGN_TOKENS.textSectionTitle,
-    paddingHorizontal: 24,
+    paddingHorizontal: 18,
     paddingTop: 8,
     paddingBottom: 4,
   },
@@ -344,10 +342,10 @@ const styles = StyleSheet.create({
   // Option rows
   optionRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 13,
-    marginHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     marginVertical: 2,
     borderRadius: 12,
   },
@@ -356,15 +354,12 @@ const styles = StyleSheet.create({
   optionLabel: {
     flex: 1,
     fontSize: FONT_SIZES.md,
-    fontWeight: '500',
+    fontWeight: '300',
     color: DESIGN_TOKENS.sidebarOptionText,
     letterSpacing: 0.2,
   },
   optionLabelDisabled: { color: DESIGN_TOKENS.sidebarOptionDisabled },
-  optionDanger: { color: DESIGN_TOKENS.subNegativeDark },
-  optionChevron: { marginLeft: 8 },
-  chevronText: { fontSize: FONT_SIZES.xxl, color: DESIGN_TOKENS.sidebarChevron, lineHeight: 22 },
-
+  optionDanger: { color: DESIGN_TOKENS.subNegativeDark, fontWeight: "500" },
   // Footer
   footerSlot: {
     paddingHorizontal: 24,

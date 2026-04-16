@@ -6,6 +6,7 @@ import { FONT_SIZES } from "@/constants/themes/font";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import DishList, { Dish } from "./dishes";
 import CategoryBar from "./filter-chip";
+import { SPACING } from "@/constants/themes/spacing";
 
 const DishesDisplay: React.FC = () => {
 
@@ -16,9 +17,9 @@ const DishesDisplay: React.FC = () => {
         return dishes.filter(dish => activeCategories.includes(dish.category) || activeCategories.includes("all"))
     }, [activeCategories, dishes])
 
-    const handleToggle = (key: string, available: boolean) => {
+    const handleToggle = (id: string, available: boolean) => {
         setDishes((prev) =>
-            prev.map((d) => (d.key === key ? { ...d, available } : d))
+            prev.map((d) => (d.id === id ? { ...d, available } : d))
         );
     };
 
@@ -42,20 +43,20 @@ const styles = StyleSheet.create({
     },
     screen: {
         flex: 1,
-        backgroundColor: '#0D0D14',
+        backgroundColor: DESIGN_TOKENS.primaryAccent3,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingTop: 8,
-        paddingBottom: 12,
+        paddingHorizontal: SPACING.xl,
+        paddingTop: SPACING.sm,
+        paddingBottom: SPACING.md,
         borderBottomWidth: 1,
         borderBottomColor: DESIGN_TOKENS.sidebarDividerSoft,
     },
     headerTitle: {
-        color: '#F0F0F5',
+        color: DESIGN_TOKENS.primaryWhite,
         fontSize: FONT_SIZES.xxxl,
         fontWeight: '800',
         letterSpacing: -0.5,
@@ -67,15 +68,15 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     headerBadge: {
-        backgroundColor: '#1C1C26',
+        backgroundColor: DESIGN_TOKENS.primaryAccent3,
         borderRadius: 20,
-        paddingHorizontal: 14,
-        paddingVertical: 8,
+        paddingHorizontal: SPACING.bg,
+        paddingVertical: SPACING.sm,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.sidebarChevron,
     },
     headerBadgeText: {
-        color: '#F97316',
+        color: DESIGN_TOKENS.primaryAccent4,
         fontSize: FONT_SIZES.sm,
         fontWeight: '700',
     },

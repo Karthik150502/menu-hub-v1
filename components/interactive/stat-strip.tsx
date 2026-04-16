@@ -1,5 +1,6 @@
 import { FONT_SIZES } from '@/constants/themes/font';
-import { DESIGN_TOKENS, STATS_CARD_COLORS } from '@/constants/themes/theme';
+import { SPACING } from '@/constants/themes/spacing';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useRef } from 'react';
 import {
     Animated,
@@ -10,6 +11,21 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+
+
+const T = {
+    bg: DESIGN_TOKENS.background_1,
+    cardBg: DESIGN_TOKENS.cardBg,
+    cardBorder: DESIGN_TOKENS.cardBorder,
+    label: DESIGN_TOKENS.textLabel,
+    value: DESIGN_TOKENS.primaryWhite,
+    subPositive: DESIGN_TOKENS.subPositive,
+    subNegative: DESIGN_TOKENS.subNegative,
+    subNeutral: DESIGN_TOKENS.subNeutral,
+    accentDefault: DESIGN_TOKENS.accentDefault,
+    refreshIcon: DESIGN_TOKENS.subNeutral,
+    title: DESIGN_TOKENS.titleText,
+};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,10 +80,10 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
 
     const subColor =
         card.trend === 'positive'
-            ? STATS_CARD_COLORS.subPositive
+            ? T.subPositive
             : card.trend === 'negative'
-                ? STATS_CARD_COLORS.subNegative
-                : STATS_CARD_COLORS.subNeutral;
+                ? T.subNegative
+                : T.subNeutral;
     ;
 
     return (
@@ -81,7 +97,7 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
                 <View
                     style={[
                         styles.card,
-                        { width, height, borderTopColor: STATS_CARD_COLORS.accentDefault },
+                        { width, height, borderTopColor: T.accentDefault },
                     ]}
                 >
                     <Text style={styles.cardLabel} numberOfLines={1}>
@@ -160,7 +176,7 @@ export const StatStrip: React.FC<StatStripProps> = ({
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={[styles.strip, { paddingRight: 16 }]}
+                contentContainerStyle={[styles.strip, { paddingRight: SPACING.lg }]}
                 decelerationRate="fast"
                 snapToInterval={cardWidth + 10}
                 snapToAlignment="start"
@@ -182,49 +198,49 @@ export const StatStrip: React.FC<StatStripProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: STATS_CARD_COLORS.bg,
-        paddingVertical: 16
+        backgroundColor: T.bg,
+        paddingVertical: SPACING.lg
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingTop: 14,
-        paddingBottom: 10,
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.bg,
+        paddingBottom: SPACING.ssm,
     },
     title: {
         fontSize: FONT_SIZES.xs,
         fontWeight: '700',
         letterSpacing: 1.6,
-        color: STATS_CARD_COLORS.title,
+        color: T.title,
         textTransform: 'uppercase',
     },
     refreshBtn: {
-        padding: 4,
+        padding: SPACING.xs,
     },
     refreshIcon: {
         fontSize: FONT_SIZES.xxl,
-        color: STATS_CARD_COLORS.refreshIcon,
+        color: T.refreshIcon,
         lineHeight: 24,
     },
 
     // Strip
     strip: {
-        paddingLeft: 16,
+        paddingLeft: SPACING.lg,
         gap: 10,
         alignItems: 'flex-start',
     },
 
     // Card
     card: {
-        backgroundColor: STATS_CARD_COLORS.cardBg,
+        backgroundColor: T.cardBg,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: STATS_CARD_COLORS.cardBorder,
+        borderColor: T.cardBorder,
         borderTopWidth: 2,
-        paddingHorizontal: 14,
-        paddingVertical: 14,
+        paddingHorizontal: SPACING.bg,
+        paddingVertical: SPACING.bg,
         justifyContent: 'space-between',
         // shadow
         shadowColor: DESIGN_TOKENS.black,
@@ -237,14 +253,14 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.xs,
         fontWeight: '600',
         letterSpacing: 0.8,
-        color: STATS_CARD_COLORS.label,
+        color: T.label,
         textTransform: 'uppercase',
         marginBottom: 6,
     },
     cardValue: {
         fontSize: FONT_SIZES.xl,
         fontWeight: '500',
-        color: STATS_CARD_COLORS.value,
+        color: T.value,
         letterSpacing: -0.5,
         flex: 1,
     },
