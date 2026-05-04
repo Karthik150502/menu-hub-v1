@@ -1,3 +1,5 @@
+import { TYPOGRAPHY } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useRef } from 'react';
@@ -51,20 +53,20 @@ const C = {
     secondaryBg: DESIGN_TOKENS.cardBg,
     secondaryBorder: DESIGN_TOKENS.cardBorder,
 
-    textOnFilled: DESIGN_TOKENS.primaryWhite,
+    textOnFilled: DESIGN_TOKENS.textPrimary,
     textOnGhost: DESIGN_TOKENS.textOnGhost,
     textDisabled: DESIGN_TOKENS.textDisabled,
 
     disabled: DESIGN_TOKENS.disabled,
-    disabledBorder: DESIGN_TOKENS.disabledBorder,
+    disabledBorder: DESIGN_TOKENS.whiteFadeXs,
 } as const;
 
 // ─── Size config ──────────────────────────────────────────────────────────────
 
 const SIZE = {
-    sm: { paddingH: 14, paddingV: 8, fontSize: 12, iconSize: 13, gap: 5, radius: 10 },
-    md: { paddingH: 20, paddingV: 13, fontSize: 14, iconSize: 15, gap: 7, radius: 13 },
-    lg: { paddingH: 26, paddingV: 16, fontSize: 16, iconSize: 18, gap: 9, radius: 16 },
+    sm: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodySmall, iconSize: 13, gap: 5, radius: 10 },
+    md: { paddingH: SPACING.xl, paddingV: SPACING.bg, ...TYPOGRAPHY.body, iconSize: 15, gap: 7, radius: 13 },
+    lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, iconSize: 18, gap: 9, radius: 16 },
 } as const;
 
 // ─── Variant config ───────────────────────────────────────────────────────────

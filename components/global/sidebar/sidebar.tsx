@@ -1,4 +1,5 @@
-import { FONT_SIZES } from '@/constants/themes/font';
+import { TYPOGRAPHY } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -108,7 +109,7 @@ const headerStyles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 14,
+        gap: SPACING.bg,
     },
     avatar: {
         width: 46,
@@ -119,20 +120,17 @@ const headerStyles = StyleSheet.create({
         justifyContent: 'center',
     },
     avatarText: {
-        color: DESIGN_TOKENS.primaryWhite,
-        fontWeight: '700',
-        fontSize: FONT_SIZES.lg,
+        color: DESIGN_TOKENS.textPrimary,
+        ...TYPOGRAPHY.h4
     },
     name: {
-        color: DESIGN_TOKENS.primaryWhite,
-        fontWeight: '600',
-        fontSize: FONT_SIZES.lg,
-        letterSpacing: 0.2,
+        color: DESIGN_TOKENS.textPrimary,
+        ...TYPOGRAPHY.h4
     },
     email: {
         color: DESIGN_TOKENS.subNeutral,
-        fontSize: FONT_SIZES.sm,
-        marginTop: 2,
+        ...TYPOGRAPHY.bodySmall,
+        marginTop: SPACING.xxs,
     },
 });
 
@@ -143,13 +141,14 @@ const footerStyles = StyleSheet.create({
         alignItems: 'center',
     },
     version: {
-        color: DESIGN_TOKENS.subNeutral,
-        fontSize: FONT_SIZES.sm,
+        color: DESIGN_TOKENS.textSectionTitle,
+        textAlign: "left",
+        ...TYPOGRAPHY.caption_bold,
     },
     help: {
-        color: DESIGN_TOKENS.subNeutral,
-        fontSize: FONT_SIZES.sm,
-        fontWeight: '500',
+        color: DESIGN_TOKENS.textSectionTitle,
+        textAlign: "left",
+        ...TYPOGRAPHY.caption_bold,
     },
 });
 

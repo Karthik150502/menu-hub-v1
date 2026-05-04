@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-// eslint-disable-next-line import/no-named-as-default
+
+import { SPACING } from "@/constants/themes/spacing";
 import StatStrip, { StatCard } from "./stat-strip";
 
 
@@ -74,11 +75,11 @@ const ScrollableStatsStrip = () => {
 
 const styles = StyleSheet.create({
     reactLogo: { height: 178, width: 290, bottom: 0, left: 0, position: 'absolute' },
-    titleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-    stepContainer: { gap: 8, marginBottom: 8, marginTop: 8 },
+    titleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: SPACING.xs },
+    stepContainer: { gap: SPACING.sm, marginBottom: SPACING.sm, marginTop: SPACING.sm },
     strip: {
-        marginHorizontal: -16, // bleed to screen edges
-        marginBottom: 8,
+        marginHorizontal: -SPACING.lg, // bleeds to screen edges
+        marginBottom: SPACING.sm,
     },
 });
 

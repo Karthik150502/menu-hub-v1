@@ -1,4 +1,4 @@
-import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
@@ -19,7 +19,7 @@ const T = {
     accent: DESIGN_TOKENS.accentDefault,
 
     // Text
-    textPrimary: DESIGN_TOKENS.primaryWhite,
+    textPrimary: DESIGN_TOKENS.textPrimary,
     textLabel: DESIGN_TOKENS.textLabel,
     textPlaceholder: DESIGN_TOKENS.textPlaceholder,
     textMuted: DESIGN_TOKENS.textMuted,
@@ -128,15 +128,15 @@ const Field: React.FC<FieldProps> = ({
 
 
 export const fieldStyles = StyleSheet.create({
-    wrapper: { marginBottom: 20 },
-    labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-    label: { color: T.textLabel, ...TYPOGRAPHY.caption_sm_700, letterSpacing: 1.1, textTransform: 'uppercase' },
-    optional: { marginLeft: 8, color: T.textMuted, ...TYPOGRAPHY.overline_xs_500 },
+    wrapper: { marginBottom: SPACING.xl },
+    labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+    label: { color: T.textLabel, ...TYPOGRAPHY.label, letterSpacing: 1.1, textTransform: 'uppercase' },
+    optional: { marginLeft: SPACING.sm, color: T.textMuted, ...TYPOGRAPHY.overline },
     inputWrap: { borderWidth: 1.5, borderRadius: 12, backgroundColor: T.inputBg, paddingHorizontal: SPACING.bg },
-    input: { color: T.textPrimary, fontSize: FONT_SIZES.lg, paddingVertical: SPACING.bg },
+    input: { color: T.textPrimary, ...TYPOGRAPHY.body, paddingVertical: SPACING.bg },
     inputMulti: { minHeight: 80, textAlignVertical: 'top', paddingTop: SPACING.md },
-    error: { color: T.error, ...TYPOGRAPHY.heading_lg_500, marginTop: 6 },
-    hint: { color: T.textHint, fontSize: FONT_SIZES.sm, marginTop: 6 },
+    error: { color: T.error, ...TYPOGRAPHY.body, marginTop: SPACING.xs },
+    hint: { color: T.textHint, ...TYPOGRAPHY.bodySmall, marginTop: SPACING.xs },
 });
 
 

@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
   },
   link: {
-    marginTop: 15,
+    marginTop: SPACING.lg,
     paddingVertical: SPACING.lg,
   },
 });
