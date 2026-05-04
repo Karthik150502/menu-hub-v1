@@ -1,4 +1,5 @@
-import { FONT_SIZES } from '@/constants/themes/font';
+import { TYPOGRAPHY } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -18,10 +19,10 @@ import {
 } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.78, 300);
-
+const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.78, 220);
 
 // ─── Component ────────────────────────────────────────────────────────────────
+
 const SidebarBuilder: React.FC<SidebarProps> = ({
   visible,
   onClose,
@@ -38,40 +39,29 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const itemAnimations = useRef<Animated.Value[]>([]).current;
 
-  // Pre-build item stagger animations
   const allOptions = optionGroups.flatMap((g) => g.options);
   while (itemAnimations.length < allOptions.length + 10) {
     itemAnimations.push(new Animated.Value(0));
   }
 
   const openSidebar = useCallback(() => {
-    // Reset stagger values
     itemAnimations.forEach((v) => v.setValue(0));
-
     Animated.parallel([
       Animated.timing(translateX, {
-        toValue: 0,
-        duration: 340,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
+        toValue: 0, duration: 340,
+        easing: Easing.out(Easing.cubic), useNativeDriver: true,
       }),
       Animated.timing(backdropOpacity, {
-        toValue: overlayOpacity,
-        duration: 280,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
+        toValue: overlayOpacity, duration: 280,
+        easing: Easing.out(Easing.quad), useNativeDriver: true,
       }),
     ]).start(() => {
-      // Stagger items after panel arrives
       const staggered = itemAnimations
         .slice(0, allOptions.length)
         .map((v, i) =>
           Animated.timing(v, {
-            toValue: 1,
-            delay: i * 45,
-            duration: 220,
-            easing: Easing.out(Easing.back(1.4)),
-            useNativeDriver: true,
+            toValue: 1, delay: i * 50, duration: 240,
+            easing: Easing.out(Easing.back(1.2)), useNativeDriver: true,
           }),
         );
       Animated.stagger(40, staggered).start();
@@ -83,41 +73,29 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
       Animated.parallel([
         Animated.timing(translateX, {
           toValue: side === 'left' ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH,
-          duration: 280,
-          easing: Easing.in(Easing.cubic),
-          useNativeDriver: true,
+          duration: 280, easing: Easing.in(Easing.cubic), useNativeDriver: true,
         }),
         Animated.timing(backdropOpacity, {
-          toValue: 0,
-          duration: 240,
-          easing: Easing.in(Easing.quad),
-          useNativeDriver: true,
+          toValue: 0, duration: 240,
+          easing: Easing.in(Easing.quad), useNativeDriver: true,
         }),
-      ]).start(() => {
-        callback?.();
-      });
+      ]).start(() => callback?.());
     },
     [translateX, backdropOpacity, side],
   );
 
   useEffect(() => {
-    if (visible) {
-      openSidebar();
-    } else {
-      closeSidebar();
-    }
+    if (visible) openSidebar();
+    else closeSidebar();
   }, [visible, openSidebar, closeSidebar]);
 
-  const handleClose = () => {
-    closeSidebar(onClose);
-  };
+  const handleClose = () => closeSidebar(onClose);
 
   const sidebarStyle: ViewStyle =
     side === 'left'
-      ? { left: 0, borderTopRightRadius: 20, borderBottomRightRadius: 20 }
-      : { right: 0, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 };
+      ? { left: 0, borderTopRightRadius: 24, borderBottomRightRadius: 24 }
+      : { right: 0, borderTopLeftRadius: 24, borderBottomLeftRadius: 24 };
 
-  // Flatten all options with their indices for stagger
   let flatIndex = 0;
 
   return (
@@ -128,32 +106,22 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
       statusBarTranslucent
       onRequestClose={handleClose}
     >
-      {/* Backdrop */}
       <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
         <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
       </Animated.View>
 
-      {/* Sidebar panel */}
       <Animated.View
         style={[
           styles.sidebar,
           sidebarStyle,
-          {
-            backgroundColor: DESIGN_TOKENS.background_1,
-            transform: [{ translateX }]
-          },
+          { backgroundColor: DESIGN_TOKENS.background_1, transform: [{ translateX }] },
           containerStyle,
         ]}
       >
-        {/* Edge accent line */}
-        <View
-          style={[
-            styles.accentLine,
-            side === 'left' ? styles.accentRight : styles.accentLeft,
-          ]}
-        />
+        {/* Subtle right-edge glow line */}
+        <View style={[styles.accentLine, side === 'left' ? styles.accentRight : styles.accentLeft]} />
 
-        {/* Header slot */}
+        {/* Header */}
         {header && (
           <View style={styles.headerSlot}>
             {header}
@@ -161,7 +129,7 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
           </View>
         )}
 
-        {/* Body: option groups */}
+        {/* Option groups */}
         <ScrollView
           style={styles.body}
           contentContainerStyle={styles.bodyContent}
@@ -169,34 +137,42 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
           bounces={false}
         >
           {optionGroups.map((group, groupIdx) => (
-            <View key={groupIdx} style={groupIdx > 0 ? styles.groupSpacing : undefined}>
-              {groupIdx > 0 && <View style={styles.groupDivider} />}
+            <View key={groupIdx} style={styles.group}>
+              {/* Group label */}
+              {group.groupLabel && (
+                <Text style={styles.groupLabel}>
+                  {group.groupLabel.toUpperCase()}
+                </Text>
+              )}
 
-              {group.groupLabel ? (
-                <Text style={styles.groupLabel}>{group.groupLabel.toUpperCase()}</Text>
-              ) : null}
+              {/* Top border of the group block */}
+              <View style={styles.groupEdgeBorder} />
 
-              {group.options.map((option) => {
+              {group.options.map((option, optIdx) => {
                 const animValue = itemAnimations[flatIndex++];
+                const isLast = optIdx === group.options.length - 1;
                 return (
                   <AnimatedOption
                     key={option.key}
                     option={option}
                     animValue={animValue}
+                    showSeparator={!isLast}
                     onPress={() => {
                       if (option.disabled) return;
                       handleClose();
-                      // small delay so close animation starts before action
                       setTimeout(option.onPress, 80);
                     }}
                   />
                 );
               })}
+
+              {/* Bottom border of the group block */}
+              <View style={styles.groupEdgeBorder} />
             </View>
           ))}
         </ScrollView>
 
-        {/* Footer slot */}
+        {/* Footer */}
         {footer && (
           <View style={styles.footerSlot}>
             <View style={styles.footerDivider} />
@@ -204,38 +180,43 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
           </View>
         )}
       </Animated.View>
-    </Modal >
+    </Modal>
   );
 };
 
-// ─── Animated Option Item ─────────────────────────────────────────────────────
+// ─── Animated Option ──────────────────────────────────────────────────────────
 
 interface AnimatedOptionProps {
   option: SidebarOption;
   animValue: Animated.Value;
   onPress: () => void;
+  showSeparator: boolean;
 }
 
-const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPress }) => {
+const AnimatedOption: React.FC<AnimatedOptionProps> = ({
+  option, animValue, onPress, showSeparator,
+}) => {
   const pressAnim = useRef(new Animated.Value(1)).current;
+  const bgAnim = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    Animated.spring(pressAnim, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 40,
-      bounciness: 0,
-    }).start();
+    Animated.parallel([
+      Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 40, bounciness: 0 }),
+      Animated.timing(bgAnim, { toValue: 1, duration: 80, useNativeDriver: false }),
+    ]).start();
   };
 
   const handlePressOut = () => {
-    Animated.spring(pressAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 4,
-    }).start();
+    Animated.parallel([
+      Animated.spring(pressAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 4 }),
+      Animated.timing(bgAnim, { toValue: 0, duration: 160, useNativeDriver: false }),
+    ]).start();
   };
+
+  const rowBg = bgAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['rgba(255,255,255,0)', 'rgba(255,255,255,0.04)'],
+  });
 
   const itemStyle = {
     opacity: animValue,
@@ -243,7 +224,7 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPr
       {
         translateX: animValue.interpolate({
           inputRange: [0, 1],
-          outputRange: [-18, 0],
+          outputRange: [-20, 0],
         }),
       },
       { scale: pressAnim },
@@ -258,20 +239,35 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPr
         onPressOut={handlePressOut}
         disabled={option.disabled}
         activeOpacity={1}
-        style={[styles.optionRow, option.disabled && styles.optionDisabled]}
       >
-        {option.icon && <View style={styles.optionIcon}>{option.icon}</View>}
-        <Text
+        <Animated.View
           style={[
-            styles.optionLabel,
-            option.danger && styles.optionDanger,
-            option.disabled && styles.optionLabelDisabled,
+            styles.optionRow,
+            option.disabled && styles.optionDisabled,
+            { backgroundColor: rowBg },
           ]}
-          numberOfLines={1}
         >
-          {option.label}
-        </Text>
+          {/* Leading icon */}
+          {option.icon && (
+            <View style={styles.optionIconWrap}>{option.icon}</View>
+          )}
+
+          {/* Label */}
+          <Text
+            style={[
+              styles.optionLabel,
+              option.danger && styles.optionDanger,
+              option.disabled && styles.optionLabelDisabled,
+            ]}
+            numberOfLines={1}
+          >
+            {option.label}
+          </Text>
+        </Animated.View>
       </TouchableOpacity>
+
+      {/* Inset separator — only between items, full width */}
+      {showSeparator && <View style={styles.itemSeparator} />}
     </Animated.View>
   );
 };
@@ -281,94 +277,118 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({ option, animValue, onPr
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: DESIGN_TOKENS.black
+    backgroundColor: DESIGN_TOKENS.primaryBlack,
   },
   sidebar: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     width: SIDEBAR_WIDTH,
-    shadowColor: DESIGN_TOKENS.black,
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 24,
-    elevation: 20,
+    shadowColor: DESIGN_TOKENS.primaryBlack,
+    shadowOffset: { width: 6, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 32,
+    elevation: 24,
     overflow: 'hidden',
   },
+
+  // Subtle accent line on the open edge
   accentLine: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     width: 1,
-    backgroundColor: DESIGN_TOKENS.sidebarAccentLine,
+    backgroundColor: DESIGN_TOKENS.accentLineSubtle,
   },
   accentRight: { right: 0 },
   accentLeft: { left: 0 },
 
-  // Header
+  // ── Header ──────────────────────────────────────────────────────────────────
   headerSlot: {
     paddingTop: Platform.OS === 'ios' ? 56 : 32,
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xxl,
     paddingBottom: 0,
   },
   headerDivider: {
     height: 1,
-    backgroundColor: DESIGN_TOKENS.sidebarDivider,
-    marginTop: 16,
+    backgroundColor: DESIGN_TOKENS.borderSubtle,
+    marginTop: SPACING.lg,
   },
 
-  // Body
+  // ── Body ────────────────────────────────────────────────────────────────────
   body: { flex: 1 },
-  bodyContent: { paddingVertical: 12 },
-
-  groupSpacing: { marginTop: 4 },
-  groupDivider: {
-    height: 1,
-    backgroundColor: DESIGN_TOKENS.sidebarDividerSoft,
-    marginHorizontal: 20,
-    marginVertical: 8,
+  bodyContent: {
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.xl,
+    gap: SPACING.xxl,  // breathing room between groups
   },
+
+  // ── Group ────────────────────────────────────────────────────────────────────
+  group: { gap: 0 },
+
   groupLabel: {
-    textAlign: "left",
-    fontSize: FONT_SIZES.xs,
-    fontWeight: '700',
-    letterSpacing: 1.4,
+    ...TYPOGRAPHY.caption_bold,
     color: DESIGN_TOKENS.textSectionTitle,
-    paddingHorizontal: 18,
-    paddingTop: 8,
-    paddingBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 1.4,
+    paddingHorizontal: SPACING.xxl,
+    paddingBottom: SPACING.sm,
+    textAlign: 'right',
   },
 
-  // Option rows
+  // Full-width top and bottom borders that frame the group
+  groupEdgeBorder: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: DESIGN_TOKENS.whiteFadeSm,  // very subtle — lighter than whiteFadeXs
+  },
+
+  // ── Option row ───────────────────────────────────────────────────────────────
   optionRow: {
     flexDirection: 'row',
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    marginVertical: 2,
-    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingHorizontal: SPACING.xxl,
+    paddingVertical: SPACING.ssm + 2,  // 12px — generous tap target
+    gap: SPACING.sm,
   },
-  optionDisabled: { opacity: 0.58 },
-  optionIcon: { marginRight: 14, width: 22, alignItems: 'center' },
+
+  optionDisabled: { opacity: 0.35 },
+
+  optionIconWrap: {
+    width: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+
   optionLabel: {
-    flex: 1,
-    fontSize: FONT_SIZES.md,
-    fontWeight: '300',
-    color: DESIGN_TOKENS.sidebarOptionText,
-    letterSpacing: 0.2,
+    ...TYPOGRAPHY.body,
+    color: DESIGN_TOKENS.textHint,
+    letterSpacing: 0.15,
+    flexShrink: 1,
   },
-  optionLabelDisabled: { color: DESIGN_TOKENS.sidebarOptionDisabled },
-  optionDanger: { color: DESIGN_TOKENS.subNegativeDark, fontWeight: "500" },
-  // Footer
+  optionLabelDisabled: { color: DESIGN_TOKENS.textDisabled },
+  optionDanger: {
+    color: DESIGN_TOKENS.subNegativeDark,
+    fontWeight: '500',
+  },
+
+  // Inset separator between items — barely perceptible
+  itemSeparator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: DESIGN_TOKENS.whiteFadeXs,  // almost invisible
+    marginHorizontal: SPACING.xxl,                 // indented from edges
+  },
+
+  // ── Footer ──────────────────────────────────────────────────────────────────
   footerSlot: {
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xxl,
     paddingBottom: Platform.OS === 'ios' ? 40 : 24,
   },
   footerDivider: {
     height: 1,
-    backgroundColor: DESIGN_TOKENS.sidebarDivider,
-    marginBottom: 16,
+    backgroundColor: DESIGN_TOKENS.borderSubtle,
+    marginBottom: SPACING.lg,
   },
 });
 

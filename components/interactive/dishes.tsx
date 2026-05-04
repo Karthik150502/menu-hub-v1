@@ -19,12 +19,13 @@ import {
     useWindowDimensions,
 } from 'react-native';
 
-import { FONT_SIZES } from '@/constants/themes/font';
+import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 
 import { BANNER_HEIGHT, CARD_RADIUS, GAP, H_PADDING, MAX_CARD_W, MIN_CARD_W } from '@/constants/dimensions';
 
 import { dishSplashIcon } from '@/constants/images';
 import { SPACING } from '@/constants/themes/spacing';
+import AppDropdown from '../custom/dropdown-select';
 import DishFormModal from './DishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -63,15 +64,11 @@ export interface DishListProps {
 interface DropdownItem {
     key: string;
     label: string;
-    icon: string;
+    icon?: string;
     danger?: boolean;
+    onSelect: () => void;
 }
 
-const DROPDOWN_ITEMS: DropdownItem[] = [
-    { key: 'edit', label: 'Edit Item', icon: 'create-outline' },
-    { key: 'info', label: 'Info', icon: 'information-circle-outline' },
-    { key: 'delete', label: 'Delete', icon: 'trash-outline', danger: true },
-];
 
 interface CardSettingsProps {
     onEdit: () => void;
@@ -223,11 +220,11 @@ const MenuVisibilityBadge: React.FC<{ showInMenu: boolean }> = ({ showInMenu }) 
     }, [showInMenu]);
 
     const bg = showInMenu
-        ? DESIGN_TOKENS.menuBadgePositiveBg
-        : DESIGN_TOKENS.menuBadgeNegativeBg;
+        ? DESIGN_TOKENS.feedbackPositiveSubtle
+        : DESIGN_TOKENS.feedbackNegativeSubtle;
     const border = showInMenu
-        ? DESIGN_TOKENS.menuBadgePositiveBorder
-        : DESIGN_TOKENS.menuBadgeNegativeBorder;
+        ? DESIGN_TOKENS.feedbackPositiveBorder
+        : DESIGN_TOKENS.feedbackNegativeBorder;
     const color = showInMenu ? DESIGN_TOKENS.subPositive : DESIGN_TOKENS.subNegative;
     const icon = showInMenu ? 'eye-outline' : 'eye-off-outline';
     const label = showInMenu ? 'In Menu' : 'Hidden';
@@ -282,6 +279,34 @@ const DishCard: React.FC<{
     ];
     const switchOpacity = switchAnim.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] });
 
+
+    const DROPDOWN_ITEMS: DropdownItem[] = [
+        {
+            key: 'info',
+            label: 'Info',
+            onSelect: () => {
+                console.log("INFO selected.")
+            }
+        },
+        {
+            key: 'edit',
+            label: 'Edit Item',
+            onSelect: () => {
+                console.log("EDIT selected.")
+                setEditModalVisible(true)
+            }
+        },
+        {
+            key: 'delete',
+            label: 'Delete',
+            danger: true,
+            onSelect: () => {
+                console.log("DELETE selected.")
+                onDelete?.(dish.id)
+            }
+        },
+    ];
+
     return (
         <>
             <Animated.View style={[styles.cardWrapper, { opacity: switchOpacity }]} onLayout={onLayout}>
@@ -315,12 +340,12 @@ const DishCard: React.FC<{
                             {/* Menu visibility — bottom left of banner */}
                             <MenuVisibilityBadge showInMenu={dish.showInMenu ?? true} />
 
-                            {/* Top-right: settings dropdown */}
-                            <CardSettings
-                                onEdit={() => setEditModalVisible(true)}
-                                onInfo={() => { /* hook up an info sheet here */ }}
-                                onDelete={() => onDelete?.(dish.id)}
+
+                            <AppDropdown
+                                dropdownItems={DROPDOWN_ITEMS}
+                                dropdownButtonIcon='options-outline'
                             />
+
 
                             {!dish.available && (
                                 <View style={styles.unavailableScrim}>
@@ -355,7 +380,7 @@ const DishCard: React.FC<{
                                     onValueChange={handleToggle}
                                     trackColor={{ false: DESIGN_TOKENS.switchTrackOff, true: DESIGN_TOKENS.subPositive }}
                                     ios_backgroundColor={DESIGN_TOKENS.switchTrackOff}
-                                    thumbColor={DESIGN_TOKENS.primaryWhite}
+                                    thumbColor={DESIGN_TOKENS.textPrimary}
                                     style={styles.switch}
                                 />
                             </View>
@@ -476,8 +501,8 @@ const styles = StyleSheet.create({
         backgroundColor: DESIGN_TOKENS.cardBg,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: DESIGN_TOKENS.dropdownBorder,
-        shadowColor: DESIGN_TOKENS.black,
+        borderColor: DESIGN_TOKENS.cardBorder,
+        shadowColor: DESIGN_TOKENS.primaryBlack,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.55,
         shadowRadius: 20,
@@ -493,17 +518,15 @@ const styles = StyleSheet.create({
     },
     dropdownLabel: {
         color: DESIGN_TOKENS.textOnGhost,
-        fontSize: FONT_SIZES.md,
-        fontWeight: '500',
-        letterSpacing: 0.1,
+        ...TYPOGRAPHY.body
     },
     dropdownLabelDanger: {
         color: DESIGN_TOKENS.subNegativeDark
     },
     dropdownDivider: {
         height: 1,
-        backgroundColor: DESIGN_TOKENS.divider,
-        marginHorizontal: 12,
+        backgroundColor: DESIGN_TOKENS.disabled,
+        marginHorizontal: SPACING.md,
     },
 
     // ── Menu visibility badge ──────────────────────────────────────────────────
@@ -520,9 +543,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     menuBadgeText: {
-        fontSize: FONT_SIZES.xs,
-        fontWeight: '700',
-        letterSpacing: 0.4,
+        ...TYPOGRAPHY.caption_bold
     },
 
     bannerWrapper: { height: BANNER_HEIGHT, overflow: 'hidden', position: 'relative' },
@@ -546,25 +567,25 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.whiteFadeSm,
     },
-    tagText: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.6 },
+    tagText: { color: DESIGN_TOKENS.textPrimary, ...TYPOGRAPHY.bodySmall },
     unavailableScrim: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: DESIGN_TOKENS.unavailableScrim,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    unavailableText: { color: DESIGN_TOKENS.unavailableText, fontSize: FONT_SIZES.sm, fontWeight: '800', letterSpacing: 3 },
+    unavailableText: { color: DESIGN_TOKENS.unavailableText, ...TYPOGRAPHY.body },
 
     infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, gap: 12 },
     infoLeft: { flex: 1 },
-    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' },
-    dishName: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.lg, fontWeight: '700', letterSpacing: 0.1, flexShrink: 1 },
+    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: SPACING.xs, flexWrap: 'wrap' },
+    dishName: { color: DESIGN_TOKENS.textPrimary, ...TYPOGRAPHY.h4_bold, flexShrink: 1 },
     categoryPill: { paddingHorizontal: SPACING.sm, paddingVertical: SPACING.xs, borderRadius: 999 },
-    categoryText: { fontSize: FONT_SIZES.xs, fontWeight: '700', letterSpacing: 0.5, textTransform: 'capitalize' },
-    dishDesc: { color: DESIGN_TOKENS.textLabel, fontSize: FONT_SIZES.xs, lineHeight: 17 },
+    categoryText: { ...TYPOGRAPHY.caption, textTransform: 'capitalize' },
+    dishDesc: { color: DESIGN_TOKENS.textLabel, ...TYPOGRAPHY.body },
     infoRight: { alignItems: 'flex-end', gap: 8 },
-    price: { color: DESIGN_TOKENS.primaryWhite, fontSize: FONT_SIZES.lg, fontWeight: '800', letterSpacing: -0.5 },
-    currencySymbol: { fontSize: FONT_SIZES.md, fontWeight: '700' },
+    price: { color: DESIGN_TOKENS.textPrimary, ...TYPOGRAPHY.h3_bold },
+    currencySymbol: { ...TYPOGRAPHY.body },
     switch: { transform: [{ scaleX: 0.88 }, { scaleY: 0.88 }] },
     accentBar: {
         position: 'absolute',

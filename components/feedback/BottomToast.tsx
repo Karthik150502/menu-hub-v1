@@ -1,4 +1,4 @@
-import { FONT_SIZES } from '@/constants/themes/font';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
         gap: 12,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.cardBorder,
-        shadowColor: DESIGN_TOKENS.black,
+        shadowColor: DESIGN_TOKENS.primaryBlack,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.45,
         shadowRadius: 20,
@@ -204,10 +204,7 @@ const styles = StyleSheet.create({
     message: {
         flex: 1,
         color: DESIGN_TOKENS.secondaryText,
-        fontSize: FONT_SIZES.md,
-        fontWeight: '500',
-        letterSpacing: 0.1,
-        lineHeight: 18,
+        ...TYPOGRAPHY.body,
     },
     closeBtn: {
         width: 20,
@@ -218,7 +215,6 @@ const styles = StyleSheet.create({
     },
     closeText: {
         color: DESIGN_TOKENS.textMuted,
-        fontSize: FONT_SIZES.xs,
-        fontWeight: '700',
+        ...TYPOGRAPHY.caption
     },
 });

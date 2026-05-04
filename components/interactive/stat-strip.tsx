@@ -1,4 +1,4 @@
-import { FONT_SIZES } from '@/constants/themes/font';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useRef } from 'react';
@@ -17,8 +17,8 @@ const T = {
     bg: DESIGN_TOKENS.background_1,
     cardBg: DESIGN_TOKENS.cardBg,
     cardBorder: DESIGN_TOKENS.cardBorder,
-    label: DESIGN_TOKENS.textLabel,
-    value: DESIGN_TOKENS.primaryWhite,
+    label: DESIGN_TOKENS.textSectionTitle,
+    value: DESIGN_TOKENS.textPrimary,
     subPositive: DESIGN_TOKENS.subPositive,
     subNegative: DESIGN_TOKENS.subNegative,
     subNeutral: DESIGN_TOKENS.subNeutral,
@@ -210,9 +210,7 @@ const styles = StyleSheet.create({
         paddingBottom: SPACING.ssm,
     },
     title: {
-        fontSize: FONT_SIZES.xs,
-        fontWeight: '700',
-        letterSpacing: 1.6,
+        ...TYPOGRAPHY.bodySmall,
         color: T.title,
         textTransform: 'uppercase',
     },
@@ -220,9 +218,8 @@ const styles = StyleSheet.create({
         padding: SPACING.xs,
     },
     refreshIcon: {
-        fontSize: FONT_SIZES.xxl,
         color: T.refreshIcon,
-        lineHeight: 24,
+        ...TYPOGRAPHY.h2
     },
 
     // Strip
@@ -243,31 +240,26 @@ const styles = StyleSheet.create({
         paddingVertical: SPACING.bg,
         justifyContent: 'space-between',
         // shadow
-        shadowColor: DESIGN_TOKENS.black,
+        shadowColor: DESIGN_TOKENS.primaryBlack,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.35,
         shadowRadius: 10,
         elevation: 6,
     },
     cardLabel: {
-        fontSize: FONT_SIZES.xs,
-        fontWeight: '600',
-        letterSpacing: 0.8,
-        color: T.label,
+        ...TYPOGRAPHY.caption_bold,
         textTransform: 'uppercase',
-        marginBottom: 6,
+        color: T.label,
+        marginBottom: SPACING.xs,
     },
     cardValue: {
-        fontSize: FONT_SIZES.xl,
-        fontWeight: '500',
+        ...TYPOGRAPHY.h4,
         color: T.value,
-        letterSpacing: -0.5,
         flex: 1,
     },
     cardSub: {
-        fontSize: FONT_SIZES.xs,
-        fontWeight: '500',
-        marginTop: 4,
+        ...TYPOGRAPHY.caption,
+        marginTop: SPACING.xs,
     },
 });
 

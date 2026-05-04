@@ -48,22 +48,22 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: SPACING.sm,
   },
   stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
   },
   menuButton: {
     alignSelf: 'flex-start',
-    gap: 5,
+    gap: SPACING.xs,
     padding: SPACING.sm,
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   menuLine: {
     height: 2,
     width: 24,
-    backgroundColor: DESIGN_TOKENS.primaryWhite,
+    backgroundColor: DESIGN_TOKENS.textPrimary,
     borderRadius: 2,
   },
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: SPACING.sm,
     flex: 1,           // fills remaining screen height
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     borderRadius: 20,
     overflow: 'hidden',
   },

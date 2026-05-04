@@ -1,4 +1,4 @@
-import { FONT_SIZES } from '@/constants/themes/font';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
@@ -47,27 +47,27 @@ interface ToastContextValue {
 const TOAST_CONFIG: Record<ToastType, { accent: string; bg: string; icon: string; iconBg: string }> = {
     success: {
         accent: DESIGN_TOKENS.primaryBright,
-        bg: DESIGN_TOKENS.toastSuccessBg,
+        bg: DESIGN_TOKENS.feedbackSuccessBg,
         icon: '✓',
         iconBg: DESIGN_TOKENS.accentFaint,
     },
     error: {
         accent: DESIGN_TOKENS.subNegative,
-        bg: DESIGN_TOKENS.toastErrorBg,
+        bg: DESIGN_TOKENS.feedbackErrorBg,
         icon: '✕',
         iconBg: DESIGN_TOKENS.errorWarn,
     },
     warning: {
-        accent: DESIGN_TOKENS.toastWarningAccent,
-        bg: DESIGN_TOKENS.toastWarningBg,
+        accent: DESIGN_TOKENS.feedbackWarning,
+        bg: DESIGN_TOKENS.feedbackWarningBg,
         icon: '⚠',
-        iconBg: DESIGN_TOKENS.toastWarningIconBg,
+        iconBg: DESIGN_TOKENS.feedbackWarningSubtle,
     },
     info: {
-        accent: DESIGN_TOKENS.toastInfoAccent,
-        bg: DESIGN_TOKENS.toastInfoBg,
+        accent: DESIGN_TOKENS.feedbackInfo,
+        bg: DESIGN_TOKENS.feedbackInfoBg,
         icon: 'i',
-        iconBg: DESIGN_TOKENS.toastInfoIconBg,
+        iconBg: DESIGN_TOKENS.feedbackInfoSubtle,
     },
 };
 
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
         paddingLeft: SPACING.none,
         gap: 12,
         // shadow
-        shadowColor: DESIGN_TOKENS.black,
+        shadowColor: DESIGN_TOKENS.primaryBlack,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.35,
         shadowRadius: 16,
@@ -290,24 +290,18 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
     iconText: {
-        fontSize: FONT_SIZES.lg,
-        fontWeight: '800',
-        lineHeight: 18,
+        ...TYPOGRAPHY.h4
     },
 
     textWrap: { flex: 1 },
     title: {
-        color: DESIGN_TOKENS.primaryWhite,
-        fontSize: FONT_SIZES.md,
-        fontWeight: '700',
-        letterSpacing: 0.1,
-        marginBottom: 2,
+        color: DESIGN_TOKENS.textPrimary,
+        ...TYPOGRAPHY.body,
+        marginBottom: SPACING.xxs,
     },
     message: {
         color: DESIGN_TOKENS.textSubtle,
-        fontSize: FONT_SIZES.md,
-        lineHeight: 18,
-        fontWeight: '500'
+        ...TYPOGRAPHY.body
     },
 
     closeBtn: {
@@ -319,8 +313,7 @@ const styles = StyleSheet.create({
     },
     closeText: {
         color: DESIGN_TOKENS.textMuted,
-        fontSize: FONT_SIZES.sm,
-        fontWeight: '700',
+        ...TYPOGRAPHY.bodySmall,
     },
 
     progressBar: {

@@ -48,7 +48,6 @@ export const DESIGN_TOKENS: Record<string, string> = {
   textDisabled: 'rgba(255,255,255,0.28)',
 
   disabled: 'rgba(255,255,255,0.06)',
-  disabledBorder: 'rgba(255,255,255,0.08)',
 
   ghostBorder: 'rgba(255,255,255,0.14)',
   ghostBg: 'rgba(255,255,255,0.05)',
@@ -56,10 +55,10 @@ export const DESIGN_TOKENS: Record<string, string> = {
   errorWarn: "#f56e6e81",
 
   // ── Text ──────────────────────────────────────────────────────────────────
-  primaryWhite: '#FFFFFF',
-  secondaryText: '#E0E0E0',
   textLabel: 'rgba(255,255,255,0.42)',
   titleText: 'rgba(255,255,255,0.75)',
+  textPrimary: "rgba(255,255,255,0.90)",
+  textSecondary: '#E0E0E0',
 
   /** Subtle text — hints, helper copy */
   textHint: 'rgba(255, 255, 255, 0.44)',
@@ -83,7 +82,6 @@ export const DESIGN_TOKENS: Record<string, string> = {
   inputBg: 'rgba(255,255,255,0.04)',
 
   // ── Dividers & chrome ─────────────────────────────────────────────────────
-  divider: 'rgba(255,255,255,0.06)',
   dragPill: 'rgba(255,255,255,0.15)',
 
   // ── Switch / toggle ───────────────────────────────────────────────────────
@@ -100,43 +98,43 @@ export const DESIGN_TOKENS: Record<string, string> = {
   /** Warm tint behind the ₹ badge — intentional brand warmth */
   currencyBadgeBg: 'rgba(249,115,22,0.10)',
 
-  black: '#000',
-
-  // ── Toast specific ───────────────────────────────────────────────
-  toastSuccessBg: 'rgba(97, 6, 111, 0.91)',
-  toastErrorBg: 'rgba(88, 6, 6, 0.91)',
-  toastWarningBg: 'rgba(122, 89, 5, 0.85)',
-  toastInfoBg: 'rgba(4, 38, 80, 0.97)',
-
-  toastWarningAccent: '#dfa30b',
-  toastInfoAccent: '#0565dbfc',
-
-  toastWarningIconBg: 'rgba(251,191,36,0.20)',
-  toastInfoIconBg: 'rgba(96,165,250,0.20)',
+  primaryBlack: '#000',
 
 
+  // Backgrounds (strong surfaces)
+  feedbackSuccessBg: 'rgba(97, 6, 111, 0.91)',
+  feedbackErrorBg: 'rgba(88, 6, 6, 0.91)',
+  feedbackWarningBg: 'rgba(122, 89, 5, 0.85)',
+  feedbackInfoBg: 'rgba(4, 38, 80, 0.97)',
+
+  // Accents (primary highlight color)
+  feedbackWarning: '#dfa30b',
+  feedbackInfo: '#0565dbfc',
+
+  // Subtle backgrounds (icon / chip / soft highlight)
+  feedbackWarningSubtle: 'rgba(251,191,36,0.20)',
+  feedbackInfoSubtle: 'rgba(96,165,250,0.20)',
+
+  // Positive (success-like)
+  feedbackPositiveSubtle: 'rgba(0,255,13,0.15)',
+  feedbackPositiveBorder: 'rgba(0,255,13,0.35)',
+
+  // Negative (error-like)
+  feedbackNegativeSubtle: 'rgba(255,0,0,0.15)',
+  feedbackNegativeBorder: 'rgba(255,0,0,0.35)',
 
 
-  // ── Sidebar specific ───────────────────────────────────────────────
-  sidebarAccentLine: 'rgba(99,179,237,0.18)',
 
-  sidebarDivider: 'rgba(255,255,255,0.07)',
-  sidebarDividerSoft: 'rgba(255,255,255,0.06)',
-
-  sidebarOptionText: 'rgba(255,255,255,0.87)',
-  sidebarOptionDisabled: 'rgba(255,255,255,0.35)',
-  sidebarChevron: 'rgba(255,255,255,0.2)',
-
-
+  borderSubtle: 'rgba(255,255,255,0.07)',
+  accentLineSubtle: 'rgba(99,179,237,0.18)',
+  iconMuted: 'rgba(255,255,255,0.2)',
 
   whiteFadeSm: "rgba(255,255,255,0.18)",
   whiteFadeXs: "rgba(255,255,255,0.08)",
 
-
   // ── Dish Card specific ─────────────────────────────────────────────
   settingsBtnBg: 'rgba(0,0,0,0.45)',
 
-  dropdownBorder: 'rgba(255,255,255,0.10)',
   textOnGhost: 'rgba(255,255,255,0.82)',
 
   badgeBg: 'rgba(0,0,0,0.38)',
@@ -146,15 +144,13 @@ export const DESIGN_TOKENS: Record<string, string> = {
 
   decorCircleStrong: 'rgba(255,255,255,0.12)',
 
-  menuBadgePositiveBg: 'rgba(0,255,13,0.15)',
-  menuBadgePositiveBorder: 'rgba(0,255,13,0.35)',
-  menuBadgeNegativeBg: 'rgba(255,0,0,0.15)',
-  menuBadgeNegativeBorder: 'rgba(255,0,0,0.35)',
+
 
   primaryAccent1: '#440246',
   primaryAccent2: '#650368',
   primaryAccent3: '#261c26',
   primaryAccent4: '#f916d7',
+  primaryAccent5: '#280222',
   primaryGlow: 'rgba(148,0,171,0.35)',
   primaryFaint: 'rgba(148,0,171,0.12)',
   primaryBorder: 'rgba(148,0,171,0.45)',

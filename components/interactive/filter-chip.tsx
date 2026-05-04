@@ -1,11 +1,11 @@
 import { CATEGORIES } from "@/constants/mock-data";
-import { FONT_SIZES } from "@/constants/themes/font";
+import { TYPOGRAPHY } from "@/constants/themes/font";
+import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import React, { useRef } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useBottomToast } from "../feedback/BottomToast";
 import { Dish } from "./dishes";
-import { SPACING } from "@/constants/themes/spacing";
 
 export interface Category {
     key: string;
@@ -128,12 +128,10 @@ const styles = StyleSheet.create({
     },
     chipText: {
         color: DESIGN_TOKENS.textLabel,
-        fontSize: FONT_SIZES.md,
-        fontWeight: "600",
-        letterSpacing: 0.2,
+        ...TYPOGRAPHY.body
     },
     chipTextSelected: {
-        color: DESIGN_TOKENS.primaryWhite,
+        color: DESIGN_TOKENS.textPrimary,
     },
 
 });

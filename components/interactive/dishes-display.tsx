@@ -2,11 +2,11 @@ import { INITIAL_DISHES } from "@/constants/mock-data";
 import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { FONT_SIZES } from "@/constants/themes/font";
+import { TYPOGRAPHY } from "@/constants/themes/font";
+import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import DishList, { Dish } from "./dishes";
 import CategoryBar from "./filter-chip";
-import { SPACING } from "@/constants/themes/spacing";
 
 const DishesDisplay: React.FC = () => {
 
@@ -53,19 +53,17 @@ const styles = StyleSheet.create({
         paddingTop: SPACING.sm,
         paddingBottom: SPACING.md,
         borderBottomWidth: 1,
-        borderBottomColor: DESIGN_TOKENS.sidebarDividerSoft,
+        borderBottomColor: DESIGN_TOKENS.disabled,
     },
     headerTitle: {
-        color: DESIGN_TOKENS.primaryWhite,
-        fontSize: FONT_SIZES.xxxl,
-        fontWeight: '800',
+        color: DESIGN_TOKENS.textPrimary,
+        ...TYPOGRAPHY.h1,
         letterSpacing: -0.5,
     },
     headerSub: {
         color: DESIGN_TOKENS.textSubtle,
-        fontSize: FONT_SIZES.sm,
-        marginTop: 2,
-        fontWeight: '500',
+        ...TYPOGRAPHY.bodySmall,
+        marginTop: SPACING.xxs,
     },
     headerBadge: {
         backgroundColor: DESIGN_TOKENS.primaryAccent3,
@@ -73,12 +71,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.bg,
         paddingVertical: SPACING.sm,
         borderWidth: 1,
-        borderColor: DESIGN_TOKENS.sidebarChevron,
+        borderColor: DESIGN_TOKENS.iconMuted,
     },
     headerBadgeText: {
         color: DESIGN_TOKENS.primaryAccent4,
-        fontSize: FONT_SIZES.sm,
-        fontWeight: '700',
+        ...TYPOGRAPHY.bodySmall,
     },
     list: {
         flex: 1,

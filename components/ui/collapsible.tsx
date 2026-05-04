@@ -4,6 +4,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { SPACING } from '@/constants/themes/spacing';
 import { Colors } from '@/constants/themes/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   content: {
-    marginTop: 6,
-    marginLeft: 24,
+    marginTop: SPACING.xs,
+    marginLeft: SPACING.xxl,
   },
 });
