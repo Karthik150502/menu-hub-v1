@@ -14,10 +14,10 @@ import {
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonSize = 'icon' | 'sm' | 'md' | 'lg';
 
 export interface AppButtonProps {
-    label: string;
+    label?: string;
     onPress: () => void;
     variant?: ButtonVariant;
     size?: ButtonSize;
@@ -30,6 +30,7 @@ export interface AppButtonProps {
     /** Override the container style */
     style?: ViewStyle;
     fullWidth?: boolean;
+    children?: React.ReactNode
 }
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
@@ -64,6 +65,7 @@ const C = {
 // ─── Size config ──────────────────────────────────────────────────────────────
 
 const SIZE = {
+    icon: { paddingH: SPACING.xs, paddingV: SPACING.xs, ...TYPOGRAPHY.bodySmall, iconSize: 8, gap: 0, radius: 13 },
     sm: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodySmall, iconSize: 13, gap: 5, radius: 10 },
     md: { paddingH: SPACING.xl, paddingV: SPACING.bg, ...TYPOGRAPHY.body, iconSize: 15, gap: 7, radius: 13 },
     lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, iconSize: 18, gap: 9, radius: 16 },
@@ -162,6 +164,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
     loading = false,
     style,
     fullWidth = false,
+    children
 }) => {
     const pressAnim = useRef(new Animated.Value(1)).current;
     const isInactive = disabled || loading;
@@ -217,22 +220,25 @@ export const AppButton: React.FC<AppButtonProps> = ({
                     fullWidth && styles.btnFull,
                 ]}
             >
-                {/* Left icon or spinner */}
-                {loading ? (
-                    <Spinner color={v.icon} size={s.iconSize} />
-                ) : iconLeft ? (
-                    <Ionicons name={iconLeft as any} size={s.iconSize} color={v.icon} />
-                ) : null}
 
-                {/* Label */}
-                <Text style={[styles.label, { color: v.text, fontSize: s.fontSize }]}>
-                    {loading ? 'Loading…' : label}
-                </Text>
+                {children ? children : <>
+                    {/* Left icon or spinner */}
+                    {loading ? (
+                        <Spinner color={v.icon} size={s.iconSize} />
+                    ) : iconLeft ? (
+                        <Ionicons name={iconLeft as any} size={s.iconSize} color={v.icon} />
+                    ) : null}
 
-                {/* Right icon */}
-                {!loading && iconRight && (
-                    <Ionicons name={iconRight as any} size={s.iconSize} color={v.icon} />
-                )}
+                    {/* Label */}
+                    <Text style={[styles.label, { color: v.text, fontSize: s.fontSize }]}>
+                        {loading ? 'Loading…' : label}
+                    </Text>
+
+                    {/* Right icon */}
+                    {!loading && iconRight && (
+                        <Ionicons name={iconRight as any} size={s.iconSize} color={v.icon} />
+                    )}
+                </>}
             </TouchableOpacity>
         </Animated.View>
     );

@@ -5,6 +5,7 @@ export const FONT_SIZES = {
     base: 16,
     lg: 18,
     xl: 20,
+    big: 22,
     xxl: 24,
     xxxl: 28,
     display: 32,
@@ -44,12 +45,12 @@ export const TYPOGRAPHY = {
         lineHeight: FONT_SIZES.xxl * LINE_HEIGHTS.tight,
     },
     h3: {
-        fontSize: FONT_SIZES.xl,
+        fontSize: FONT_SIZES.big,
         fontWeight: FONT_WEIGHTS.semibold,
         lineHeight: FONT_SIZES.xl * LINE_HEIGHTS.normal,
     },
     h3_bold: {
-        fontSize: FONT_SIZES.xl,
+        fontSize: FONT_SIZES.big,
         fontWeight: FONT_WEIGHTS.bold,
         lineHeight: FONT_SIZES.xl * LINE_HEIGHTS.normal,
     },
@@ -88,6 +89,16 @@ export const TYPOGRAPHY = {
     bodySmall: {
         fontSize: FONT_SIZES.sm,
         fontWeight: FONT_WEIGHTS.regular,
+        lineHeight: FONT_SIZES.sm * LINE_HEIGHTS.normal,
+    },
+    bodySmallSemiBold: {
+        fontSize: FONT_SIZES.sm,
+        fontWeight: FONT_WEIGHTS.semibold,
+        lineHeight: FONT_SIZES.sm * LINE_HEIGHTS.normal,
+    },
+    bodySmallBold: {
+        fontSize: FONT_SIZES.sm,
+        fontWeight: FONT_WEIGHTS.bold,
         lineHeight: FONT_SIZES.sm * LINE_HEIGHTS.normal,
     },
 

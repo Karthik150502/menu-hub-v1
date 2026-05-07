@@ -5,10 +5,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
-    Easing,
     LayoutChangeEvent,
-    Modal,
-    Pressable,
     ScrollView,
     StyleSheet,
     Switch,
@@ -26,6 +23,7 @@ import { BANNER_HEIGHT, CARD_RADIUS, GAP, H_PADDING, MAX_CARD_W, MIN_CARD_W } fr
 import { dishSplashIcon } from '@/constants/images';
 import { SPACING } from '@/constants/themes/spacing';
 import AppDropdown from '../custom/dropdown-select';
+// eslint-disable-next-line import/no-named-as-default
 import DishFormModal from './DishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -68,137 +66,6 @@ interface DropdownItem {
     danger?: boolean;
     onSelect: () => void;
 }
-
-
-interface CardSettingsProps {
-    onEdit: () => void;
-    onInfo: () => void;
-    onDelete: () => void;
-}
-
-const CardSettings: React.FC<CardSettingsProps> = ({ onEdit, onInfo, onDelete }) => {
-    const [open, setOpen] = useState(false);
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-    const dropdownAnim = useRef(new Animated.Value(0)).current;
-    const btnRef = useRef<View>(null);
-    const [anchor, setAnchor] = useState({ x: 0, y: 0, width: 0 });
-
-    const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.88, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
-    const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
-
-    const openDropdown = () => {
-        btnRef.current?.measureInWindow((x, y, width, height) => {
-            setAnchor({ x, y: y + height + 4, width });
-            setOpen(true);
-            dropdownAnim.setValue(0);
-            Animated.timing(dropdownAnim, {
-                toValue: 1,
-                duration: 180,
-                easing: Easing.out(Easing.cubic),
-                useNativeDriver: true,
-            }).start();
-        });
-    };
-
-    const closeDropdown = () => {
-        Animated.timing(dropdownAnim, {
-            toValue: 0,
-            duration: 130,
-            easing: Easing.in(Easing.quad),
-            useNativeDriver: true,
-        }).start(() => setOpen(false));
-    };
-
-    const handleSelect = (key: string) => {
-        closeDropdown();
-        // Small delay so close animation plays before action
-        setTimeout(() => {
-            if (key === 'edit') onEdit();
-            if (key === 'info') onInfo();
-            if (key === 'delete') onDelete();
-        }, 250);
-    };
-
-    const dropdownStyle = {
-        opacity: dropdownAnim,
-        transform: [
-            {
-                translateY: dropdownAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-8, 0],
-                }),
-            },
-            {
-                scale: dropdownAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.92, 1],
-                }),
-            },
-        ],
-    };
-
-    return (
-        <>
-            {/* Settings button */}
-            <Animated.View
-                ref={btnRef as any}
-                style={[styles.settingsBtnWrap, { transform: [{ scale: scaleAnim }] }]}
-            >
-                <TouchableOpacity
-                    onPress={open ? closeDropdown : openDropdown}
-                    onPressIn={onPressIn}
-                    onPressOut={onPressOut}
-                    activeOpacity={1}
-                    style={styles.settingsBtn}
-                    hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-                >
-                    <Ionicons
-                        name={open ? 'close' : "options-outline"}
-                        size={15}
-                        color={DESIGN_TOKENS.titleText}
-                    />
-                </TouchableOpacity>
-            </Animated.View>
-
-            {/* Dropdown rendered in a Modal so it escapes card overflow:hidden */}
-            {open && (
-                <Modal transparent animationType="none" onRequestClose={closeDropdown}>
-                    {/* Backdrop — tap outside to close */}
-                    <Pressable style={StyleSheet.absoluteFill} onPress={closeDropdown} />
-
-                    <Animated.View
-                        style={[
-                            styles.dropdown,
-                            dropdownStyle,
-                            { top: anchor.y, right: SCREEN_WIDTH - anchor.x - anchor.width },
-                        ]}
-                    >
-                        {DROPDOWN_ITEMS.map((item, i) => (
-                            <React.Fragment key={item.key}>
-                                <TouchableOpacity
-                                    style={styles.dropdownItem}
-                                    onPress={() => handleSelect(item.key)}
-                                    activeOpacity={0.7}
-                                >
-                                    <Text style={[
-                                        styles.dropdownLabel,
-                                        item.danger && styles.dropdownLabelDanger,
-                                    ]}>
-                                        {item.label}
-                                    </Text>
-                                </TouchableOpacity>
-                                {/* Divider between items, not after last */}
-                                {i < DROPDOWN_ITEMS.length - 1 && (
-                                    <View style={styles.dropdownDivider} />
-                                )}
-                            </React.Fragment>
-                        ))}
-                    </Animated.View>
-                </Modal>
-            )}
-        </>
-    );
-};
 
 // ─── Menu visibility badge ────────────────────────────────────────────────────
 

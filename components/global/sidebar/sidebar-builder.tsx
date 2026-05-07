@@ -232,7 +232,7 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   };
 
   return (
-    <Animated.View style={itemStyle}>
+    <Animated.View>
       <TouchableOpacity
         onPress={onPress}
         onPressIn={handlePressIn}
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
 
   groupLabel: {
     ...TYPOGRAPHY.caption_bold,
-    color: DESIGN_TOKENS.textSectionTitle,
+    color: DESIGN_TOKENS.textLabel,
     textTransform: 'uppercase',
     letterSpacing: 1.4,
     paddingHorizontal: SPACING.xxl,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
 
   optionLabel: {
     ...TYPOGRAPHY.body,
-    color: DESIGN_TOKENS.textHint,
+    color: DESIGN_TOKENS.textPrimary,
     letterSpacing: 0.15,
     flexShrink: 1,
   },

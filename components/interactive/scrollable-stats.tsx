@@ -63,7 +63,6 @@ const ScrollableStatsStrip = () => {
     }, []);
 
     return <StatStrip
-        title="Live Stats"
         cards={stats}
         onRefresh={handleRefresh}
         refreshing={refreshing}
