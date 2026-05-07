@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     },
     message: {
         flex: 1,
-        color: DESIGN_TOKENS.secondaryText,
+        color: DESIGN_TOKENS.textSecondary,
         ...TYPOGRAPHY.body,
     },
     closeBtn: {

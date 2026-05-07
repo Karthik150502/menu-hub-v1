@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
+// eslint-disable-next-line import/no-named-as-default
 import DishList, { Dish } from "./dishes";
 import CategoryBar from "./filter-chip";
 

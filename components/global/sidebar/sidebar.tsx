@@ -95,7 +95,7 @@ const Sidebar: React.FC = () => {
         visible={isOpen}
         onClose={closeSidebar}
         side="left"
-        header={sidebarHeader}
+        // header={sidebarHeader}
         footer={sidebarFooter}
         optionGroups={optionGroups}
         overlayOpacity={0.55}
@@ -128,7 +128,7 @@ const headerStyles = StyleSheet.create({
         ...TYPOGRAPHY.h4
     },
     email: {
-        color: DESIGN_TOKENS.subNeutral,
+        color: DESIGN_TOKENS.textLabel,
         ...TYPOGRAPHY.bodySmall,
         marginTop: SPACING.xxs,
     },

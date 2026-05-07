@@ -49,8 +49,6 @@ export interface StatCard {
 export interface StatStripProps {
     /** Array of stat cards to render */
     cards: StatCard[];
-    /** Section title shown above the strip */
-    title?: string;
     /** Called when the refresh icon is tapped */
     onRefresh?: () => void;
     /** Whether a refresh is in progress (spins the icon) */
@@ -84,7 +82,12 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
             : card.trend === 'negative'
                 ? T.subNegative
                 : T.subNeutral;
-    ;
+    const topBorderColor =
+        card.trend === 'positive'
+            ? T.subPositive
+            : card.trend === 'negative'
+                ? T.subNegative
+                : T.accentDefault;
 
     return (
         <Animated.View style={[{ transform: [{ scale: pressAnim }] }]}>
@@ -97,7 +100,10 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
                 <View
                     style={[
                         styles.card,
-                        { width, height, borderTopColor: T.accentDefault },
+                        {
+                            width, height,
+                            borderTopColor: topBorderColor
+                        },
                     ]}
                 >
                     <Text style={styles.cardLabel} numberOfLines={1}>
@@ -113,7 +119,7 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
                     ) : null}
                 </View>
             </TouchableOpacity>
-        </Animated.View>
+        </Animated.View >
     );
 };
 
@@ -155,7 +161,6 @@ const RefreshButton: React.FC<{ onPress?: () => void; spinning: boolean }> = ({
 
 export const StatStrip: React.FC<StatStripProps> = ({
     cards,
-    title,
     onRefresh,
     refreshing = false,
     cardWidth = 140,
@@ -164,14 +169,6 @@ export const StatStrip: React.FC<StatStripProps> = ({
 }) => {
     return (
         <View style={[styles.container, style]}>
-            {/* Header row */}
-            {(title || onRefresh) && (
-                <View style={styles.header}>
-                    {title ? <Text style={styles.title}>{title}</Text> : <View />}
-                    {onRefresh && <RefreshButton onPress={onRefresh} spinning={refreshing} />}
-                </View>
-            )}
-
             {/* Horizontal scroll strip */}
             <ScrollView
                 horizontal
@@ -199,7 +196,7 @@ export const StatStrip: React.FC<StatStripProps> = ({
 const styles = StyleSheet.create({
     container: {
         backgroundColor: T.bg,
-        paddingVertical: SPACING.lg
+        paddingTop: SPACING.lg
     },
     header: {
         flexDirection: 'row',
