@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
@@ -246,11 +247,11 @@ export function useToast(): ToastContextValue {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        top: Platform.OS === 'ios' ? 56 : 40,
-        left: 16,
-        right: 16,
+        top: Platform.OS === 'ios' ? DIMENSIONS.safeAreaTopIOS : 40,
+        left: SPACING.lg,
+        right: SPACING.lg,
         zIndex: 9999,
-        gap: 10,
+        gap: SPACING.ssm,
         pointerEvents: 'box-none',
     },
 
@@ -258,12 +259,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderRadius: 16,
+        borderRadius: BORDER_RADIUS.xxl,
         overflow: 'hidden',
         paddingVertical: SPACING.bg,
         paddingRight: SPACING.bg,
         paddingLeft: SPACING.none,
-        gap: 12,
+        gap: SPACING.md,
         // shadow
         shadowColor: DESIGN_TOKENS.primaryBlack,
         shadowOffset: { width: 0, height: 6 },
@@ -274,17 +275,17 @@ const styles = StyleSheet.create({
     },
 
     accentBar: {
-        width: 3,
+        width: DIMENSIONS.barNormal,
         alignSelf: 'stretch',
-        borderRadius: 2,
+        borderRadius: BORDER_RADIUS.xxs,
         marginLeft: 0,
         flexShrink: 0,
     },
 
     iconWrap: {
-        width: 34,
-        height: 34,
-        borderRadius: 10,
+        width: DIMENSIONS.touchXl,
+        height: DIMENSIONS.touchXl,
+        borderRadius: BORDER_RADIUS.md,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
@@ -305,8 +306,8 @@ const styles = StyleSheet.create({
     },
 
     closeBtn: {
-        width: 24,
-        height: 24,
+        width: DIMENSIONS.touchMd,
+        height: DIMENSIONS.touchMd,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
@@ -321,8 +322,8 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        height: 2,
+        height: DIMENSIONS.barThin,
         transformOrigin: 'left',
-        borderRadius: 1,
+        borderRadius: BORDER_RADIUS.xxs,
     },
 });

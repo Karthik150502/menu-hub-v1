@@ -1,3 +1,4 @@
+import { SPACING } from '@/constants/themes/spacing';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 // eslint-disable-next-line import/no-named-as-default
@@ -31,9 +32,9 @@ export const HomePageHero: React.FC<HomePageHeroProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 8,
-        gap: 10,
-        paddingVertical: 18
+        paddingHorizontal: SPACING.sm,
+        gap: SPACING.ssm,
+        paddingVertical: SPACING.slg,
     },
 });
 

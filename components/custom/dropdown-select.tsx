@@ -1,4 +1,5 @@
-import { TYPOGRAPHY } from "@/constants/themes/font";
+import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from "@/constants/themes/font";
+import { BORDER_RADIUS, DIMENSIONS } from "@/constants/themes/dimensions";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -124,7 +125,7 @@ const AppDropdown: React.FC<AppDropdownProps> = ({
                 >
                     <Ionicons
                         name={(open ? 'close' : dropdownButtonIcon) as any}
-                        size={15}
+                        size={DIMENSIONS.iconMd}
                         color={DESIGN_TOKENS.titleText}
                     />
                     {/* Optional label beside the icon */}
@@ -165,7 +166,7 @@ const AppDropdown: React.FC<AppDropdownProps> = ({
                                     {item.icon && (
                                         <Ionicons
                                             name={item.icon as any}
-                                            size={15}
+                                            size={DIMENSIONS.iconMd}
                                             color={item.danger ? DESIGN_TOKENS.subNegativeDark : DESIGN_TOKENS.titleText}
                                         />
                                     )}
@@ -196,8 +197,8 @@ const styles = StyleSheet.create({
     // Trigger — icon-only (default)
     triggerWrap: {
         position: 'absolute',
-        top: 6,
-        right: 6,
+        top: SPACING.xsm,
+        right: SPACING.xsm,
     },
     // Trigger — with label (not absolutely positioned, flows inline)
     triggerWrapLabelled: {
@@ -207,9 +208,9 @@ const styles = StyleSheet.create({
     },
 
     triggerBtn: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
+        width: DIMENSIONS.touchLg,
+        height: DIMENSIONS.touchLg,
+        borderRadius: BORDER_RADIUS.xxl,
         backgroundColor: DESIGN_TOKENS.settingsBtnBg,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.whiteFadeSm,
@@ -220,25 +221,25 @@ const styles = StyleSheet.create({
     triggerBtnLabelled: {
         width: 'auto',
         height: 'auto',
-        borderRadius: 20,
+        borderRadius: BORDER_RADIUS.card,
         flexDirection: 'row',
-        gap: 6,
+        gap: SPACING.xsm,
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.sm,
     },
     triggerLabel: {
         color: DESIGN_TOKENS.titleText,
-        fontSize: 13,
-        fontWeight: '600',
+        fontSize: FONT_SIZES.compact,
+        fontWeight: FONT_WEIGHTS.semibold,
         letterSpacing: 0.1,
     },
 
     // Dropdown panel
     dropdown: {
         position: 'absolute',
-        minWidth: 160,
+        minWidth: DIMENSIONS.menuMinWidth,
         backgroundColor: DESIGN_TOKENS.cardBg,
-        borderRadius: 14,
+        borderRadius: BORDER_RADIUS.xl,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.cardBorder,
         shadowColor: DESIGN_TOKENS.primaryBlack,
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     dropdownItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10,
+        gap: SPACING.ssm,
         paddingVertical: SPACING.md,
         paddingHorizontal: SPACING.lg,
     },

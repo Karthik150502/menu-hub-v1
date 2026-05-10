@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
@@ -100,7 +101,7 @@ export const BottomToastContainer: React.FC<{
     bottomInset?: number;
 }> = ({ toasts, onDismiss, bottomInset }) => {
     const insets = useSafeAreaInsets();
-    const bottom = (bottomInset ?? insets.bottom) + 16;
+    const bottom = (bottomInset ?? insets.bottom) + SPACING.lg;
 
     return (
         <View
@@ -175,10 +176,10 @@ export function useBottomToast(): BottomToastContextValue {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        left: 24,
-        right: 24,
+        left: SPACING.xxl,
+        right: SPACING.xxl,
         alignItems: 'center',
-        gap: 8,
+        gap: SPACING.sm,
         zIndex: 9999,
         pointerEvents: 'box-none',
     },
@@ -187,11 +188,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         backgroundColor: DESIGN_TOKENS.bottomToastBg,
-        borderRadius: 100,
+        borderRadius: BORDER_RADIUS.pill,
         paddingVertical: SPACING.md,
         paddingLeft: SPACING.xl,
         paddingRight: SPACING.bg,
-        gap: 12,
+        gap: SPACING.md,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.cardBorder,
         shadowColor: DESIGN_TOKENS.primaryBlack,
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.45,
         shadowRadius: 20,
         elevation: 14,
-        maxWidth: 360,
+        maxWidth: DIMENSIONS.notifMaxWidth,
     },
     message: {
         flex: 1,
@@ -207,8 +208,8 @@ const styles = StyleSheet.create({
         ...TYPOGRAPHY.body,
     },
     closeBtn: {
-        width: 20,
-        height: 20,
+        width: DIMENSIONS.touchSm,
+        height: DIMENSIONS.touchSm,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,

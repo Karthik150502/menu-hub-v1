@@ -18,7 +18,7 @@ import {
 
 import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 
-import { BANNER_HEIGHT, CARD_RADIUS, GAP, H_PADDING, MAX_CARD_W, MIN_CARD_W } from '@/constants/dimensions';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 
 import { dishSplashIcon } from '@/constants/images';
 import { SPACING } from '@/constants/themes/spacing';
@@ -30,8 +30,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 
 function getColumns(screenWidth: number): number {
-    const usable = screenWidth - H_PADDING * 2;
-    return Math.max(1, Math.floor((usable + GAP) / (MIN_CARD_W + GAP)));
+    const usable = screenWidth - SPACING.sm * 2;
+    return Math.max(1, Math.floor((usable + SPACING.lg) / (DIMENSIONS.cardMinWidth + SPACING.lg)));
 }
 
 export interface Dish {
@@ -293,7 +293,7 @@ export const DishList: React.FC<DishListProps> = ({
 
     return (
         <ScrollView
-            showsVerticalScrollIndicator={true}
+            showsVerticalScrollIndicator
             contentContainerStyle={styles.grid}
             style={[styles.list, style]}
         >
@@ -326,19 +326,19 @@ const styles = StyleSheet.create({
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: GAP,
-        paddingHorizontal: H_PADDING,
+        gap: SPACING.lg,
+        paddingHorizontal: SPACING.sm,
         paddingTop: SPACING.md,
         paddingBottom: SPACING.xxl,
     },
 
-    cardWrapper: { flexGrow: 1, flexShrink: 1, flexBasis: MIN_CARD_W, maxWidth: MAX_CARD_W },
-    ghostCard: { flex: 1, borderRadius: CARD_RADIUS, backgroundColor: 'transparent' },
+    cardWrapper: { flexGrow: 1, flexShrink: 1, flexBasis: DIMENSIONS.cardMinWidth, maxWidth: DIMENSIONS.cardMaxWidth },
+    ghostCard: { flex: 1, borderRadius: BORDER_RADIUS.card, backgroundColor: 'transparent' },
 
     card: {
         flex: 1,
         backgroundColor: DESIGN_TOKENS.cardBg,
-        borderRadius: CARD_RADIUS,
+        borderRadius: BORDER_RADIUS.card,
         overflow: 'hidden',
         shadowColor: DESIGN_TOKENS.shadowColor,
         borderWidth: 1,
@@ -350,11 +350,11 @@ const styles = StyleSheet.create({
     },
 
     // ── Settings button ────────────────────────────────────────────────────────
-    settingsBtnWrap: { position: 'absolute', top: 6, right: 6 },
+    settingsBtnWrap: { position: 'absolute', top: SPACING.xsm, right: SPACING.xsm },
     settingsBtn: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
+        width: DIMENSIONS.touchLg,
+        height: DIMENSIONS.touchLg,
+        borderRadius: BORDER_RADIUS.xxl,
         backgroundColor: DESIGN_TOKENS.settingsBtnBg,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.whiteFadeSm,
@@ -364,9 +364,9 @@ const styles = StyleSheet.create({
     // ── Dropdown ──────────────────────────────────────────────────────────────
     dropdown: {
         position: 'absolute',
-        minWidth: 160,
+        minWidth: DIMENSIONS.menuMinWidth,
         backgroundColor: DESIGN_TOKENS.cardBg,
-        borderRadius: 14,
+        borderRadius: BORDER_RADIUS.xl,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.cardBorder,
         shadowColor: DESIGN_TOKENS.primaryBlack,
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     dropdownItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10,
+        gap: SPACING.ssm,
         paddingVertical: SPACING.md,
         paddingHorizontal: SPACING.lg,
     },
@@ -399,38 +399,38 @@ const styles = StyleSheet.create({
     // ── Menu visibility badge ──────────────────────────────────────────────────
     menuBadge: {
         position: 'absolute',
-        bottom: 10,
-        left: 10,
+        bottom: SPACING.ssm,
+        left: SPACING.ssm,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 4,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 20,
+        gap: SPACING.xs,
+        paddingHorizontal: SPACING.sm,
+        paddingVertical: SPACING.xs,
+        borderRadius: BORDER_RADIUS.card,
         borderWidth: 1,
     },
     menuBadgeText: {
         ...TYPOGRAPHY.caption_bold
     },
 
-    bannerWrapper: { height: BANNER_HEIGHT, overflow: 'hidden', position: 'relative' },
+    bannerWrapper: { height: DIMENSIONS.bannerHeight, overflow: 'hidden', position: 'relative' },
     banner: { ...StyleSheet.absoluteFillObject },
     bannerOverlay: {
         opacity: 0.5,
         transform: [{ skewX: '-20deg' }, { translateX: SCREEN_WIDTH * 0.4 }],
     },
-    decorCircle: { position: 'absolute', borderWidth: 1, borderRadius: 999 },
+    decorCircle: { position: 'absolute', borderWidth: 1, borderRadius: BORDER_RADIUS.full },
     decorCircleLg: { width: 140, height: 140, bottom: -50, right: -30 },
     decorCircleSm: { width: 80, height: 80, top: -20, right: 60 },
 
     tag: {
         position: 'absolute',
-        top: 12,
-        left: 12,
+        top: SPACING.md,
+        left: SPACING.md,
         backgroundColor: DESIGN_TOKENS.badgeBg,
         paddingHorizontal: SPACING.ssm,
         paddingVertical: SPACING.xs,
-        borderRadius: 20,
+        borderRadius: BORDER_RADIUS.card,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.whiteFadeSm,
     },
@@ -443,23 +443,23 @@ const styles = StyleSheet.create({
     },
     unavailableText: { color: DESIGN_TOKENS.unavailableText, ...TYPOGRAPHY.body },
 
-    infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, gap: 12 },
+    infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, gap: SPACING.md },
     infoLeft: { flex: 1 },
-    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: SPACING.xs, flexWrap: 'wrap' },
+    nameRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.xs, flexWrap: 'wrap' },
     dishName: { color: DESIGN_TOKENS.textPrimary, ...TYPOGRAPHY.h4_bold, flexShrink: 1 },
-    categoryPill: { paddingHorizontal: SPACING.sm, paddingVertical: SPACING.xs, borderRadius: 999 },
+    categoryPill: { paddingHorizontal: SPACING.sm, paddingVertical: SPACING.xs, borderRadius: BORDER_RADIUS.full },
     categoryText: { ...TYPOGRAPHY.caption, textTransform: 'capitalize' },
     dishDesc: { color: DESIGN_TOKENS.textLabel, ...TYPOGRAPHY.body },
-    infoRight: { alignItems: 'flex-end', gap: 8 },
+    infoRight: { alignItems: 'flex-end', gap: SPACING.sm },
     price: { color: DESIGN_TOKENS.textPrimary, ...TYPOGRAPHY.h3_bold },
     currencySymbol: { ...TYPOGRAPHY.body },
     switch: { transform: [{ scaleX: 0.88 }, { scaleY: 0.88 }] },
     accentBar: {
         position: 'absolute',
         left: 0, top: 0, bottom: 0,
-        width: 3,
-        borderTopLeftRadius: CARD_RADIUS,
-        borderBottomLeftRadius: CARD_RADIUS,
+        width: DIMENSIONS.barNormal,
+        borderTopLeftRadius: BORDER_RADIUS.card,
+        borderBottomLeftRadius: BORDER_RADIUS.card,
     },
 });
 

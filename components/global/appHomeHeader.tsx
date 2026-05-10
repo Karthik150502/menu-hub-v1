@@ -1,4 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { FONT_WEIGHTS, TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React from 'react';
@@ -63,8 +64,6 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const AVATAR_SIZE = 38;
-
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
@@ -91,9 +90,9 @@ const styles = StyleSheet.create({
     },
 
     avatarBtn: {
-        width: AVATAR_SIZE,
-        height: AVATAR_SIZE,
-        borderRadius: AVATAR_SIZE / 2,
+        width: DIMENSIONS.touchXxl,
+        height: DIMENSIONS.touchXxl,
+        borderRadius: DIMENSIONS.touchXxl / 2,
         backgroundColor: DESIGN_TOKENS.accentDefault,
         alignItems: 'center',
         justifyContent: 'center',
@@ -106,9 +105,9 @@ const styles = StyleSheet.create({
     avatarText: {
         ...TYPOGRAPHY.label,
         color: DESIGN_TOKENS.primaryWhite,
-        fontWeight: '700',
+        fontWeight: FONT_WEIGHTS.bold,
         // nudge optical vertical centering
-        lineHeight: Platform.OS === 'ios' ? undefined : AVATAR_SIZE * 0.55,
+        lineHeight: Platform.OS === 'ios' ? undefined : DIMENSIONS.touchXxl * 0.55,
     },
 });
 

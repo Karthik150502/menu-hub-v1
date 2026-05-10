@@ -1,3 +1,4 @@
+import { SPACING } from '@/constants/themes/spacing';
 import React, { useCallback, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 
@@ -18,7 +19,7 @@ export const FormItem: React.FC<FormRowProps> = ({
     children,
     span     = 1,
     _columns = 1,
-    _gap     = 12,
+    _gap     = SPACING.md,
 }) => {
     const isFull    = span === 'full' || Number(span) >= _columns;
     const spanCount = isFull ? _columns : Math.min(Number(span), _columns);
@@ -45,7 +46,7 @@ interface FormGridProps {
 
 export const FormGrid: React.FC<FormGridProps> = ({
     children,
-    gap     = 12,
+    gap     = SPACING.md,
     columns: colProp,
 }) => {
     const [containerWidth, setContainerWidth] = useState(0);

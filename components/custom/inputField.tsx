@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
@@ -132,9 +133,9 @@ export const fieldStyles = StyleSheet.create({
     labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
     label: { color: T.textLabel, ...TYPOGRAPHY.label, letterSpacing: 1.1, textTransform: 'uppercase' },
     optional: { marginLeft: SPACING.sm, color: T.textMuted, ...TYPOGRAPHY.overline },
-    inputWrap: { borderWidth: 1.5, borderRadius: 12, backgroundColor: T.inputBg, paddingHorizontal: SPACING.bg },
+    inputWrap: { borderWidth: 1.5, borderRadius: BORDER_RADIUS.lg, backgroundColor: T.inputBg, paddingHorizontal: SPACING.bg },
     input: { color: T.textPrimary, ...TYPOGRAPHY.body, paddingVertical: SPACING.bg },
-    inputMulti: { minHeight: 80, textAlignVertical: 'top', paddingTop: SPACING.md },
+    inputMulti: { minHeight: DIMENSIONS.inputMultilineMin, textAlignVertical: 'top', paddingTop: SPACING.md },
     error: { color: T.error, ...TYPOGRAPHY.body, marginTop: SPACING.xs },
     hint: { color: T.textHint, ...TYPOGRAPHY.bodySmall, marginTop: SPACING.xs },
 });

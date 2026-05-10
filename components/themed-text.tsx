@@ -1,3 +1,5 @@
+import { FONT_SIZES, FONT_WEIGHTS } from '@/constants/themes/font';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -35,26 +37,26 @@ export function ThemedText({
 
 const styles = StyleSheet.create({
   default: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.base,
     lineHeight: 24,
   },
   defaultSemiBold: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.base,
     lineHeight: 24,
-    fontWeight: '600',
+    fontWeight: FONT_WEIGHTS.semibold,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
+    fontSize: FONT_SIZES.display,
+    fontWeight: FONT_WEIGHTS.bold,
+    lineHeight: FONT_SIZES.display,
   },
   subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: FONT_SIZES.xl,
+    fontWeight: FONT_WEIGHTS.bold,
   },
   link: {
     lineHeight: 30,
-    fontSize: 16,
-    color: '#0a7ea4',
+    fontSize: FONT_SIZES.base,
+    color: DESIGN_TOKENS.linkColor,
   },
 });
