@@ -1,51 +1,85 @@
+// eslint-disable-next-line import/no-named-as-default
+import WelcomeHero from '@/components/design/welcomeIntro2';
+import AppHeader from '@/components/global/appHomeHeader';
 import Sidebar from '@/components/global/sidebar/sidebar';
-import { SidebarButton } from '@/components/global/sidebar/sidebar-button';
 import DishesDisplay from '@/components/interactive/dishes-display';
 // eslint-disable-next-line import/no-named-as-default
 import HomePageHero from '@/components/interactive/homeHeroComponent';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
 import { SPACING } from '@/constants/themes/spacing';
-import { StyleSheet, View } from 'react-native';
+import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-
   return (
-    <View style={{ flex: 1 }}>
+    /*
+      SafeAreaView with edges={['bottom']} ONLY.
+      - 'top' is intentionally excluded — AppHeader already reads
+        useSafeAreaInsets().top and applies its own paddingTop, so adding
+        top here would double-pad the header.
+      - 'bottom' IS needed — without it the ScrollView's last item slides
+        under the home indicator bar on iPhone and the Android nav bar.
+      - 'left'/'right' are excluded — no hardware cutouts on the sides
+        on any device we support.
+    */
+    <SafeAreaView style={styles.root} edges={['bottom']}>
       <Sidebar />
-      {/* ── Main content ─────────────────────────────────────────────────── */}
-      <View style={styles.headerContainer}>
-        {/* ── Dishes in a fixed-height box ─────────────────────────────── */}
-        <SidebarButton />
-        <HomePageHero
-          name={"Frank"}
-          isOpen
-          restaurantName={"Mijoko"}
-        />
-        <ScrollableStatsStrip />
-      </View>
-      <View style={styles.dishesContainer}>
-        <DishesDisplay />
-      </View>
-    </View>
+
+      {/*
+        AppHeader is outside the ScrollView so it stays pinned at the top.
+        It handles its own top safe area via useSafeAreaInsets() internally.
+      */}
+      <AppHeader
+        title="Mijoko"
+        userInitials="KJ"
+        onProfilePress={() => { }}
+      />
+
+      {/* ── Scrollable body ─────────────────────────────────────────────── */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* <WelcomeHero /> */}
+        <WelcomeHero />
+        <View style={styles.heroSection}>
+          <HomePageHero
+            name="Frank"
+            isOpen
+            restaurantName="Mijoko"
+          />
+          <ScrollableStatsStrip />
+        </View>
+
+        <View style={styles.dishesContainer}>
+          <DishesDisplay />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  // ── Index container ──────────────────────────────────────────────────────
+  root: {
+    flex: 1,
+    backgroundColor: DESIGN_TOKENS.background_1,
+  },
+  scrollContent: {
+    paddingBottom: SPACING.xxxl,
+  },
+  heroSection: {
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.sm,
+  },
   dishesContainer: {
-    width: "100%",
     paddingHorizontal: SPACING.sm,
-    flex: 1,           // fills remaining screen height
     marginBottom: SPACING.lg,
     borderRadius: 20,
     overflow: 'hidden',
+    height: 540,
   },
-  headerContainer: {
-    width: "100%",
-    height: "auto",        // ~60% of a typical screen
-    padding: SPACING.lg,
-    paddingTop: SPACING.giant
-  }
 });

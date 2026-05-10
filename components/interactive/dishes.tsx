@@ -24,7 +24,7 @@ import { dishSplashIcon } from '@/constants/images';
 import { SPACING } from '@/constants/themes/spacing';
 import AppDropdown from '../custom/dropdown-select';
 // eslint-disable-next-line import/no-named-as-default
-import DishFormModal from './DishFormModal';
+import DishFormModal from '../dish/dishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -293,7 +293,7 @@ export const DishList: React.FC<DishListProps> = ({
 
     return (
         <ScrollView
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
             contentContainerStyle={styles.grid}
             style={[styles.list, style]}
         >

@@ -95,7 +95,7 @@ const Sidebar: React.FC = () => {
         visible={isOpen}
         onClose={closeSidebar}
         side="left"
-        // header={sidebarHeader}
+        header={sidebarHeader}
         footer={sidebarFooter}
         optionGroups={optionGroups}
         overlayOpacity={0.55}
