@@ -1,5 +1,6 @@
 import { CATEGORIES } from '@/constants/mock-data';
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { dishSchema } from '@/types/zod/validations/dish';
@@ -144,7 +145,7 @@ const CategorySelect: React.FC<{
 const catStyles = StyleSheet.create({
     wrapper: { marginBottom: SPACING.xl },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm },
-    chip: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.sm, borderRadius: 20, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
+    chip: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.sm, borderRadius: BORDER_RADIUS.card, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
     chipActive: { borderColor: T.accent, backgroundColor: T.accentFaint },
     chipText: { color: T.textPrimary, ...TYPOGRAPHY.body },
     chipTextActive: { color: T.accent },

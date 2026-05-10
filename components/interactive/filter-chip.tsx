@@ -1,5 +1,6 @@
 import { CATEGORIES } from "@/constants/mock-data";
 import { TYPOGRAPHY } from "@/constants/themes/font";
+import { BORDER_RADIUS } from "@/constants/themes/dimensions";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import React, { useRef } from "react";
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     barContent: {
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.ssm,
-        gap: 8,
+        gap: SPACING.sm,
         flexDirection: "row",
         alignItems: "center",
     },
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     chip: {
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.sm,
-        borderRadius: 999,
+        borderRadius: BORDER_RADIUS.full,
         backgroundColor: DESIGN_TOKENS.cardBg,
         borderWidth: 1,
         borderColor: DESIGN_TOKENS.cardBorder,

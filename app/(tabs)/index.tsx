@@ -1,11 +1,13 @@
 // eslint-disable-next-line import/no-named-as-default
-import WelcomeHero from '@/components/design/welcomeIntro2';
+import WelcomeHero from '@/components/design/welcomeIntro';
+// eslint-disable-next-line import/no-named-as-default
 import AppHeader from '@/components/global/appHomeHeader';
 import Sidebar from '@/components/global/sidebar/sidebar';
 import DishesDisplay from '@/components/interactive/dishes-display';
 // eslint-disable-next-line import/no-named-as-default
 import HomePageHero from '@/components/interactive/homeHeroComponent';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -41,7 +43,6 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* <WelcomeHero /> */}
         <WelcomeHero />
         <View style={styles.heroSection}>
           <HomePageHero
@@ -78,8 +79,8 @@ const styles = StyleSheet.create({
   dishesContainer: {
     paddingHorizontal: SPACING.sm,
     marginBottom: SPACING.lg,
-    borderRadius: 20,
+    borderRadius: BORDER_RADIUS.card,
     overflow: 'hidden',
-    height: 540,
+    height: DIMENSIONS.sectionHeight,
   },
 });

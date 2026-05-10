@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { TYPOGRAPHY } from "@/constants/themes/font";
+import { BORDER_RADIUS } from "@/constants/themes/dimensions";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 // eslint-disable-next-line import/no-named-as-default
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     },
     headerBadge: {
         backgroundColor: DESIGN_TOKENS.primaryAccent3,
-        borderRadius: 20,
+        borderRadius: BORDER_RADIUS.card,
         paddingHorizontal: SPACING.bg,
         paddingVertical: SPACING.sm,
         borderWidth: 1,

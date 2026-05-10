@@ -72,6 +72,8 @@ export const DESIGN_TOKENS: Record<string, string> = {
   textSectionTitle: 'rgba(255,255,255,0.30)',
   /** Close / dismiss button text */
   textDismiss: 'rgba(255,255,255,0.50)',
+  /** Mid-opacity icon / symbol text */
+  textIcon: 'rgba(255,255,255,0.70)',
 
   // ── Surfaces ──────────────────────────────────────────────────────────────
   background_1: '#110013',
@@ -155,6 +157,33 @@ export const DESIGN_TOKENS: Record<string, string> = {
   primaryFaint: 'rgba(148,0,171,0.12)',
   primaryFaintDark: 'rgba(78, 3, 89, 0.12)',
   primaryBorder: 'rgba(148,0,171,0.45)',
+
+  // ── White ─────────────────────────────────────────────────────────────────
+  primaryWhite: '#FFFFFF',
+
+  // ── Link ──────────────────────────────────────────────────────────────────
+  linkColor: '#0a7ea4',
+
+  // ── Shadow ────────────────────────────────────────────────────────────────
+  shadowColor: '#000000',
+
+  // ── Live badge ring colors ─────────────────────────────────────────────────
+  liveRingOpen: 'rgba(9,198,15,0.20)',
+  liveRingClosed: 'rgba(255,0,0,0.18)',
+
+  // ── Welcome hero ring / glow colors ───────────────────────────────────────
+  primaryRing: 'rgba(148,0,171,0.15)',
+  primaryRingFaint: 'rgba(148,0,171,0.08)',
+  whiteGhost: 'rgba(255,255,255,0.04)',
+
+  // ── Float card background ─────────────────────────────────────────────────
+  floatCardBg: '#1E0C24',
+
+  // ── Decorative icon accent colors ─────────────────────────────────────────
+  iconAccentPurple: '#C040D8',
+  iconAccentYellow: '#FBBF24',
+  iconAccentBlue: '#60A5FA',
+  iconAccentViolet: '#A78BFA',
 };
 
 export const Fonts = Platform.select({

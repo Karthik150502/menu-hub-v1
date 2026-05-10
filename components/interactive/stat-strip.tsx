@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useRef } from 'react';
@@ -222,14 +223,14 @@ const styles = StyleSheet.create({
     // Strip
     strip: {
         paddingLeft: SPACING.lg,
-        gap: 10,
+        gap: SPACING.ssm,
         alignItems: 'flex-start',
     },
 
     // Card
     card: {
         backgroundColor: T.cardBg,
-        borderRadius: 14,
+        borderRadius: BORDER_RADIUS.xl,
         borderWidth: 1,
         borderColor: T.cardBorder,
         borderTopWidth: 2,

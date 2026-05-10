@@ -1,4 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { FONT_WEIGHTS, TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -65,10 +66,10 @@ const C = {
 // ─── Size config ──────────────────────────────────────────────────────────────
 
 const SIZE = {
-    icon: { paddingH: SPACING.xs, paddingV: SPACING.xs, ...TYPOGRAPHY.bodySmall, iconSize: 8, gap: 0, radius: 13 },
-    sm: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodySmall, iconSize: 13, gap: 5, radius: 10 },
-    md: { paddingH: SPACING.xl, paddingV: SPACING.bg, ...TYPOGRAPHY.body, iconSize: 15, gap: 7, radius: 13 },
-    lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, iconSize: 18, gap: 9, radius: 16 },
+    icon: { paddingH: SPACING.xs, paddingV: SPACING.xs, ...TYPOGRAPHY.bodySmall, iconSize: DIMENSIONS.iconXs, gap: 0, radius: BORDER_RADIUS.lg },
+    sm: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodySmall, iconSize: DIMENSIONS.iconSm, gap: SPACING.xs, radius: BORDER_RADIUS.md },
+    md: { paddingH: SPACING.xl, paddingV: SPACING.bg, ...TYPOGRAPHY.body, iconSize: DIMENSIONS.iconMd, gap: SPACING.xsm, radius: BORDER_RADIUS.lg },
+    lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, iconSize: DIMENSIONS.iconLg, gap: SPACING.ssm, radius: BORDER_RADIUS.xxl },
 } as const;
 
 // ─── Variant config ───────────────────────────────────────────────────────────
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     btnFull: { width: '100%' },
 
     label: {
-        fontWeight: '700',
+        fontWeight: FONT_WEIGHTS.bold,
         letterSpacing: 0.2,
     },
 });

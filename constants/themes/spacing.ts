@@ -4,6 +4,7 @@ export const SPACING = {
     // Micro spacing (tight UI)
     xxs: 2,
     xs: 4,
+    xsm: 6,
     sm: 8,
     ssm: 10,
 
@@ -11,6 +12,7 @@ export const SPACING = {
     md: 12,
     bg: 14,
     lg: 16,
+    slg: 18,
 
     // Layout spacing
     xl: 20,

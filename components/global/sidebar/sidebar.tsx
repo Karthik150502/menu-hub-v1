@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
@@ -112,9 +113,9 @@ const headerStyles = StyleSheet.create({
         gap: SPACING.bg,
     },
     avatar: {
-        width: 46,
-        height: 46,
-        borderRadius: 23,
+        width: DIMENSIONS.touchXxxl,
+        height: DIMENSIONS.touchXxxl,
+        borderRadius: DIMENSIONS.touchXxxl / 2,
         backgroundColor: DESIGN_TOKENS.primaryBright,
         alignItems: 'center',
         justifyContent: 'center',

@@ -1,4 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -72,7 +73,7 @@ export const HeroGreeting: React.FC<HeroGreetingProps> = ({ name }) => {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { gap: 6 },
+    container: { gap: SPACING.xsm },
     salutation: {
         ...TYPOGRAPHY.label,
         color: DESIGN_TOKENS.textSectionTitle,
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
         ...TYPOGRAPHY.h3_bold,
         color: DESIGN_TOKENS.accentDefault,
     },
-    emoji: { fontSize: 20 },
+    emoji: { fontSize: FONT_SIZES.xl },
 });
 
 export default HeroGreeting;

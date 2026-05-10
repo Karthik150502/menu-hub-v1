@@ -1,6 +1,7 @@
 // ─── Toggle Row ───────────────────────────────────────────────────────────────
 
 import { TYPOGRAPHY } from "@/constants/themes/font";
+import { BORDER_RADIUS } from "@/constants/themes/dimensions";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { StyleSheet, Switch, Text, View } from "react-native";
@@ -54,7 +55,7 @@ const ToggleRow: React.FC<ToggleRowProps> = ({
 
 
 const toggleStyles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: 12, paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, marginBottom: SPACING.bg },
+    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: T.toggleBg, borderWidth: 1, borderColor: T.toggleBorder, borderRadius: BORDER_RADIUS.lg, paddingHorizontal: SPACING.lg, paddingVertical: SPACING.bg, marginBottom: SPACING.bg },
     rowDisabled: { opacity: 0.55 },
     text: { flex: 1, marginRight: SPACING.md },
     label: { color: T.textPrimary, ...TYPOGRAPHY.body },

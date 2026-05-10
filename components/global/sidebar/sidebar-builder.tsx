@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
@@ -19,7 +20,7 @@ import {
 } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.78, 220);
+const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.78, DIMENSIONS.panelMaxWidth);
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -93,8 +94,8 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
 
   const sidebarStyle: ViewStyle =
     side === 'left'
-      ? { left: 0, borderTopRightRadius: 24, borderBottomRightRadius: 24 }
-      : { right: 0, borderTopLeftRadius: 24, borderBottomLeftRadius: 24 };
+      ? { left: 0, borderTopRightRadius: BORDER_RADIUS.panel, borderBottomRightRadius: BORDER_RADIUS.panel }
+      : { right: 0, borderTopLeftRadius: BORDER_RADIUS.panel, borderBottomLeftRadius: BORDER_RADIUS.panel };
 
   let flatIndex = 0;
 
@@ -215,7 +216,7 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({
 
   const rowBg = bgAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['rgba(255,255,255,0)', 'rgba(255,255,255,0.04)'],
+    outputRange: ['transparent', DESIGN_TOKENS.whiteGhost],
   });
 
   const itemStyle = {
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
 
   // ── Header ──────────────────────────────────────────────────────────────────
   headerSlot: {
-    paddingTop: Platform.OS === 'ios' ? 56 : 32,
+    paddingTop: Platform.OS === 'ios' ? DIMENSIONS.safeAreaTopIOS : DIMENSIONS.safeAreaTopAndroid,
     paddingHorizontal: SPACING.xxl,
     paddingBottom: 0,
   },
@@ -348,14 +349,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingHorizontal: SPACING.xxl,
-    paddingVertical: SPACING.ssm + 2,  // 12px — generous tap target
+    paddingVertical: SPACING.md,
     gap: SPACING.sm,
   },
 
   optionDisabled: { opacity: 0.35 },
 
   optionIconWrap: {
-    width: 20,
+    width: DIMENSIONS.touchSm,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
   // ── Footer ──────────────────────────────────────────────────────────────────
   footerSlot: {
     paddingHorizontal: SPACING.xxl,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+    paddingBottom: Platform.OS === 'ios' ? DIMENSIONS.safeAreaBottomIOS : DIMENSIONS.safeAreaBottomAndroid,
   },
   footerDivider: {
     height: 1,

@@ -1,4 +1,6 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
+import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
@@ -44,7 +46,7 @@ export const RestaurantLiveBadge: React.FC<RestaurantLiveBadgeProps> = ({
     }, [isOpen, pulseAnim]);
 
     const dotColor = isOpen ? DESIGN_TOKENS.subPositive : DESIGN_TOKENS.subNegative;
-    const ringColor = isOpen ? 'rgba(9,198,15,0.20)' : 'rgba(255,0,0,0.18)';
+    const ringColor = isOpen ? DESIGN_TOKENS.liveRingOpen : DESIGN_TOKENS.liveRingClosed;
     const label = isOpen ? 'LIVE' : 'CLOSED';
     const labelColor = isOpen ? DESIGN_TOKENS.subPositive : DESIGN_TOKENS.subNegative;
     const sub = isOpen
@@ -81,26 +83,26 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 5,
+        gap: SPACING.xs,
     },
     dotRing: {
-        width: 14,
-        height: 14,
-        borderRadius: 7,
+        width: DIMENSIONS.dotMd,
+        height: DIMENSIONS.dotMd,
+        borderRadius: DIMENSIONS.dotMd / 2,
         alignItems: 'center',
         justifyContent: 'center',
     },
     dot: {
-        width: 7,
-        height: 7,
-        borderRadius: 4,
+        width: DIMENSIONS.dotSm,
+        height: DIMENSIONS.dotSm,
+        borderRadius: BORDER_RADIUS.xs,
     },
     label: {
         ...TYPOGRAPHY.bodySmallBold,
     },
     sep: {
-        fontSize: 16,
-        fontWeight: "700",
+        fontSize: FONT_SIZES.base,
+        fontWeight: FONT_WEIGHTS.bold,
         color: DESIGN_TOKENS.textSectionTitle,
     },
     sub: {

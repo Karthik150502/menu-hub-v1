@@ -1,4 +1,5 @@
 import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React from 'react';
@@ -76,10 +77,10 @@ export const AppModal: React.FC<AppModalProps> = (props) => {
 const modalStyles = StyleSheet.create({
     root: { flex: 1, backgroundColor: T.screenBg },
     header: { paddingTop: SPACING.md, paddingHorizontal: SPACING.xxl, paddingBottom: SPACING.md, borderBottomWidth: 1, borderBottomColor: T.divider },
-    dragPill: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: T.dragPill, marginBottom: 16 },
+    dragPill: { alignSelf: 'center', width: DIMENSIONS.pillWidth, height: DIMENSIONS.barThick, borderRadius: BORDER_RADIUS.xxs, backgroundColor: T.dragPill, marginBottom: SPACING.lg },
     headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     title: { color: T.textPrimary, ...TYPOGRAPHY.h3 },
-    closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: T.closeBtn, alignItems: 'center', justifyContent: 'center' },
+    closeBtn: { width: DIMENSIONS.touchLg, height: DIMENSIONS.touchLg, borderRadius: BORDER_RADIUS.xxl, backgroundColor: T.closeBtn, alignItems: 'center', justifyContent: 'center' },
     closeBtnText: { color: T.closeBtnText, ...TYPOGRAPHY.bodySmall },
     scroll: { flex: 1 },
     content: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl, paddingBottom: Platform.OS === 'ios' ? SPACING.giant : SPACING.xxxl },
