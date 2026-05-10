@@ -153,6 +153,7 @@ export const DESIGN_TOKENS: Record<string, string> = {
   primaryAccent5: '#280222',
   primaryGlow: 'rgba(148,0,171,0.35)',
   primaryFaint: 'rgba(148,0,171,0.12)',
+  primaryFaintDark: 'rgba(78, 3, 89, 0.12)',
   primaryBorder: 'rgba(148,0,171,0.45)',
 };
 
