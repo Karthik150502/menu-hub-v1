@@ -7,43 +7,63 @@ import DishesDisplay from '@/components/interactive/dishes-display';
 // eslint-disable-next-line import/no-named-as-default
 import HomePageHero from '@/components/interactive/homeHeroComponent';
 import ScrollableStatsStrip from '@/components/interactive/scrollable-stats';
+import { Page } from '@/components/Page';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
   return (
     /*
-      SafeAreaView with edges={['bottom']} ONLY.
-      - 'top' is intentionally excluded — AppHeader already reads
-        useSafeAreaInsets().top and applies its own paddingTop, so adding
-        top here would double-pad the header.
-      - 'bottom' IS needed — without it the ScrollView's last item slides
-        under the home indicator bar on iPhone and the Android nav bar.
-      - 'left'/'right' are excluded — no hardware cutouts on the sides
-        on any device we support.
+      Thin root View with flex:1 so that Sidebar (an absolute-positioned overlay)
+      has a sized parent to position itself against while Page fills the rest.
     */
-    <SafeAreaView style={styles.root} edges={['bottom']}>
-      <Sidebar />
+    <View style={styles.root}>
 
       {/*
-        AppHeader is outside the ScrollView so it stays pinned at the top.
-        It handles its own top safe area via useSafeAreaInsets() internally.
+        Sidebar is an absolutely-positioned drawer overlay.
+        It lives outside <Page> so it can render above every page layer,
+        including the header and footer slots.
       */}
-      <AppHeader
-        title="Mijoko"
-        userInitials="KJ"
-        onProfilePress={() => { }}
-      />
+      <Sidebar />
 
-      {/* ── Scrollable body ─────────────────────────────────────────────── */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+      <Page
+        scrollable
+        /*
+          safeArea={false} — AppHeader already applies useSafeAreaInsets().top
+          internally, so letting Page also add paddingTop would double-pad the
+          notch area. Bottom safe area is covered by paddingBottom in scrollContent.
+        */
+        safeArea={false}
+        /*
+          keyboardAware={false} — the home screen has no TextInput fields.
+          Disabling KeyboardAvoidingView and the Keyboard.dismiss tap handler
+          removes unnecessary layout overhead.
+        */
+        keyboardAware={false}
+        backgroundColor={DESIGN_TOKENS.background_1}
+        /*
+          AppHeader passed as the fixed header slot — it stays pinned above the
+          scroll area and handles its own safe-area top padding.
+        */
+        header={
+          <AppHeader
+            title="Mijoko"
+            userInitials="KJ"
+            onProfilePress={() => { }}
+          />
+        }
+        /*
+          padding={0} — each content section owns its own horizontal padding
+          so the Page default (16px) would conflict with section-level gutters.
+        */
+        padding={0}
         contentContainerStyle={styles.scrollContent}
       >
+
         <WelcomeHero />
+
         <View style={styles.heroSection}>
           <HomePageHero
             name="Frank"
@@ -56,8 +76,9 @@ export default function HomeScreen() {
         <View style={styles.dishesContainer}>
           <DishesDisplay />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+      </Page>
+    </View>
   );
 }
 
