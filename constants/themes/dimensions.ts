@@ -55,7 +55,7 @@ export const DIMENSIONS = {
     // ── Scene / hero area dimensions ──────────────────────────────────────────
     sceneSm: 300,
     sceneLg: 400,
-    cardFloating: 70,
+    cardFloating: 54,
 
     // ── Card layout constraints ───────────────────────────────────────────────
     cardMinWidth: 260,

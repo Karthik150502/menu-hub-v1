@@ -1,6 +1,4 @@
-import { FONT_SIZES, FONT_WEIGHTS } from '@/constants/themes/font';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
-import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
@@ -8,267 +6,283 @@ import {
     Animated,
     Easing,
     StyleSheet,
-    Text,
     View,
 } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FloatCardProps {
-    icon:      string;
+    icon: string;
     iconColor: string;
-    title:     string;
-    sub:       string;
-    style?:    object;
 }
 
 interface FloatingCardConfig {
-    icon:       string;
-    iconColor:  string;
-    title:      string;
-    sub:        string;
-    // Starting position inside the scene
-    startX:     number;
-    startY:     number;
-    // How far it drifts in each axis (the "float range")
-    driftX:     number;
-    driftY:     number;
-    // How long one full float cycle takes (ms)
-    duration:   number;
-    // Delay before animation starts, so cards are out of phase
-    delay:      number;
+    icon: string;
+    iconColor: string;
+    radius: number;
+    startAngle: number;
+    duration: number;
+    ringDuration: number;
+    clockwise: boolean;
 }
 
-// ─── Config — 5 cards, each with a unique float personality ──────────────────
+// ─── Config ───────────────────────────────────────────────────────────────────
 
+const SCENE_CENTER = DIMENSIONS.sceneLg / 2;
+
+// Each orbit is 65 px apart (card diameter 54 + 11 buffer) so no two cards ever touch.
+// Radii: 90 → 155 → 220 → 285 → 350 (inner to outer).
 const CARDS: FloatingCardConfig[] = [
-    {
-        // Starts top-left, drifts diagonally to bottom-right
-        icon: 'receipt-outline', iconColor: DESIGN_TOKENS.subPositive,
-        title: '294', sub: 'orders',
-        startX: 16,  startY: 16,
-        driftX: 240, driftY: 230,
-        duration: 3800, delay: 0,
-    },
-    {
-        // Starts top-right, drifts diagonally to bottom-left
-        icon: 'trending-up-outline', iconColor: DESIGN_TOKENS.iconAccentPurple,
-        title: '₹98,420', sub: 'this week',
-        startX: 300, startY: 20,
-        driftX: -230, driftY: 240,
-        duration: 4400, delay: 600,
-    },
-    {
-        // Starts centre-top, drifts down
-        icon: 'star-outline', iconColor: DESIGN_TOKENS.iconAccentYellow,
-        title: '4.7 ★', sub: 'avg rating',
-        startX: 160, startY: 20,
-        driftX: -140, driftY: 260,
-        duration: 3600, delay: 1200,
-    },
-    {
-        // Starts bottom-left, drifts right and up
-        icon: 'repeat-outline', iconColor: DESIGN_TOKENS.iconAccentBlue,
-        title: '61%', sub: 'repeat rate',
-        startX: 16,  startY: 300,
-        driftX: 250, driftY: -240,
-        duration: 4800, delay: 300,
-    },
-    {
-        // Starts bottom-right, drifts left and up
-        icon: 'flash-outline', iconColor: DESIGN_TOKENS.iconAccentViolet,
-        title: 'Sat #1', sub: 'best day',
-        startX: 300, startY: 300,
-        driftX: -240, driftY: -250,
-        duration: 4000, delay: 900,
-    },
+    { icon: 'receipt-outline', iconColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 18000, clockwise: true },
+    { icon: 'trending-up-outline', iconColor: DESIGN_TOKENS.iconAccentPurple, radius: 155, startAngle: (2 * Math.PI) / 5, duration: 20000, ringDuration: 9000, clockwise: false },
+    { icon: 'star-outline', iconColor: DESIGN_TOKENS.iconAccentYellow, radius: 220, startAngle: (4 * Math.PI) / 5, duration: 8000, ringDuration: 22000, clockwise: true },
+    { icon: 'repeat-outline', iconColor: DESIGN_TOKENS.iconAccentBlue, radius: 285, startAngle: (6 * Math.PI) / 5, duration: 24000, ringDuration: 5000, clockwise: false },
+    { icon: 'flash-outline', iconColor: DESIGN_TOKENS.iconAccentViolet, radius: 350, startAngle: (8 * Math.PI) / 5, duration: 17000, ringDuration: 6000, clockwise: true },
 ];
 
-// ─── Square float card ────────────────────────────────────────────────────────
+// ─── Orbit ring (dotted glowing path) ────────────────────────────────────────
+// Dots are spaced ~14 px of arc apart so density scales naturally with radius.
 
-const FloatCard: React.FC<FloatCardProps> = ({
-    icon, iconColor, title, sub, style,
-}) => (
-    <View style={[styles.floatCard, style]}>
-        <View style={[styles.iconWrap, { backgroundColor: `${iconColor}20` }]}>
-            <Ionicons name={icon as any} size={15} color={iconColor} />
-        </View>
-        <Text style={styles.floatTitle}>{title}</Text>
-        <Text style={styles.floatSub}>{sub}</Text>
+const DOT_ARC_SPACING = 18;
+
+// Deterministic size/glow tier from dot index — no Math.random() so layout is stable.
+// Prime-based hash spreads large and medium dots irregularly across the ring.
+const getDotTier = (i: number): { size: number; opacity: number; glow: number } => {
+    const h = (i * 11 + 7) % 19;
+    if (h < 2) return { size: 4.5, opacity: 0.75, glow: 8 }; // accent dot  ~10%
+    if (h < 5) return { size: 2.5, opacity: 0.50, glow: 5 }; // medium dot  ~16%
+    return { size: 1.5, opacity: 0.22, glow: 3 }; // small dot   ~74%
+};
+
+const OrbitRing: React.FC<{
+    radius: number;
+    color: string;
+    duration: number;
+    clockwise: boolean;
+}> = ({ radius, color, duration: ringDuration, clockwise }) => {
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        const loop = Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: ringDuration,
+                easing: Easing.linear,
+                useNativeDriver: true,
+            })
+        );
+        loop.start();
+        return () => loop.stop();
+    }, []);
+
+    // Opposite direction: clockwise card → counterclockwise ring, and vice-versa.
+    const rotate = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: clockwise ? ['0deg', '-360deg'] : ['0deg', '360deg'],
+    });
+
+    const dotCount = Math.round((2 * Math.PI * radius) / DOT_ARC_SPACING);
+
+    return (
+        // Full-scene container so React Native rotates around (sceneLg/2, sceneLg/2)
+        // — exactly SCENE_CENTER — without any extra transform math.
+        <Animated.View style={[styles.orbitRingContainer, { transform: [{ rotate }] }]}>
+            {Array.from({ length: dotCount }, (_, i) => {
+                const angle = (2 * Math.PI * i) / dotCount;
+                const { size, opacity, glow } = getDotTier(i);
+                return (
+                    <View
+                        key={i}
+                        style={[
+                            styles.orbitDot,
+                            {
+                                width: size,
+                                height: size,
+                                borderRadius: size / 2,
+                                left: SCENE_CENTER + radius * Math.cos(angle) - size / 2,
+                                top: SCENE_CENTER + radius * Math.sin(angle) - size / 2,
+                                opacity,
+                                backgroundColor: color,
+                                shadowColor: color,
+                                shadowRadius: glow,
+                                elevation: size > 3 ? 4 : 2,
+                            },
+                        ]}
+                    />
+                );
+            })}
+        </Animated.View>
+    );
+};
+
+// ─── Circle float card (icon only) ───────────────────────────────────────────
+
+const FloatCard: React.FC<FloatCardProps> = ({ icon, iconColor }) => (
+    <View style={[styles.floatCard, { borderColor: `${iconColor}40` }]}>
+        <Ionicons name={icon as any} size={22} color={iconColor} />
     </View>
 );
 
-// ─── Animated floating wrapper ────────────────────────────────────────────────
-// Uses two sine-like ping-pong animations on X and Y independently,
-// offset by phase so the card traces a smooth Lissajous-style path.
+// ─── Circular orbit animation ─────────────────────────────────────────────────
+// Pre-computes 16 keyframe positions on the circle so Animated.interpolate
+// traces a smooth orbit without needing cos/sin at runtime.
+
+const STEPS = 60;
+const INPUT_RANGE = Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS);
 
 const FloatingCard: React.FC<FloatingCardConfig> = ({
-    icon, iconColor, title, sub,
-    startX, startY, driftX, driftY,
-    duration, delay,
+    icon, iconColor, radius, startAngle, duration, clockwise,
 }) => {
-    const animX = useRef(new Animated.Value(0)).current;
-    const animY = useRef(new Animated.Value(0)).current;
+    const anim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // X and Y loop at slightly different durations so the path never repeats
-        const loopX = Animated.loop(
-            Animated.sequence([
-                Animated.timing(animX, {
-                    toValue: 1, duration: duration,
-                    easing: Easing.inOut(Easing.sin),
-                    useNativeDriver: true, delay,
-                }),
-                Animated.timing(animX, {
-                    toValue: 0, duration: duration,
-                    easing: Easing.inOut(Easing.sin),
-                    useNativeDriver: true,
-                }),
-            ])
+        const loop = Animated.loop(
+            Animated.timing(anim, {
+                toValue: 1,
+                duration,
+                easing: Easing.linear,
+                useNativeDriver: true,
+            })
         );
-        const loopY = Animated.loop(
-            Animated.sequence([
-                Animated.timing(animY, {
-                    toValue: 1, duration: duration * 1.3,
-                    easing: Easing.inOut(Easing.sin),
-                    useNativeDriver: true, delay: delay + 400,
-                }),
-                Animated.timing(animY, {
-                    toValue: 0, duration: duration * 1.3,
-                    easing: Easing.inOut(Easing.sin),
-                    useNativeDriver: true,
-                }),
-            ])
-        );
-
-        loopX.start();
-        loopY.start();
-
-        return () => { loopX.stop(); loopY.stop(); };
+        loop.start();
+        return () => loop.stop();
     }, []);
 
-    const translateX = animX.interpolate({
-        inputRange: [0, 1], outputRange: [0, driftX],
+    const dir = clockwise ? 1 : -1;
+    const translateX = anim.interpolate({
+        inputRange: INPUT_RANGE,
+        outputRange: INPUT_RANGE.map(t =>
+            radius * Math.cos(startAngle + dir * 2 * Math.PI * t)
+        ),
+        extrapolate: 'clamp',
     });
-    const translateY = animY.interpolate({
-        inputRange: [0, 1], outputRange: [0, driftY],
+    const translateY = anim.interpolate({
+        inputRange: INPUT_RANGE,
+        outputRange: INPUT_RANGE.map(t =>
+            radius * Math.sin(startAngle + dir * 2 * Math.PI * t)
+        ),
+        extrapolate: 'clamp',
     });
 
     return (
         <Animated.View
-            style={[
-                styles.floatAnchor,
-                { left: startX, top: startY },
-                { transform: [{ translateX }, { translateY }] },
-            ]}
+            style={[styles.floatAnchor, { transform: [{ translateX }, { translateY }] }]}
         >
-            <FloatCard
-                icon={icon}
-                iconColor={iconColor}
-                title={title}
-                sub={sub}
-            />
+            <FloatCard icon={icon} iconColor={iconColor} />
         </Animated.View>
     );
 };
 
 // ─── WelcomeHero ──────────────────────────────────────────────────────────────
 
-export const WelcomeHero: React.FC = () => (
-    <View style={styles.scene}>
+export const WelcomeHero: React.FC = () => {
+    const slideY = useRef(new Animated.Value(-70)).current;
+    const opacity = useRef(new Animated.Value(0.5)).current;
 
-        {/* Purple radial glow */}
-        <View style={styles.glow} />
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(slideY, {
+                toValue: 0,
+                duration: 1600,
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+                toValue: 1,
+                duration: 1600,
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
 
-        {/* Floating stat cards */}
-        {CARDS.map((card, i) => (
-            <FloatingCard key={i} {...card} />
-        ))}
+    return (
+        <Animated.View style={[styles.scene, { opacity, transform: [{ translateY: slideY }] }]}>
 
-        {/* Centre icon — on top of everything */}
-        <View style={styles.centerIcon}>
-            <Ionicons name="fast-food-outline" size={DIMENSIONS.touchXxl} color={DESIGN_TOKENS.primaryWhite} />
-        </View>
+            {/* Dotted orbit rings — rendered behind the cards */}
+            {CARDS.map((card, i) => (
+                <OrbitRing
+                    key={`ring-${i}`}
+                    radius={card.radius}
+                    color={card.iconColor}
+                    duration={card.ringDuration}
+                    clockwise={card.clockwise}
+                />
+            ))}
 
-    </View>
-);
+            {/* Orbiting icon cards */}
+            {CARDS.map((card, i) => (
+                <FloatingCard key={i} {...card} />
+            ))}
+
+            {/* Centre icon — outer bloom → mid bloom → icon circle */}
+            <View style={styles.centerIcon}>
+                <Ionicons name="fast-food-outline" size={DIMENSIONS.touchXxl} color={DESIGN_TOKENS.primaryWhite} />
+            </View>
+
+        </Animated.View>
+    );
+};
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
     scene: {
-        width:          DIMENSIONS.sceneLg,
-        height:         DIMENSIONS.sceneLg,
-        alignSelf:      'center',
-        position:       'relative',
-        overflow:       'hidden',
-        borderRadius:   BORDER_RADIUS.scene,
+        width: DIMENSIONS.sceneLg,
+        height: DIMENSIONS.sceneLg,
+        alignSelf: 'center',
+        position: 'relative',
     },
 
-    glow: {
-        position:        'absolute',
-        width:           260,
-        height:          260,
-        borderRadius:    130,
-        backgroundColor: DESIGN_TOKENS.primaryFaint,
-        top:             70,
-        left:            70,
+    // Full-scene container for each orbit ring — position:absolute at (0,0) with
+    // the same dimensions as the scene so the default pivot (50%,50%) lands exactly
+    // on SCENE_CENTER, letting the rotate transform spin the ring in place.
+    orbitRingContainer: {
+        position: 'absolute',
+        width: DIMENSIONS.sceneLg,
+        height: DIMENSIONS.sceneLg,
+        left: 0,
+        top: 0,
+    },
+
+    orbitDot: {
+        position: 'absolute',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
     },
 
     floatAnchor: {
         position: 'absolute',
+        left: SCENE_CENTER - DIMENSIONS.cardFloating / 2,
+        top: SCENE_CENTER - DIMENSIONS.cardFloating / 2,
     },
 
-    // Square card
     floatCard: {
-        width:           DIMENSIONS.cardFloating,
-        height:          DIMENSIONS.cardFloating,
+        width: DIMENSIONS.cardFloating,
+        height: DIMENSIONS.cardFloating,
         backgroundColor: DESIGN_TOKENS.floatCardBg,
-        borderWidth:     1,
-        borderColor:     DESIGN_TOKENS.primaryGlow,
-        borderRadius:    BORDER_RADIUS.card,
-        alignItems:      'center',
-        justifyContent:  'center',
-        gap:             SPACING.xs,
-        padding:         SPACING.ssm,
-    },
-    iconWrap: {
-        width:          28,
-        height:         28,
-        borderRadius:   BORDER_RADIUS.sm,
-        alignItems:     'center',
+        borderWidth: 1,
+        borderRadius: BORDER_RADIUS.full,
+        alignItems: 'center',
         justifyContent: 'center',
-        marginBottom:   SPACING.xxs,
-    },
-    floatTitle: {
-        fontSize:   FONT_SIZES.xs,
-        fontWeight: FONT_WEIGHTS.bold,
-        color:      DESIGN_TOKENS.titleText,
-        textAlign:  'center',
-    },
-    floatSub: {
-        fontSize:  FONT_SIZES.xxs,
-        color:     DESIGN_TOKENS.textHint,
-        textAlign: 'center',
     },
 
-    // Centre icon
     centerIcon: {
-        position:        'absolute',
-        width:           DIMENSIONS.featureIcon,
-        height:          DIMENSIONS.featureIcon,
-        borderRadius:    BORDER_RADIUS.panel,
+        position: 'absolute',
+        width: DIMENSIONS.featureIcon,
+        height: DIMENSIONS.featureIcon,
+        borderRadius: BORDER_RADIUS.panel,
         backgroundColor: DESIGN_TOKENS.accentDefault,
-        alignItems:      'center',
-        justifyContent:  'center',
-        zIndex:          20,
-        top:             (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
-        left:            (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
-        shadowColor:     DESIGN_TOKENS.accentDefault,
-        shadowOffset:    { width: 0, height: 8 },
-        shadowOpacity:   0.55,
-        shadowRadius:    24,
-        elevation:       14,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 20,
+        top: (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
+        left: (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
+        shadowColor: DESIGN_TOKENS.accentDefault,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.55,
+        shadowRadius: 24,
+        elevation: 14,
     },
 });
 
