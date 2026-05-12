@@ -33,11 +33,10 @@ const SCENE_CENTER = DIMENSIONS.sceneLg / 2;
 // Each orbit is 65 px apart (card diameter 54 + 11 buffer) so no two cards ever touch.
 // Radii: 90 → 155 → 220 → 285 → 350 (inner to outer).
 const CARDS: FloatingCardConfig[] = [
-    { icon: 'receipt-outline', iconColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 18000, clockwise: true },
+    { icon: 'flash-outline', iconColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 18000, clockwise: true },
     { icon: 'trending-up-outline', iconColor: DESIGN_TOKENS.iconAccentPurple, radius: 155, startAngle: (2 * Math.PI) / 5, duration: 20000, ringDuration: 9000, clockwise: false },
     { icon: 'star-outline', iconColor: DESIGN_TOKENS.iconAccentYellow, radius: 220, startAngle: (4 * Math.PI) / 5, duration: 8000, ringDuration: 22000, clockwise: true },
     { icon: 'repeat-outline', iconColor: DESIGN_TOKENS.iconAccentBlue, radius: 285, startAngle: (6 * Math.PI) / 5, duration: 24000, ringDuration: 5000, clockwise: false },
-    { icon: 'flash-outline', iconColor: DESIGN_TOKENS.iconAccentViolet, radius: 350, startAngle: (8 * Math.PI) / 5, duration: 17000, ringDuration: 6000, clockwise: true },
 ];
 
 // ─── Orbit ring (dotted glowing path) ────────────────────────────────────────
@@ -176,8 +175,8 @@ const FloatingCard: React.FC<FloatingCardConfig> = ({
 // ─── WelcomeHero ──────────────────────────────────────────────────────────────
 
 export const WelcomeHero: React.FC = () => {
-    const slideY = useRef(new Animated.Value(-70)).current;
-    const opacity = useRef(new Animated.Value(0.5)).current;
+    const slideY = useRef(new Animated.Value(-500)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         Animated.parallel([
