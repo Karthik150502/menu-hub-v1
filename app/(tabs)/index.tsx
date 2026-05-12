@@ -1,6 +1,4 @@
 // eslint-disable-next-line import/no-named-as-default
-import WelcomeHero from '@/components/design/welcomeIntro';
-// eslint-disable-next-line import/no-named-as-default
 import AppHeader from '@/components/global/appHomeHeader';
 import Sidebar from '@/components/global/sidebar/sidebar';
 import DishesDisplay from '@/components/interactive/dishes-display';
@@ -11,9 +9,13 @@ import { Page } from '@/components/Page';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import { StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     /*
       Thin root View with flex:1 so that Sidebar (an absolute-positioned overlay)
@@ -62,7 +64,14 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
       >
 
-        <WelcomeHero />
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() => router.push('/login')}
+          activeOpacity={0.75}
+        >
+          <Ionicons name="person-outline" size={DIMENSIONS.iconMd} color={DESIGN_TOKENS.primaryWhite} />
+          <Text style={styles.loginBtnText}>Get Started</Text>
+        </TouchableOpacity>
 
         <View style={styles.heroSection}>
           <HomePageHero
@@ -91,6 +100,27 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: SPACING.xxxl,
+  },
+  loginBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    alignSelf: 'center',
+    paddingHorizontal: SPACING.xxl,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.pill,
+    backgroundColor: DESIGN_TOKENS.accentDefault,
+    shadowColor: DESIGN_TOKENS.accentDefault,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    elevation: 8,
+    marginTop: SPACING.xl,
+  },
+  loginBtnText: {
+    color: DESIGN_TOKENS.primaryWhite,
+    fontFamily: 'Montserrat_600SemiBold',
+    fontSize: 14,
   },
   heroSection: {
     paddingHorizontal: SPACING.lg,
