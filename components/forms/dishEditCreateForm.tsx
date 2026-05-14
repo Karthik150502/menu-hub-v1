@@ -1,3 +1,4 @@
+import Text from '@/components/custom/appText';
 import { CATEGORIES } from '@/constants/mock-data';
 import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
@@ -11,7 +12,7 @@ import {
     SubmitHandler,
     useForm,
 } from 'react-hook-form';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 // eslint-disable-next-line import/no-named-as-default
 import AppButton from '../custom/AppButton';
 import ChipSelect from '../custom/ChipSelect';

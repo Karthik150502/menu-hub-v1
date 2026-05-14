@@ -3,6 +3,7 @@ import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
   Animated,
@@ -34,6 +35,7 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
   overlayOpacity = 0.6,
   containerStyle,
 }) => {
+  const router = useRouter();
   const translateX = useRef(
     new Animated.Value(side === 'left' ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH),
   ).current;
@@ -161,7 +163,10 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
                     onPress={() => {
                       if (option.disabled) return;
                       handleClose();
-                      setTimeout(option.onPress, 80);
+                      setTimeout(() => {
+                        if (option.href) router.push(option.href as never);
+                        option.onPress?.();
+                      }, 80);
                     }}
                   />
                 );

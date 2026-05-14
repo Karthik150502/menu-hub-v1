@@ -3,6 +3,7 @@ import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { useRef } from "react";
 import { Animated, StyleSheet, Text, TextInput, View } from "react-native";
+import AppBanner from "./appBanner";
 import { fieldStyles } from "./inputField";
 
 const T = {
@@ -72,7 +73,8 @@ export const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur,
                     style={[fieldStyles.input, priceStyles.input]}
                 />
             </Animated.View>
-            {error && <Text style={fieldStyles.error}>⚠ {error}</Text>}
+
+            {error && <AppBanner dismissible={false} title={"Price"} type="warning" message={error} />}
         </View>
     );
 };

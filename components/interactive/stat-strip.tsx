@@ -1,5 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
 import { BORDER_RADIUS } from '@/constants/themes/dimensions';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useRef } from 'react';

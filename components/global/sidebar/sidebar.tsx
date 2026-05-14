@@ -1,9 +1,10 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import Text from '@/components/custom/appText';
 import { DIMENSIONS } from '@/constants/themes/dimensions';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import SidebarBuilder from './sidebar-builder';
 import { useSidebar } from './sidebar-context';
 
@@ -16,17 +17,12 @@ const optionGroups: SidebarOptionGroup[] = [
             {
                 key: 'home',
                 label: 'Home',
-                onPress: () => console.log('Home pressed'),
+                href: '/(tabs)',
             },
             {
-                key: 'explore',
-                label: 'Explore',
-                onPress: () => console.log('Explore pressed'),
-            },
-            {
-                key: 'notifications',
-                label: 'Notifications',
-                onPress: () => console.log('Notifications pressed'),
+                key: 'get_started',
+                label: 'Get Started',
+                href: '/login',
             },
         ],
     },
@@ -58,7 +54,6 @@ const optionGroups: SidebarOptionGroup[] = [
                 label: 'Log Out',
                 onPress: () => console.log('Logout pressed'),
                 danger: true,
-                // disabled:true,
             },
         ],
     },

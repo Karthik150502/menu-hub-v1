@@ -1,6 +1,7 @@
 import { FONT_SIZES, FONT_WEIGHTS } from '@/constants/themes/font';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import Text from '@/components/custom/appText';
+import { StyleSheet, type TextProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/use-theme-color';
 
