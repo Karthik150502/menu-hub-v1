@@ -10,6 +10,7 @@ import {
     TextInput,
     View,
 } from 'react-native';
+import AppBanner from './appBanner';
 
 const T = {
     inputBg: DESIGN_TOKENS.inputBg,
@@ -97,8 +98,7 @@ const Field: React.FC<FieldProps> = ({
             </Animated.View>
 
             {error
-                ? <Text style={fieldStyles.error}>⚠ {error}</Text>
-                : hint
+                ? <AppBanner dismissible={false} title={label} type="warning" message={error} /> : hint
                     ? <Text style={fieldStyles.hint}>{hint}</Text>
                     : null
             }

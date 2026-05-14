@@ -7,20 +7,18 @@ import { z } from "zod";
 export const dishSchema = z.object({
     name: z
         .string()
-        .min(2, 'Name must be at least 2 characters')
-        .max(60, 'Name must be 60 characters or fewer'),
+        .min(1, 'Enter the item name')
+        .max(60, 'Item name too long'),
 
     description: z
         .string()
-        .max(200, 'Keep it under 200 characters')
+        .max(200, 'Description too long')
         .optional(),
 
     // Price is a string in the form — coerce and validate as a number
     price: z
         .string()
-        .min(1, 'Price is required')
-        .refine(v => !isNaN(parseFloat(v)), { message: 'Must be a number' })
-        .refine(v => parseFloat(v) > 0, { message: 'Price must be greater than 0' })
+        .refine(v => !isNaN(parseFloat(v)), { message: 'Enter a suitable price for the item' })
         .refine(v => parseFloat(v) <= 100_000, { message: 'Price seems too high' }),
 
     currency: z.string(),

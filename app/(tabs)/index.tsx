@@ -9,9 +9,8 @@ import { Page } from '@/components/Page';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -63,16 +62,6 @@ export default function HomeScreen() {
         padding={0}
         contentContainerStyle={styles.scrollContent}
       >
-
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => router.push('/login')}
-          activeOpacity={0.75}
-        >
-          <Ionicons name="person-outline" size={DIMENSIONS.iconMd} color={DESIGN_TOKENS.primaryWhite} />
-          <Text style={styles.loginBtnText}>Get Started</Text>
-        </TouchableOpacity>
-
         <View style={styles.heroSection}>
           <HomePageHero
             name="Frank"
@@ -100,22 +89,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: SPACING.xxxl,
-  },
-  loginBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
-    alignSelf: 'center',
-    paddingHorizontal: SPACING.xxl,
-    paddingVertical: SPACING.md,
-    borderRadius: BORDER_RADIUS.pill,
-    backgroundColor: DESIGN_TOKENS.accentDefault,
-    shadowColor: DESIGN_TOKENS.accentDefault,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.45,
-    shadowRadius: 14,
-    elevation: 8,
-    marginTop: SPACING.xl,
   },
   loginBtnText: {
     color: DESIGN_TOKENS.primaryWhite,

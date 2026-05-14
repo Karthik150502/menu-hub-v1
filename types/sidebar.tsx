@@ -6,7 +6,10 @@ export interface SidebarOption {
     key: string;
     label: string;
     icon?: React.ReactNode;
-    onPress: () => void;
+    /** Navigate to this route when pressed (expo-router path). */
+    href?: string;
+    /** Called when pressed. If href is also set, called after navigation. */
+    onPress?: () => void;
     disabled?: boolean;
     danger?: boolean;
 }

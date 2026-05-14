@@ -3,7 +3,8 @@ import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import Text from '@/components/custom/appText';
+import { Animated, StyleSheet, View } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

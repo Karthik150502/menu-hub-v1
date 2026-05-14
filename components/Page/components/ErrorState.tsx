@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { memo } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import Text from '@/components/custom/appText';
+import { TouchableOpacity, View } from 'react-native';
 import { PAGE_THEME, pageStyles } from '../styles';
 import type { ErrorStateProps } from '../types';
 

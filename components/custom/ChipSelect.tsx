@@ -3,7 +3,8 @@ import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Text from '@/components/custom/appText';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { fieldStyles } from './inputField';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
