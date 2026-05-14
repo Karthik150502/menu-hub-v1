@@ -1,5 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef } from 'react';
@@ -8,25 +8,18 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    View,
 } from 'react-native';
 
 const T = {
-    // Surface
     inputBg: DESIGN_TOKENS.inputBg,
     inputBorder: DESIGN_TOKENS.whiteFadeXs,
-
-    // Accent
     accent: DESIGN_TOKENS.accentDefault,
-
-    // Text
     textPrimary: DESIGN_TOKENS.textPrimary,
     textLabel: DESIGN_TOKENS.textLabel,
     textPlaceholder: DESIGN_TOKENS.textPlaceholder,
     textMuted: DESIGN_TOKENS.textMuted,
     textHint: DESIGN_TOKENS.textHint,
-
-    // Semantic
     error: DESIGN_TOKENS.errorWarn,
 } as const;
 
@@ -50,15 +43,10 @@ const Field: React.FC<FieldProps> = ({
     const borderAnim = useRef(new Animated.Value(0)).current;
     const isFocused = useRef(false);
 
-    // Re-evaluate border color whenever `error` changes.
-    // If the field isn't focused, snap back to the error/neutral resting color.
     useEffect(() => {
         if (!isFocused.current) {
             Animated.spring(borderAnim, {
-                toValue: 0,
-                useNativeDriver: false,
-                speed: 22,
-                bounciness: 0,
+                toValue: 0, useNativeDriver: false, speed: 22, bounciness: 0,
             }).start();
         }
     }, [error]);
@@ -78,8 +66,6 @@ const Field: React.FC<FieldProps> = ({
         }).start();
     };
 
-    // Interpolation reads `error` at call time — inside the component body,
-    // so it gets the latest value on every render.
     const borderColor = borderAnim.interpolate({
         inputRange: [0, 1],
         outputRange: [T.inputBorder, T.accent],
@@ -87,17 +73,12 @@ const Field: React.FC<FieldProps> = ({
 
     return (
         <View style={fieldStyles.wrapper}>
-            {/* Label row */}
             <View style={fieldStyles.labelRow}>
                 <Text style={fieldStyles.label}>{label}</Text>
                 {optional && <Text style={fieldStyles.optional}>optional</Text>}
             </View>
 
-            {/* Input */}
-            <Animated.View style={[
-                fieldStyles.inputWrap,
-                { borderColor },
-            ]}>
+            <Animated.View style={[fieldStyles.inputWrap, { borderColor }]}>
                 <TextInput
                     value={value}
                     onChangeText={onChange}
@@ -115,7 +96,6 @@ const Field: React.FC<FieldProps> = ({
                 />
             </Animated.View>
 
-            {/* Error takes priority over hint */}
             {error
                 ? <Text style={fieldStyles.error}>⚠ {error}</Text>
                 : hint
@@ -126,19 +106,39 @@ const Field: React.FC<FieldProps> = ({
     );
 };
 
-
-
 export const fieldStyles = StyleSheet.create({
     wrapper: { marginBottom: SPACING.xl },
     labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
     label: { color: T.textLabel, ...TYPOGRAPHY.label, letterSpacing: 1.1, textTransform: 'uppercase' },
     optional: { marginLeft: SPACING.sm, color: T.textMuted, ...TYPOGRAPHY.overline },
-    inputWrap: { borderWidth: 1.5, borderRadius: BORDER_RADIUS.lg, backgroundColor: T.inputBg, paddingHorizontal: SPACING.bg },
-    input: { color: T.textPrimary, ...TYPOGRAPHY.body, paddingVertical: SPACING.bg },
-    inputMulti: { minHeight: DIMENSIONS.inputMultilineMin, textAlignVertical: 'top', paddingTop: SPACING.md },
+
+    inputWrap: {
+        borderWidth: 1.5,
+        borderRadius: BORDER_RADIUS.lg,
+        backgroundColor: T.inputBg,
+        paddingHorizontal: SPACING.bg,
+        justifyContent: 'center',
+    },
+
+    input: {
+        color: T.textPrimary,
+        fontSize: TYPOGRAPHY.body.fontSize,
+        fontWeight: TYPOGRAPHY.body.fontWeight as any,
+        letterSpacing: (TYPOGRAPHY.body as any).letterSpacing,
+        paddingVertical: SPACING.slg,   // 12px — balanced on both iOS and Android
+        includeFontPadding: false,
+        textAlignVertical: 'center',
+    },
+
+    inputMulti: {
+        minHeight: DIMENSIONS.inputMultilineMin,
+        textAlignVertical: 'top',   // multiline reads top-to-bottom
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.md,
+    },
+
     error: { color: T.error, ...TYPOGRAPHY.body, marginTop: SPACING.xs },
     hint: { color: T.textHint, ...TYPOGRAPHY.bodySmall, marginTop: SPACING.xs },
 });
-
 
 export default Field;
