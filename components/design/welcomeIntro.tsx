@@ -5,10 +5,11 @@ import React, { useEffect, useRef } from 'react';
 import {
     Animated,
     Easing,
+    Image,
     StyleSheet,
     View,
 } from 'react-native';
-
+import BrandLogo from "../../assets/images/web/brand/plato_app_logo.png";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FloatCardProps {
@@ -17,7 +18,7 @@ interface FloatCardProps {
 }
 
 interface FloatingCardConfig {
-    icon: string;
+    icon?: string;
     iconColor: string;
     radius: number;
     startAngle: number;
@@ -33,10 +34,10 @@ const SCENE_CENTER = DIMENSIONS.sceneLg / 2;
 // Each orbit is 65 px apart (card diameter 54 + 11 buffer) so no two cards ever touch.
 // Radii: 90 → 155 → 220 → 285 → 350 (inner to outer).
 const CARDS: FloatingCardConfig[] = [
-    { icon: 'flash-outline', iconColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 18000, clockwise: true },
+    { icon: 'flash-outline', iconColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 12000, clockwise: true },
     { icon: 'trending-up-outline', iconColor: DESIGN_TOKENS.iconAccentPurple, radius: 155, startAngle: (2 * Math.PI) / 5, duration: 20000, ringDuration: 9000, clockwise: false },
     { icon: 'star-outline', iconColor: DESIGN_TOKENS.iconAccentYellow, radius: 220, startAngle: (4 * Math.PI) / 5, duration: 8000, ringDuration: 22000, clockwise: true },
-    { icon: 'repeat-outline', iconColor: DESIGN_TOKENS.iconAccentBlue, radius: 285, startAngle: (6 * Math.PI) / 5, duration: 24000, ringDuration: 5000, clockwise: false },
+    { icon: 'repeat-outline', iconColor: DESIGN_TOKENS.iconAccentBlue, radius: 285, startAngle: (6 * Math.PI) / 5, duration: 24000, ringDuration: 48000, clockwise: false },
 ];
 
 // ─── Orbit ring (dotted glowing path) ────────────────────────────────────────
@@ -135,6 +136,7 @@ const FloatingCard: React.FC<FloatingCardConfig> = ({
     const anim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
+        if (!icon) return;
         const loop = Animated.loop(
             Animated.timing(anim, {
                 toValue: 1,
@@ -145,7 +147,9 @@ const FloatingCard: React.FC<FloatingCardConfig> = ({
         );
         loop.start();
         return () => loop.stop();
-    }, []);
+    }, [icon]);
+
+    if (!icon) return null;
 
     const dir = clockwise ? 1 : -1;
     const translateX = anim.interpolate({
@@ -216,7 +220,8 @@ export const WelcomeHero: React.FC = () => {
 
             {/* Centre icon — outer bloom → mid bloom → icon circle */}
             <View style={styles.centerIcon}>
-                <Ionicons name="fast-food-outline" size={DIMENSIONS.touchXxl} color={DESIGN_TOKENS.primaryWhite} />
+                <Image source={BrandLogo} style={styles.logo} />
+                {/* <Ionicons name="fast-food-outline" size={DIMENSIONS.touchXxl} color={DESIGN_TOKENS.primaryWhite} /> */}
             </View>
 
         </Animated.View>
@@ -278,10 +283,16 @@ const styles = StyleSheet.create({
         top: (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
         left: (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
         shadowColor: DESIGN_TOKENS.accentDefault,
-        shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.55,
         shadowRadius: 24,
         elevation: 14,
+    },
+    logo: {
+        width: DIMENSIONS.featureIcon,
+        height: DIMENSIONS.featureIcon,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: BORDER_RADIUS.panel,
     },
 });
 

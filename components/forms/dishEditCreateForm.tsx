@@ -1,6 +1,5 @@
 import { CATEGORIES } from '@/constants/mock-data';
 import { TYPOGRAPHY } from '@/constants/themes/font';
-import { BORDER_RADIUS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { dishSchema } from '@/types/zod/validations/dish';
@@ -12,10 +11,11 @@ import {
     SubmitHandler,
     useForm,
 } from 'react-hook-form';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 // eslint-disable-next-line import/no-named-as-default
 import AppButton from '../custom/AppButton';
-import Field, { fieldStyles } from '../custom/inputField';
+import ChipSelect from '../custom/ChipSelect';
+import Field from '../custom/inputField';
 import { PriceField } from '../custom/priceField';
 import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
@@ -50,11 +50,6 @@ export interface DishEditCreateFormProps {
 // ─── Theme ────────────────────────────────────────────────────────────────────
 
 const T = {
-    inputBg: DESIGN_TOKENS.inputBg,
-    inputBorder: DESIGN_TOKENS.whiteFadeXs,
-    accent: DESIGN_TOKENS.accentDefault,
-    accentFaint: DESIGN_TOKENS.accentFaint,
-    textPrimary: DESIGN_TOKENS.textPrimary,
     textSectionTitle: DESIGN_TOKENS.textSectionTitle,
     divider: DESIGN_TOKENS.disabled,
 } as const;
@@ -105,50 +100,6 @@ const sectionStyles = StyleSheet.create({
     wrap: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md, marginTop: SPACING.sm, gap: SPACING.sm },
     title: { color: T.textSectionTitle, ...TYPOGRAPHY.caption_bold, textTransform: 'uppercase', flexShrink: 0 },
     line: { flex: 1, height: 1, backgroundColor: T.divider },
-});
-
-// ─── Category select ──────────────────────────────────────────────────────────
-
-const CategorySelect: React.FC<{
-    value: string;
-    onChange: (v: string) => void;
-    error?: string;
-}> = ({ value, onChange, error }) => {
-    const options = CATEGORIES.filter(c => c.key !== 'all');
-    return (
-        <View style={catStyles.wrapper}>
-            <View style={fieldStyles.labelRow}>
-                <Text style={fieldStyles.label}>Category</Text>
-            </View>
-            <View style={catStyles.grid}>
-                {options.map(cat => {
-                    const active = cat.key === value;
-                    return (
-                        <TouchableOpacity
-                            key={cat.key}
-                            style={[catStyles.chip, active && catStyles.chipActive]}
-                            onPress={() => onChange(cat.key)}
-                            activeOpacity={0.7}
-                        >
-                            <Text style={[catStyles.chipText, active && catStyles.chipTextActive]}>
-                                {cat.label}
-                            </Text>
-                        </TouchableOpacity>
-                    );
-                })}
-            </View>
-            {error && <Text style={fieldStyles.error}>⚠ {error}</Text>}
-        </View>
-    );
-};
-
-const catStyles = StyleSheet.create({
-    wrapper: { marginBottom: SPACING.xl },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm },
-    chip: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.sm, borderRadius: BORDER_RADIUS.card, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
-    chipActive: { borderColor: T.accent, backgroundColor: T.accentFaint },
-    chipText: { color: T.textPrimary, ...TYPOGRAPHY.body },
-    chipTextActive: { color: T.accent },
 });
 
 // ─── DishEditCreateForm ───────────────────────────────────────────────────────
@@ -296,7 +247,9 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
                     control={control}
                     name="category"
                     render={({ field: { value, onChange } }) => (
-                        <CategorySelect
+                        <ChipSelect
+                            label="Category"
+                            options={CATEGORIES.filter(c => c.key !== 'all')}
                             value={value}
                             onChange={onChange}
                             error={errors.category?.message}

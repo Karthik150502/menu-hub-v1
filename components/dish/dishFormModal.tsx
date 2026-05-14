@@ -2,7 +2,7 @@ import React from 'react';
 import { AppModal } from '../custom/AppModal';
 import { Dish } from '../interactive/dishes';
 // eslint-disable-next-line import/no-named-as-default
-import DishEditCreateForm from '../dish/dishEditCreateForm';
+import DishEditCreateForm from '../forms/dishEditCreateForm';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
