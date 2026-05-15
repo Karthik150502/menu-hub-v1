@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppModal } from '../custom/AppModal';
 import { Dish } from '../interactive/dishes';
-// eslint-disable-next-line import/no-named-as-default
+
 import DishEditCreateForm from '../forms/dishEditCreateForm';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -24,8 +24,9 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
     onSubmit,
     submitLabel = 'Save Item',
     isSubmitting = false,
-}) => (
-    <AppModal
+}) => {
+
+    return <AppModal
         visible={visible}
         animationType="slide"
         presentationStyle="pageSheet"
@@ -42,6 +43,6 @@ export const DishFormModal: React.FC<DishFormModalProps> = ({
             isSubmitting={isSubmitting}
         />
     </AppModal>
-);
+};
 
 export default DishFormModal;

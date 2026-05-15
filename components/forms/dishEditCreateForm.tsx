@@ -111,7 +111,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
     submitLabel = 'Save Item',
     isSubmitting = false,
 }) => {
-    const { info } = useBottomToast();
+    const { info: bottomInfo } = useBottomToast();
 
     const {
         control,
@@ -153,7 +153,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
 
     const onInvalid: SubmitErrorHandler<DishFormValues> = (errs) => {
         console.warn('[DishEditCreateForm] Validation failed', errs);
-        info('Resolve all the errors before submitting');
+        bottomInfo('Resolve all the errors before submitting');
     };
 
     return (
@@ -192,7 +192,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
                             value={value ?? ''}
                             onChange={onChange}
                             onBlur={onBlur}
-                            placeholder="e.g. 40% off 💚"
+                            placeholder="e.g. 40% off"
                             error={errors.tag?.message}
                         />
                     )}

@@ -9,12 +9,12 @@ import {
     ScrollView,
     StyleSheet,
     Switch,
-    Text,
     TouchableOpacity,
     View,
     ViewStyle,
     useWindowDimensions,
 } from 'react-native';
+import Text from '../custom/appText';
 
 import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 

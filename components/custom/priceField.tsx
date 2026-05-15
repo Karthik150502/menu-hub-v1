@@ -2,8 +2,10 @@ import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { useRef } from "react";
-import { Animated, StyleSheet, Text, TextInput, View } from "react-native";
+import { Animated, StyleSheet, TextInput, View } from "react-native";
+// eslint-disable-next-line import/no-named-as-default
 import AppBanner from "./appBanner";
+import Text from "./appText";
 import { fieldStyles } from "./inputField";
 
 const T = {
@@ -82,7 +84,7 @@ export const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur,
 const priceStyles = StyleSheet.create({
     inputWrap: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.none, overflow: 'hidden' },
     currencyBadge: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.bg, backgroundColor: T.currencyBadgeBg, alignItems: 'center', justifyContent: 'center' },
-    currencyText: { color: T.currencyText, ...TYPOGRAPHY.h4 },
+    currencyText: { color: T.currencyText, fontFamily: 'Montserrat_500Medium', fontSize: TYPOGRAPHY.h4.fontSize },
     divider: { width: 1, alignSelf: 'stretch', backgroundColor: T.priceDivider },
     input: { flex: 1, paddingHorizontal: SPACING.bg },
 });

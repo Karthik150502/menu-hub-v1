@@ -6,11 +6,12 @@ import React, { useEffect, useRef } from 'react';
 import {
     Animated,
     StyleSheet,
-    Text,
     TextInput,
     View,
 } from 'react-native';
+// eslint-disable-next-line import/no-named-as-default
 import AppBanner from './appBanner';
+import Text from './appText';
 
 const T = {
     inputBg: DESIGN_TOKENS.inputBg,
@@ -122,8 +123,8 @@ export const fieldStyles = StyleSheet.create({
 
     input: {
         color: T.textPrimary,
+        fontFamily: 'Montserrat_400Regular',
         fontSize: TYPOGRAPHY.body.fontSize,
-        fontWeight: TYPOGRAPHY.body.fontWeight as any,
         letterSpacing: (TYPOGRAPHY.body as any).letterSpacing,
         paddingVertical: SPACING.slg,   // 12px — balanced on both iOS and Android
         includeFontPadding: false,
