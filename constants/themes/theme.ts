@@ -38,6 +38,7 @@ export const DESIGN_TOKENS: Record<string, string> = {
   subPositive: '#09c60f',
   subNegative: '#FF0000',
   subNegativeDark: '#990000',
+  errorRed:"#960000",
   subNegativeDarkFade: '#c3050521',
   subPositiveDarkFade: '#00ff0d41',
   subNeutral: 'rgba(234, 186, 255, 0.35)',

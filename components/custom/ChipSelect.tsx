@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm },
     chip: { paddingHorizontal: SPACING.bg, paddingVertical: SPACING.sm, borderRadius: BORDER_RADIUS.card, borderWidth: 1.5, borderColor: T.inputBorder, backgroundColor: T.inputBg },
     chipActive: { borderColor: T.accent, backgroundColor: T.accentFaint },
-    chipText: { color: T.textPrimary, ...TYPOGRAPHY.body },
+    chipText: { color: T.textPrimary, ...TYPOGRAPHY.bodySmall },
     chipTextActive: { color: T.accent },
 });
 

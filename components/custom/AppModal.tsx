@@ -1,5 +1,7 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BottomToastPortal } from '@/components/feedback/BottomToast';
+import { ToastPortal } from '@/components/feedback/Toast';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React from 'react';
@@ -8,10 +10,10 @@ import {
     Platform,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View
 } from "react-native";
+import Text from './appText';
 
 
 type AppModalProps = ModalProps & {
@@ -37,6 +39,7 @@ const T = {
 } as const;
 
 export const AppModal: React.FC<AppModalProps> = (props) => {
+
     return <Modal
         {...props}
     >
@@ -67,6 +70,8 @@ export const AppModal: React.FC<AppModalProps> = (props) => {
             >
                 {props.children}
             </ScrollView>
+            <ToastPortal />
+            <BottomToastPortal />
         </View>
     </Modal>
 }

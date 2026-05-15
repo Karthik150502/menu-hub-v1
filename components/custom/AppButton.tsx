@@ -7,10 +7,10 @@ import React, { useRef } from 'react';
 import {
     Animated,
     StyleSheet,
-    Text,
     TouchableOpacity,
     ViewStyle
 } from 'react-native';
+import Text from './appText';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

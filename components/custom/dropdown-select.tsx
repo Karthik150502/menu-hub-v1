@@ -1,5 +1,5 @@
-import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from "@/constants/themes/font";
 import { BORDER_RADIUS, DIMENSIONS } from "@/constants/themes/dimensions";
+import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,10 +11,11 @@ import {
     Modal,
     Pressable,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
 } from "react-native";
+import Text from "./appText";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

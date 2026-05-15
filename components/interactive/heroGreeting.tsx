@@ -1,8 +1,8 @@
+import Text from '@/components/custom/appText';
 import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useState } from 'react';
-import Text from '@/components/custom/appText';
 import { StyleSheet, View } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────

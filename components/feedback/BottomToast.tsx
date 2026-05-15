@@ -1,5 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
@@ -14,10 +14,11 @@ import {
     Easing,
     Pressable,
     StyleSheet,
-    Text,
     View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Text from '../custom/appText';
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,6 +37,8 @@ interface BottomToastContextValue {
     // ↓ Exposed so BottomToastPortal can render the same toasts inside a Modal
     toasts: BottomToastEntry[];
     dismiss: (id: number) => void;
+    registerPortal: () => void;
+    unregisterPortal: () => void;
 }
 
 const DEFAULT_DURATION = 3000;
@@ -124,7 +127,13 @@ export const BottomToastContainer: React.FC<{
 // info('...') anywhere will show the toast inside the modal automatically.
 
 export const BottomToastPortal: React.FC<{ bottomInset?: number }> = ({ bottomInset }) => {
-    const { toasts, dismiss } = useBottomToast();
+    const { toasts, dismiss, registerPortal, unregisterPortal } = useBottomToast();
+
+    React.useEffect(() => {
+        registerPortal();
+        return () => unregisterPortal();
+    }, []);
+
     return (
         <BottomToastContainer
             toasts={toasts}
@@ -140,7 +149,9 @@ const BottomToastContext = createContext<BottomToastContextValue | null>(null);
 
 export const BottomToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [toasts, setToasts] = useState<BottomToastEntry[]>([]);
+    const [hasPortal, setHasPortal] = useState(false);
     const counter = useRef(0);
+    const portalCount = useRef(0);
 
     const show = useCallback((opts: BottomToastOptions) => {
         const id = ++counter.current;
@@ -151,14 +162,23 @@ export const BottomToastProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setToasts(prev => prev.filter(t => t.id !== id));
     }, []);
 
+    const registerPortal = useCallback(() => {
+        portalCount.current += 1;
+        setHasPortal(true);
+    }, []);
+
+    const unregisterPortal = useCallback(() => {
+        portalCount.current -= 1;
+        if (portalCount.current === 0) setHasPortal(false);
+    }, []);
+
     const info = useCallback((message: string, duration?: number) =>
         show({ message, duration }), [show]);
 
     return (
-        <BottomToastContext.Provider value={{ show, info, toasts, dismiss }}>
+        <BottomToastContext.Provider value={{ show, info, toasts, dismiss, registerPortal, unregisterPortal }}>
             {children}
-            {/* Default container — visible on all normal screens */}
-            <BottomToastContainer toasts={toasts} onDismiss={dismiss} />
+            {!hasPortal && <BottomToastContainer toasts={toasts} onDismiss={dismiss} />}
         </BottomToastContext.Provider>
     );
 };

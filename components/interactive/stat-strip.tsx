@@ -7,11 +7,11 @@ import {
     Animated,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
     ViewStyle,
 } from 'react-native';
+import Text from '../custom/appText';
 
 
 const T = {

@@ -1,5 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
+import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, {
@@ -41,6 +41,11 @@ interface ToastContextValue {
     error: (message: string, title?: string) => void;
     warning: (message: string, title?: string) => void;
     info: (message: string, title?: string) => void;
+    // Exposed so ToastPortal can render the same toasts inside a Modal
+    toasts: ToastEntry[];
+    dismiss: (id: number) => void;
+    registerPortal: () => void;
+    unregisterPortal: () => void;
 }
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -53,7 +58,7 @@ const TOAST_CONFIG: Record<ToastType, { accent: string; bg: string; icon: string
         iconBg: DESIGN_TOKENS.accentFaint,
     },
     error: {
-        accent: DESIGN_TOKENS.subNegative,
+        accent: DESIGN_TOKENS.errorRed,
         bg: DESIGN_TOKENS.feedbackErrorBg,
         icon: '✕',
         iconBg: DESIGN_TOKENS.errorWarn,
@@ -184,7 +189,7 @@ const ToastItem: React.FC<{
 
 // ─── Toast Container ──────────────────────────────────────────────────────────
 
-const ToastContainer: React.FC<{
+export const ToastContainer: React.FC<{
     toasts: ToastEntry[];
     onDismiss: (id: number) => void;
 }> = ({ toasts, onDismiss }) => (
@@ -203,7 +208,9 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [toasts, setToasts] = useState<ToastEntry[]>([]);
+    const [hasPortal, setHasPortal] = useState(false);
     const counter = useRef(0);
+    const portalCount = useRef(0);
 
     const show = useCallback((opts: ToastOptions) => {
         const id = ++counter.current;
@@ -212,6 +219,16 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const dismiss = useCallback((id: number) => {
         setToasts(prev => prev.filter(t => t.id !== id));
+    }, []);
+
+    const registerPortal = useCallback(() => {
+        portalCount.current += 1;
+        setHasPortal(true);
+    }, []);
+
+    const unregisterPortal = useCallback(() => {
+        portalCount.current -= 1;
+        if (portalCount.current === 0) setHasPortal(false);
     }, []);
 
     const success = useCallback((message: string, title?: string) =>
@@ -227,11 +244,30 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         show({ message, title, type: 'info' }), [show]);
 
     return (
-        <ToastContext.Provider value={{ show, success, error, warning, info }}>
+        <ToastContext.Provider value={{ show, success, error, warning, info, toasts, dismiss, registerPortal, unregisterPortal }}>
             {children}
-            <ToastContainer toasts={toasts} onDismiss={dismiss} />
+            {!hasPortal && <ToastContainer toasts={toasts} onDismiss={dismiss} />}
         </ToastContext.Provider>
     );
+};
+
+// ─── Portal — drop inside any Modal to show toasts above it ──────────────────
+//
+// Usage inside your Modal:
+//   <ToastPortal />
+//
+// Reads from the same context as useToast(), so calling toast.success(...)
+// anywhere will show the toast inside the modal automatically.
+
+export const ToastPortal: React.FC = () => {
+    const { toasts, dismiss, registerPortal, unregisterPortal } = useToast();
+
+    React.useEffect(() => {
+        registerPortal();
+        return () => unregisterPortal();
+    }, []);
+
+    return <ToastContainer toasts={toasts} onDismiss={dismiss} />;
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
