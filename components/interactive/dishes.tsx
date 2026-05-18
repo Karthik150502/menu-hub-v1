@@ -8,11 +8,10 @@ import {
     LayoutChangeEvent,
     ScrollView,
     StyleSheet,
-    Switch,
     TouchableOpacity,
     View,
     ViewStyle,
-    useWindowDimensions,
+    useWindowDimensions
 } from 'react-native';
 import Text from '../custom/appText';
 
@@ -24,6 +23,7 @@ import { dishSplashIcon } from '@/constants/images';
 import { SPACING } from '@/constants/themes/spacing';
 import AppDropdown from '../custom/dropdown-select';
 // eslint-disable-next-line import/no-named-as-default
+import AppToggle from '../custom/appToggle';
 import DishFormModal from '../dish/dishFormModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -242,13 +242,9 @@ const DishCard: React.FC<{
                                     <Text style={styles.currencySymbol}>{dish.currency ?? '₹'}</Text>
                                     {dish.price}
                                 </Text>
-                                <Switch
+                                <AppToggle
                                     value={dish.available}
                                     onValueChange={handleToggle}
-                                    trackColor={{ false: DESIGN_TOKENS.switchTrackOff, true: DESIGN_TOKENS.subPositive }}
-                                    ios_backgroundColor={DESIGN_TOKENS.switchTrackOff}
-                                    thumbColor={DESIGN_TOKENS.textPrimary}
-                                    style={styles.switch}
                                 />
                             </View>
                         </View>
