@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppModal } from '../custom/AppModal';
+import { AppModal } from '../custom/appModal';
 import { Dish } from '../interactive/dishes';
 
 import DishEditCreateForm from '../forms/dishEditCreateForm';

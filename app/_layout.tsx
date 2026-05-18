@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import Sidebar from '@/components/global/sidebar/sidebar';
-import { SidebarProvider } from '@/components/global/sidebar/sidebar-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 import { useEffect } from 'react';
@@ -12,6 +11,7 @@ import { Text, TextInput } from 'react-native';
 
 import { BottomToastProvider } from '@/components/feedback/BottomToast';
 import { ToastProvider } from '@/components/feedback/Toast';
+import { store } from '@/store';
 import {
   Montserrat_300Light,
   Montserrat_400Regular,
@@ -21,6 +21,7 @@ import {
   Montserrat_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/montserrat';
+import { Provider } from 'react-redux';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -60,7 +61,7 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <SidebarProvider>
+    <Provider store={store}>
       <ToastProvider>
         <BottomToastProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -74,6 +75,6 @@ export default function RootLayout() {
           </ThemeProvider>
         </BottomToastProvider>
       </ToastProvider>
-    </SidebarProvider>
+    </Provider>
   );
 }

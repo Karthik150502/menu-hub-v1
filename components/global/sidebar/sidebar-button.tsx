@@ -1,16 +1,17 @@
 // eslint-disable-next-line import/no-named-as-default
-import AppButton from "@/components/custom/AppButton";
+import AppButton from "@/components/custom/appButton";
 import { BORDER_RADIUS, DIMENSIONS } from "@/constants/themes/dimensions";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { StyleSheet, View } from "react-native";
-import { useSidebar } from "./sidebar-context";
+// eslint-disable-next-line import/no-unresolved
+import { openSidebar, useAppDispatch } from "@/store";
 
 export const SidebarButton: React.FC = () => {
-    const { openSidebar } = useSidebar();
+    const dispatch = useAppDispatch();
 
     return <AppButton
-        onPress={openSidebar}
+        onPress={() => dispatch(openSidebar())}
         variant="ghost"
         size="icon"
     >

@@ -4,8 +4,9 @@ import { BORDER_RADIUS } from "@/constants/themes/dimensions";
 import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
-import { StyleSheet, Switch, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "./appText";
+import AppToggle from "./appToggle";
 interface ToggleRowProps {
     label: string;
     subLabel: string;
@@ -42,13 +43,11 @@ const ToggleRow: React.FC<ToggleRowProps> = ({
             <Text style={toggleStyles.label}>{label}</Text>
             <Text style={toggleStyles.sub}>{subLabel}</Text>
         </View>
-        <Switch
+        <AppToggle
             disabled={disabled}
             value={value}
             onValueChange={onChange}
-            trackColor={{ false: T.switchTrackOff, true: activeColor }}
-            thumbColor={T.textPrimary}
-            ios_backgroundColor={T.switchTrackOff}
+            variant="success"
         />
     </View>
 );

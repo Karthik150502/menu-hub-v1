@@ -6,7 +6,8 @@ import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, View } from 'react-native';
 import SidebarBuilder from './sidebar-builder';
-import { useSidebar } from './sidebar-context';
+// eslint-disable-next-line import/no-unresolved
+import { closeSidebar, selectSidebarOpen, useAppDispatch, useAppSelector } from '@/store';
 
 
 // ─── Sidebar option groups ────────────────────────────────────────────────
@@ -62,7 +63,8 @@ const optionGroups: SidebarOptionGroup[] = [
 
 const Sidebar: React.FC = () => {
 
-    const { isOpen, closeSidebar } = useSidebar();
+    const dispatch = useAppDispatch();
+    const isOpen = useAppSelector(selectSidebarOpen);
 
     // ─── Sidebar header ───────────────────────────────────────────────────────
     const sidebarHeader = (
@@ -89,7 +91,7 @@ const Sidebar: React.FC = () => {
 
     return <SidebarBuilder
         visible={isOpen}
-        onClose={closeSidebar}
+        onClose={() => dispatch(closeSidebar())}
         side="left"
         header={sidebarHeader}
         footer={sidebarFooter}

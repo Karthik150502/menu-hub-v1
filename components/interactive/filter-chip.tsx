@@ -1,10 +1,12 @@
 import { CATEGORIES } from "@/constants/mock-data";
-import { TYPOGRAPHY } from "@/constants/themes/font";
 import { BORDER_RADIUS } from "@/constants/themes/dimensions";
+import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useRef } from "react";
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Animated, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import Text from "../custom/appText";
 import { useBottomToast } from "../feedback/BottomToast";
 import { Dish } from "./dishes";
 
@@ -38,9 +40,20 @@ const FilterChip: React.FC<{
                 activeOpacity={1}
                 style={[styles.chip, selected && styles.chipSelected]}
             >
-                <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
-                    {label}
-                </Text>
+                <View style={styles.chipInner}>
+                    <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
+                        {label}
+                    </Text>
+                    {selected && (
+                        <TouchableOpacity
+                            onPress={onPress}
+                            hitSlop={{ top: 6, bottom: 6, left: 4, right: 6 }}
+                            style={styles.closeBtn}
+                        >
+                            <Ionicons name="close" size={16} color={DESIGN_TOKENS.textPrimary} />
+                        </TouchableOpacity>
+                    )}
+                </View>
             </TouchableOpacity>
         </Animated.View>
     );
@@ -60,9 +73,6 @@ const CategoryBar: React.FC<{
         contentContainerStyle={styles.barContent}
         style={styles.bar}
     >
-
-
-
         {CATEGORIES.map((cat) => {
             const isSelected = selected.includes(cat.key)
 
@@ -126,6 +136,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.45,
         shadowRadius: 8,
         elevation: 6,
+    },
+    chipInner: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SPACING.xs,
+    },
+    closeBtn: {
+        justifyContent: "center",
+        alignItems: "center",
     },
     chipText: {
         color: DESIGN_TOKENS.textLabel,
