@@ -1,8 +1,4 @@
-import Text from '@/components/custom/appText';
 import { CATEGORIES } from '@/constants/mock-data';
-import { TYPOGRAPHY } from '@/constants/themes/font';
-import { SPACING } from '@/constants/themes/spacing';
-import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { dishSchema } from '@/types/zod/validations/dish';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect } from 'react';
@@ -12,7 +8,6 @@ import {
     SubmitHandler,
     useForm,
 } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
 // eslint-disable-next-line import/no-named-as-default
 import AppButton from '../custom/appButton';
 import ChipSelect from '../custom/ChipSelect';
@@ -22,6 +17,7 @@ import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
 import { FormGrid, FormItem } from '../forms/formGrid';
 import { Dish } from '../interactive/dishes';
+import { Section } from './section';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface DishFormValues {
@@ -47,13 +43,6 @@ export interface DishEditCreateFormProps {
     /** Shows a loading spinner and disables the button while true. */
     isSubmitting?: boolean;
 }
-
-// ─── Theme ────────────────────────────────────────────────────────────────────
-
-const T = {
-    textSectionTitle: DESIGN_TOKENS.textSectionTitle,
-    divider: DESIGN_TOKENS.disabled,
-} as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -88,20 +77,6 @@ function formValuesToDish(values: DishFormValues): Omit<Dish, 'id'> {
     };
 }
 
-// ─── Section header ───────────────────────────────────────────────────────────
-
-const Section: React.FC<{ title: string }> = ({ title }) => (
-    <View style={sectionStyles.wrap}>
-        <Text style={sectionStyles.title}>{title}</Text>
-        <View style={sectionStyles.line} />
-    </View>
-);
-
-const sectionStyles = StyleSheet.create({
-    wrap: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md, marginTop: SPACING.sm, gap: SPACING.sm },
-    title: { color: T.textSectionTitle, ...TYPOGRAPHY.caption_bold, textTransform: 'uppercase', flexShrink: 0 },
-    line: { flex: 1, height: 1, backgroundColor: T.divider },
-});
 
 // ─── DishEditCreateForm ───────────────────────────────────────────────────────
 

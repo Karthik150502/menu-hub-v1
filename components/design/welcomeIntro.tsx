@@ -14,12 +14,12 @@ import BrandLogo from "../../assets/images/web/brand/plato_app_logo.png";
 
 interface FloatCardProps {
     icon: string;
-    iconColor: string;
+    orbitColor: string;
 }
 
 interface FloatingCardConfig {
-    icon?: string;
-    iconColor: string;
+    icon?: string | null;
+    orbitColor: string;
     radius: number;
     startAngle: number;
     duration: number;
@@ -34,10 +34,10 @@ const SCENE_CENTER = DIMENSIONS.sceneLg / 2;
 // Each orbit is 65 px apart (card diameter 54 + 11 buffer) so no two cards ever touch.
 // Radii: 90 → 155 → 220 → 285 → 350 (inner to outer).
 const CARDS: FloatingCardConfig[] = [
-    { icon: 'flash-outline', iconColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 12000, clockwise: true },
-    { icon: 'trending-up-outline', iconColor: DESIGN_TOKENS.iconAccentPurple, radius: 155, startAngle: (2 * Math.PI) / 5, duration: 20000, ringDuration: 9000, clockwise: false },
-    { icon: 'star-outline', iconColor: DESIGN_TOKENS.iconAccentYellow, radius: 220, startAngle: (4 * Math.PI) / 5, duration: 8000, ringDuration: 22000, clockwise: true },
-    { icon: 'repeat-outline', iconColor: DESIGN_TOKENS.iconAccentBlue, radius: 285, startAngle: (6 * Math.PI) / 5, duration: 24000, ringDuration: 48000, clockwise: false },
+    { orbitColor: DESIGN_TOKENS.subPositive, radius: 90, startAngle: 0, duration: 14000, ringDuration: 12000, clockwise: true },
+    { orbitColor: DESIGN_TOKENS.iconAccentPurple, radius: 155, startAngle: (2 * Math.PI) / 5, duration: 20000, ringDuration: 20000, clockwise: false },
+    { orbitColor: DESIGN_TOKENS.iconAccentYellow, radius: 220, startAngle: (4 * Math.PI) / 5, duration: 8000, ringDuration: 40000, clockwise: true },
+    { orbitColor: DESIGN_TOKENS.iconAccentBlue, radius: 285, startAngle: (6 * Math.PI) / 5, duration: 24000, ringDuration: 60000, clockwise: false },
 ];
 
 // ─── Orbit ring (dotted glowing path) ────────────────────────────────────────
@@ -117,9 +117,9 @@ const OrbitRing: React.FC<{
 
 // ─── Circle float card (icon only) ───────────────────────────────────────────
 
-const FloatCard: React.FC<FloatCardProps> = ({ icon, iconColor }) => (
-    <View style={[styles.floatCard, { borderColor: `${iconColor}40` }]}>
-        <Ionicons name={icon as any} size={22} color={iconColor} />
+const FloatCard: React.FC<FloatCardProps> = ({ icon, orbitColor }) => (
+    <View style={[styles.floatCard, { borderColor: `${orbitColor}40` }]}>
+        <Ionicons name={icon as any} size={22} color={orbitColor} />
     </View>
 );
 
@@ -131,7 +131,7 @@ const STEPS = 60;
 const INPUT_RANGE = Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS);
 
 const FloatingCard: React.FC<FloatingCardConfig> = ({
-    icon, iconColor, radius, startAngle, duration, clockwise,
+    icon, orbitColor, radius, startAngle, duration, clockwise,
 }) => {
     const anim = useRef(new Animated.Value(0)).current;
 
@@ -171,7 +171,7 @@ const FloatingCard: React.FC<FloatingCardConfig> = ({
         <Animated.View
             style={[styles.floatAnchor, { transform: [{ translateX }, { translateY }] }]}
         >
-            <FloatCard icon={icon} iconColor={iconColor} />
+            <FloatCard icon={icon} orbitColor={orbitColor} />
         </Animated.View>
     );
 };
@@ -207,7 +207,7 @@ export const WelcomeHero: React.FC = () => {
                 <OrbitRing
                     key={`ring-${i}`}
                     radius={card.radius}
-                    color={card.iconColor}
+                    color={card.orbitColor}
                     duration={card.ringDuration}
                     clockwise={card.clockwise}
                 />
