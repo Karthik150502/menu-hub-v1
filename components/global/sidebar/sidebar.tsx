@@ -6,7 +6,7 @@ import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { Pressable, StyleSheet, View } from 'react-native';
 import SidebarBuilder from './sidebar-builder';
-// eslint-disable-next-line import/no-unresolved
+
 import { closeSidebar, selectSidebarOpen, useAppDispatch, useAppSelector } from '@/store';
 
 
@@ -25,6 +25,16 @@ const optionGroups: SidebarOptionGroup[] = [
                 label: 'Get Started',
                 href: '/login',
             },
+            {
+                key: 'welcome',
+                label: 'Welcome',
+                href: '/welcome',
+            },
+            {
+                key: 'register',
+                label: 'Register',
+                href: '/register',
+            }
         ],
     },
     {

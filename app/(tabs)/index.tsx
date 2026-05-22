@@ -9,11 +9,9 @@ import { Page } from '@/components/Page';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
-  const router = useRouter();
 
   return (
     /*
@@ -89,11 +87,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: SPACING.xxxl,
-  },
-  loginBtnText: {
-    color: DESIGN_TOKENS.primaryWhite,
-    fontFamily: 'Montserrat_600SemiBold',
-    fontSize: 14,
   },
   heroSection: {
     paddingHorizontal: SPACING.lg,

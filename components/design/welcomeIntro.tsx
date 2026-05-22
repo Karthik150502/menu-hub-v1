@@ -27,6 +27,10 @@ interface FloatingCardConfig {
     clockwise: boolean;
 }
 
+interface WelcomeHeroProps {
+    showCenterIcon?: boolean;
+}
+
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const SCENE_CENTER = DIMENSIONS.sceneLg / 2;
@@ -178,7 +182,9 @@ const FloatingCard: React.FC<FloatingCardConfig> = ({
 
 // ─── WelcomeHero ──────────────────────────────────────────────────────────────
 
-export const WelcomeHero: React.FC = () => {
+export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
+    showCenterIcon = true
+}) => {
     const slideY = useRef(new Animated.Value(-500)).current;
     const opacity = useRef(new Animated.Value(0)).current;
 
@@ -219,10 +225,11 @@ export const WelcomeHero: React.FC = () => {
             ))}
 
             {/* Centre icon — outer bloom → mid bloom → icon circle */}
-            <View style={styles.centerIcon}>
+            {showCenterIcon && <View style={styles.centerIcon}>
                 <Image source={BrandLogo} style={styles.logo} />
-                {/* <Ionicons name="fast-food-outline" size={DIMENSIONS.touchXxl} color={DESIGN_TOKENS.primaryWhite} /> */}
-            </View>
+            </View>}
+
+
 
         </Animated.View>
     );
@@ -234,8 +241,11 @@ const styles = StyleSheet.create({
     scene: {
         width: DIMENSIONS.sceneLg,
         height: DIMENSIONS.sceneLg,
+        flex: 1,
         alignSelf: 'center',
-        position: 'relative',
+        position: 'absolute',
+        top: -100,
+        // bottom: 0,
     },
 
     // Full-scene container for each orbit ring — position:absolute at (0,0) with
@@ -272,14 +282,12 @@ const styles = StyleSheet.create({
     },
 
     centerIcon: {
-        position: 'absolute',
         width: DIMENSIONS.featureIcon,
         height: DIMENSIONS.featureIcon,
         borderRadius: BORDER_RADIUS.panel,
         backgroundColor: DESIGN_TOKENS.accentDefault,
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 20,
         top: (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
         left: (DIMENSIONS.sceneLg - DIMENSIONS.featureIcon) / 2,
         shadowColor: DESIGN_TOKENS.accentDefault,
