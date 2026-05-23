@@ -2,7 +2,8 @@
 
 
 // eslint-disable-next-line import/no-named-as-default
-import AppButton from '@/components/custom/appButton';
+import AppButton from '@/components/custom/AppButton';
+import { useToast } from '@/components/feedback/Toast';
 // eslint-disable-next-line import/no-named-as-default
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
@@ -22,9 +23,11 @@ interface RegisterScreenProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const RegisterScreen: React.FC<RegisterScreenProps> = ({
-}) => (
-    <AuthPage onBack={() => {
+export const RegisterScreen: React.FC<RegisterScreenProps> = () => {
+
+    const toast = useToast();
+
+    return <AuthPage onBack={() => {
         router.back()
     }} backLabel="back">
         {/* ── Content below the hero ── */}
@@ -37,15 +40,20 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                 />
             </View>
             <AppButton
+                fullWidth
+                variant="primary"
+                accessibilityRole="button"
+                accessibilityLabel="Send OTP"
                 onPress={() => {
-                    router.push("/otp")
+                    // router.push("/otp")
+                    toast.error("Hello boys", "Title")
                 }}
-                label='Otp Screen'
+                label='Send OTP'
             />
         </View>
 
     </AuthPage>
-);
+};
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 

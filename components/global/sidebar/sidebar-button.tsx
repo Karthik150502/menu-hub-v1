@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-named-as-default
-import AppButton from "@/components/custom/appButton";
+import AppButton from "@/components/custom/AppButton";
 import { BORDER_RADIUS, DIMENSIONS } from "@/constants/themes/dimensions";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";

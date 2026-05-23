@@ -89,12 +89,15 @@ const KAV_BEHAVIOR = Platform.OS === 'ios' ? 'padding' : 'height';
  * - footer outside ScrollView: if the footer were inside the ScrollView it would
  *   scroll away with the content. Keeping it outside guarantees it stays fixed.
  */
+const MOBILE_MAX_WIDTH = 430;
+
 const Page: React.FC<PageProps> = memo(({
     children,
     testID,
 
     scrollable = true,
     safeArea = true,
+    mobileSize = false,
 
     loading = false,
     error = null,
@@ -217,6 +220,7 @@ const Page: React.FC<PageProps> = memo(({
             style={[
                 pageStyles.root,
                 { backgroundColor, paddingTop: topInset },
+                mobileSize && pageStyles.rootCentered,
                 style,
             ]}
             testID={testID}
@@ -238,7 +242,7 @@ const Page: React.FC<PageProps> = memo(({
              * remains identical regardless of the keyboardAware prop.
              */}
             <KeyboardAvoidingView
-                style={pageStyles.keyboardAvoid}
+                style={[pageStyles.keyboardAvoid, mobileSize && pageStyles.kavMobile]}
                 behavior={KAV_BEHAVIOR}
                 enabled={keyboardAware}
             >

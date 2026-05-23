@@ -45,11 +45,20 @@ export const pageStyles = StyleSheet.create({
     root: {
         flex: 1,
     },
+    // Centers the KAV column when mobileSize=true
+    rootCentered: {
+        alignItems: 'center',
+    },
 
     // ── KeyboardAvoidingView ──────────────────────────────────────────────────
     // Must have flex:1 so it fills the SafeAreaView and doesn't clip content.
     keyboardAvoid: {
         flex: 1,
+    },
+    // Caps width to a single mobile column on larger screens
+    kavMobile: {
+        width: '100%',
+        maxWidth: 430,
     },
 
     // ── Inner layout shell ────────────────────────────────────────────────────

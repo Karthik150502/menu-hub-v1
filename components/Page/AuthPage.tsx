@@ -37,6 +37,7 @@ const AuthPage: React.FC<AuthPageProps> = memo(({
     return (
         <Page
             safeArea={false}
+            mobileSize
             header={header}
             {...pageProps}
         />

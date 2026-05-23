@@ -9,7 +9,7 @@ import {
     useForm,
 } from 'react-hook-form';
 // eslint-disable-next-line import/no-named-as-default
-import AppButton from '../custom/appButton';
+import AppButton from '../custom/AppButton';
 import ChipSelect from '../custom/ChipSelect';
 import Field from '../custom/inputField';
 import { PriceField } from '../custom/priceField';
@@ -293,6 +293,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
             {/* Submit — always full width */}
             <FormItem span="full">
                 <AppButton
+                    size="lg"
                     label={isSubmitting ? 'Saving…' : submitLabel}
                     disabled={!isDirty || isSubmitting}
                     onPress={handleSubmit(onValid, onInvalid)}
