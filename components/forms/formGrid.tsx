@@ -9,28 +9,28 @@ function getColumns(containerWidth: number): number {
 }
 
 export interface FormRowProps {
-    children:  React.ReactNode;
-    span?:     number | 'full';
+    children: React.ReactNode;
+    span?: number | 'full';
     _columns?: number;
-    _gap?:     number;
+    _gap?: number;
 }
 
 export const FormItem: React.FC<FormRowProps> = ({
     children,
-    span     = 1,
+    span = 1,
     _columns = 1,
-    _gap     = SPACING.md,
+    _gap = SPACING.md,
 }) => {
-    const isFull    = span === 'full' || Number(span) >= _columns;
+    const isFull = span === 'full' || Number(span) >= _columns;
     const spanCount = isFull ? _columns : Math.min(Number(span), _columns);
-    const widthPct  = (spanCount / _columns) * 100;
+    const widthPct = (spanCount / _columns) * 100;
 
     return (
         <View
             style={{
-                width:        `${widthPct}%` as any,
+                width: `${widthPct}%` as any,
                 paddingRight: isFull ? 0 : _gap,
-                flexShrink:   0,
+                flexShrink: 0,
             }}
         >
             {children}
@@ -40,13 +40,13 @@ export const FormItem: React.FC<FormRowProps> = ({
 
 interface FormGridProps {
     children: React.ReactNode;
-    gap?:     number;
+    gap?: number;
     columns?: number;
 }
 
 export const FormGrid: React.FC<FormGridProps> = ({
     children,
-    gap     = SPACING.md,
+    gap = SPACING.md,
     columns: colProp,
 }) => {
     const [containerWidth, setContainerWidth] = useState(0);
@@ -63,7 +63,7 @@ export const FormGrid: React.FC<FormGridProps> = ({
         if ((child.type as any) !== FormItem) return child;
         return React.cloneElement(child as React.ReactElement<FormRowProps>, {
             _columns: columns,
-            _gap:     gap,
+            _gap: gap,
         });
     });
 
@@ -77,7 +77,7 @@ export const FormGrid: React.FC<FormGridProps> = ({
 const styles = StyleSheet.create({
     grid: {
         flexDirection: 'row',
-        flexWrap:      'wrap',
-        alignItems:    'flex-start',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
     },
 });

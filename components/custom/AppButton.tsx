@@ -15,7 +15,7 @@ import Text from './appText';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'ghostTransparent';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'ghostTransparent' | 'success' | 'warning' | 'accent' | 'outline';
 export type ButtonSize = 'icon' | 'sm' | 'md' | 'lg';
 
 export interface AppButtonProps extends Omit<TouchableOpacityProps, 'style'> {
@@ -38,6 +38,7 @@ export interface AppButtonProps extends Omit<TouchableOpacityProps, 'style'> {
     buttonStyle?: ViewStyle;
     fullWidth?: boolean;
     children?: React.ReactNode;
+    loadingLabel?: string;
 }
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
@@ -58,8 +59,20 @@ const C = {
     ghostBorder: DESIGN_TOKENS.ghostBorder,
     ghostBg: DESIGN_TOKENS.ghostBg,
 
-    secondaryBg: DESIGN_TOKENS.cardBg,
+    secondaryBg: DESIGN_TOKENS.floatCardBg,
     secondaryBorder: DESIGN_TOKENS.cardBorder,
+
+    success: DESIGN_TOKENS.subPositive,
+    successBg: DESIGN_TOKENS.feedbackPositiveSubtle,
+    successBorder: DESIGN_TOKENS.feedbackPositiveBorder,
+
+    warning: DESIGN_TOKENS.feedbackWarning,
+    warningBg: DESIGN_TOKENS.feedbackWarningSubtle,
+    warningBorder: 'rgba(251,191,36,0.40)',
+
+    accentText: DESIGN_TOKENS.primaryBright,
+    accentBg: DESIGN_TOKENS.primaryFaint,
+    accentBorder: DESIGN_TOKENS.primaryBorder,
 
     textOnFilled: DESIGN_TOKENS.textPrimary,
     textOnGhost: DESIGN_TOKENS.textOnGhost,
@@ -71,10 +84,10 @@ const C = {
 // ─── Size config ──────────────────────────────────────────────────────────────
 
 const SIZE = {
-    icon: { paddingH: SPACING.xs, paddingV: SPACING.xs, ...TYPOGRAPHY.bodySmall, iconSize: DIMENSIONS.iconXs, gap: 0, radius: BORDER_RADIUS.lg },
-    sm: { paddingH: SPACING.md, paddingV: SPACING.xxs, ...TYPOGRAPHY.bodySmall, iconSize: DIMENSIONS.iconSm, gap: SPACING.xs, radius: BORDER_RADIUS.xl },
-    md: { paddingH: SPACING.xl, paddingV: SPACING.sm, ...TYPOGRAPHY.body, iconSize: DIMENSIONS.iconMd, gap: SPACING.xsm, radius: BORDER_RADIUS.lg },
-    lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, iconSize: DIMENSIONS.iconLg, gap: SPACING.ssm, radius: BORDER_RADIUS.xxl },
+    icon: { paddingH: SPACING.xs, paddingV: SPACING.xs, ...TYPOGRAPHY.bodySmall, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconXs, gap: 0, radius: BORDER_RADIUS.lg },
+    sm: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodySmall, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconSm, gap: SPACING.xs, radius: BORDER_RADIUS.xl },
+    md: { paddingH: SPACING.xl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyBase, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconMd, gap: SPACING.xsm, radius: BORDER_RADIUS.lg },
+    lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconLg, gap: SPACING.ssm, radius: BORDER_RADIUS.xxl },
 } as const;
 
 // ─── Variant config ───────────────────────────────────────────────────────────
@@ -83,22 +96,18 @@ function getVariantStyle(variant: ButtonVariant, disabled: boolean) {
     if (disabled) return {
         bg: C.disabled, border: C.disabledBorder,
         text: C.textDisabled, icon: C.textDisabled,
-        shadow: 'transparent', shadowOp: 0,
+        shadow: 'transparent', shadowOp: 0, pressOpacity: 0.7,
     };
     switch (variant) {
-        case 'primary': return { bg: C.primary, border: C.primaryBorder, text: C.textOnFilled, icon: C.textOnFilled, shadow: C.primary, shadowOp: 0.45 };
-        case 'secondary': return { bg: C.secondaryBg, border: C.secondaryBorder, text: C.textOnGhost, icon: C.textOnGhost, shadow: 'transparent', shadowOp: 0 };
-        case 'ghost': return { bg: C.ghostBg, border: C.ghostBorder, text: C.textOnGhost, icon: DESIGN_TOKENS.accentDefault, shadow: 'transparent', shadowOp: 0 };
-        case 'danger': return { bg: C.dangerFaint, border: C.dangerBorder, text: C.danger, icon: C.danger, shadow: C.danger, shadowOp: 0.25 };
-        case 'ghostTransparent':
-            return {
-                bg: 'transparent',
-                border: 'transparent',
-                text: C.textOnGhost,
-                icon: DESIGN_TOKENS.accentDefault,
-                shadow: 'transparent',
-                shadowOp: 0,
-            };
+        case 'primary': return { bg: C.primary, border: C.primaryBorder, text: C.textOnFilled, icon: C.textOnFilled, shadow: C.primary, shadowOp: 0.45, pressOpacity: 0.75 };
+        case 'secondary': return { bg: C.secondaryBg, border: C.secondaryBorder, text: C.textOnGhost, icon: C.textOnGhost, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.75 };
+        case 'ghost': return { bg: C.ghostBg, border: C.ghostBorder, text: C.textOnGhost, icon: DESIGN_TOKENS.accentDefault, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.85 };
+        case 'danger': return { bg: C.dangerFaint, border: C.dangerBorder, text: C.danger, icon: C.danger, shadow: C.danger, shadowOp: 0.25, pressOpacity: 0.75 };
+        case 'ghostTransparent': return { bg: 'transparent', border: 'transparent', text: C.textOnGhost, icon: DESIGN_TOKENS.accentDefault, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.9 };
+        case 'success': return { bg: C.successBg, border: C.successBorder, text: C.success, icon: C.success, shadow: C.success, shadowOp: 0.20, pressOpacity: 0.75 };
+        case 'warning': return { bg: C.warningBg, border: C.warningBorder, text: C.warning, icon: C.warning, shadow: C.warning, shadowOp: 0.20, pressOpacity: 0.75 };
+        case 'accent': return { bg: C.accentBg, border: C.accentBorder, text: C.accentText, icon: C.accentText, shadow: DESIGN_TOKENS.accentDefault, shadowOp: 0.20, pressOpacity: 0.92 };
+        case 'outline': return { bg: 'transparent', border: C.textOnFilled, text: C.textOnFilled, icon: C.textOnFilled, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.85 };
     }
 }
 
@@ -137,6 +146,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
     onPress,
     onPressIn: externalPressIn,
     onPressOut: externalPressOut,
+    loadingLabel,
     // Everything else (testID, accessibilityLabel, hitSlop, onLongPress…)
     // passes straight through to TouchableOpacity
     ...touchableProps
@@ -176,6 +186,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
         >
             <TouchableOpacity
                 accessibilityRole="button"
+                activeOpacity={v.pressOpacity}
                 {...touchableProps}                      // spread native props first
                 onPress={isInactive ? undefined : onPress}
                 onPressIn={handlePressIn}
@@ -204,13 +215,14 @@ export const AppButton: React.FC<AppButtonProps> = ({
                 {children ? children : (
                     <>
                         {loading ? (
-                            <Spinner color={v.icon} size={s.iconSize} />
+                            <Spinner color={v.icon} size={s.iconSize + 2} />
                         ) : iconLeft ? (
                             <Ionicons name={iconLeft as any} size={s.iconSize} color={v.icon} />
                         ) : null}
 
+
                         <Text style={[styles.label, { color: v.text, fontSize: s.fontSize }]}>
-                            {loading ? 'Loading…' : label}
+                            {loading ? loadingLabel && 'Loading…' : label}
                         </Text>
 
                         {!loading && iconRight && (
@@ -248,7 +260,7 @@ const styles = StyleSheet.create({
     },
 
     label: {
-        fontWeight: FONT_WEIGHTS.bold,
+        fontWeight: FONT_WEIGHTS.semibold,
         letterSpacing: 0.2,
     },
 });

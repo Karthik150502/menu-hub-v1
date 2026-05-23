@@ -37,6 +37,14 @@ export interface PageProps {
      */
     safeArea?: boolean;
 
+    /**
+     * Constrains the page content to a mobile-sized column (430 px max) and
+     * centres it horizontally. Useful for auth and form screens on tablets/web
+     * where full-width layouts look stretched.
+     * @default false
+     */
+    mobileSize?: boolean;
+
     // ── State ─────────────────────────────────────────────────────────────────
     /** Shows a full-screen loading indicator instead of content. */
     loading?: boolean;

@@ -41,6 +41,7 @@ export const DESIGN_TOKENS: Record<string, string> = {
   errorRed:"#960000",
   subNegativeDarkFade: '#c3050521',
   subPositiveDarkFade: '#00ff0d41',
+  subPositiveDark: '#00ff0d8b',
   subNeutral: 'rgba(234, 186, 255, 0.35)',
   subNeutralDark: 'rgba(193, 79, 242, 0.35)',
   dangerGlow: 'rgba(248,113,113,0.30)',
@@ -54,10 +55,11 @@ export const DESIGN_TOKENS: Record<string, string> = {
   ghostBg: 'rgba(255,255,255,0.05)',
 
   errorWarn: "#f56e6e81",
+  errorRedDark: "#6c0202",
 
   // ── Text ──────────────────────────────────────────────────────────────────
   textLabel: 'rgba(255,255,255,0.42)',
-  titleText: 'rgba(255,255,255,0.75)',
+  titleText: 'rgba(219, 219, 219, 0.75)',
   textPrimary: "rgba(255,255,255,0.90)",
   textSecondary: '#E0E0E0',
 
@@ -101,7 +103,7 @@ export const DESIGN_TOKENS: Record<string, string> = {
   /** Warm tint behind the ₹ badge — intentional brand warmth */
   currencyBadgeBg: 'rgba(249,115,22,0.10)',
 
-  primaryBlack: '#000',
+  primaryBlack: '#000000',
 
 
   // Backgrounds (strong surfaces)
@@ -111,8 +113,8 @@ export const DESIGN_TOKENS: Record<string, string> = {
   feedbackInfoBg: 'rgba(4, 38, 80, 0.97)',
 
   // Accents (primary highlight color)
-  feedbackWarning: '#dfa30b',
-  feedbackInfo: '#0565dbfc',
+  feedbackWarning: '#ce9505c6',
+  feedbackInfo: '#0373b4fc',
 
   // Subtle backgrounds (icon / chip / soft highlight)
   feedbackWarningSubtle: 'rgba(251,191,36,0.20)',

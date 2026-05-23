@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/no-named-as-default
-import AppButton from '@/components/custom/appButton';
+import AppButton from '@/components/custom/AppButton';
 import { Brand } from '@/components/design/brand';
 
 import Text from '@/components/custom/appText';
+// eslint-disable-next-line import/no-named-as-default
 import WelcomeHero from '@/components/design/welcomeIntro';
 import Page from '@/components/Page';
 import { TYPOGRAPHY } from '@/constants/themes/font';
@@ -75,31 +76,21 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         {/* ── CTA buttons ── */}
         <View style={styles.bottom}>
             <AppButton
-                style={styles.btnPrimary}
                 onPress={onGetStarted}
-                activeOpacity={0.85}
                 accessibilityRole="button"
                 accessibilityLabel="Get started"
-                size="sm"
+                iconRight="arrow-forward"
+                label={"Get Started"}
                 fullWidth
-            >
-                <Text style={styles.btnPrimaryText}>Get started</Text>
-                <Ionicons name="arrow-forward" size={16} color="#fff" />
-            </AppButton>
-
+            />
             <AppButton
-                style={styles.btnSecondary}
                 onPress={onSignIn}
-                activeOpacity={0.75}
                 accessibilityRole="button"
                 accessibilityLabel="Already have an account? Sign in"
-                variant="ghostTransparent"
                 fullWidth
-            >
-                <Text style={styles.btnSecondaryText}>
-                    Already have an account? Sign in
-                </Text>
-            </AppButton>
+                variant="ghost"
+                label="Already have an account? Sign in"
+            />
         </View>
 
     </Page>
@@ -181,41 +172,11 @@ const styles = StyleSheet.create({
         width: '100%',
         maxWidth: 480,   // caps at tablet width on bigger screens
         alignSelf: 'center',  // centres the capped container on desktop
-        paddingHorizontal: SPACING.xxl,
+        paddingHorizontal: SPACING.sm,
         paddingBottom: SPACING.xxl,
         paddingTop: SPACING.xl,
-        gap: SPACING.sm,
+        gap: SPACING.md,
         marginTop: 'auto',
-    },
-
-    btnPrimary: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: SPACING.sm,
-        backgroundColor: DESIGN_TOKENS.accentDefault,
-        borderRadius: 14,
-        paddingVertical: SPACING.lg,
-    },
-    btnPrimaryText: {
-        ...TYPOGRAPHY.button,
-        color: DESIGN_TOKENS.primaryWhite,
-        fontWeight: '700',
-    },
-
-    btnSecondary: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-        borderWidth: 1,
-        borderColor: DESIGN_TOKENS.cardBorder,
-        borderRadius: 14,
-        paddingVertical: SPACING.lg - 2,
-    },
-    btnSecondaryText: {
-        ...TYPOGRAPHY.body,
-        color: DESIGN_TOKENS.textSubtle,
-        fontWeight: '600',
     },
 });
 

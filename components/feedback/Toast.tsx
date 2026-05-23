@@ -15,9 +15,9 @@ import {
     Platform,
     Pressable,
     StyleSheet,
-    Text,
     View,
 } from 'react-native';
+import Text from '../custom/appText';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -50,30 +50,26 @@ interface ToastContextValue {
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const TOAST_CONFIG: Record<ToastType, { accent: string; bg: string; icon: string; iconBg: string }> = {
+const TOAST_CONFIG: Record<ToastType, { accent: string; bg?: string; icon: string }> = {
     success: {
-        accent: DESIGN_TOKENS.primaryBright,
-        bg: DESIGN_TOKENS.feedbackSuccessBg,
+        accent: DESIGN_TOKENS.subPositiveDark,
+        bg: DESIGN_TOKENS.background_1,
         icon: '✓',
-        iconBg: DESIGN_TOKENS.accentFaint,
     },
     error: {
-        accent: DESIGN_TOKENS.errorRed,
-        bg: DESIGN_TOKENS.feedbackErrorBg,
+        accent: DESIGN_TOKENS.errorRedDark,
+        bg: DESIGN_TOKENS.background_1,
         icon: '✕',
-        iconBg: DESIGN_TOKENS.errorWarn,
     },
     warning: {
         accent: DESIGN_TOKENS.feedbackWarning,
-        bg: DESIGN_TOKENS.feedbackWarningBg,
+        bg: DESIGN_TOKENS.background_1,
         icon: '⚠',
-        iconBg: DESIGN_TOKENS.feedbackWarningSubtle,
     },
     info: {
         accent: DESIGN_TOKENS.feedbackInfo,
-        bg: DESIGN_TOKENS.feedbackInfoBg,
+        bg: DESIGN_TOKENS.background_1,
         icon: 'i',
-        iconBg: DESIGN_TOKENS.feedbackInfoSubtle,
     },
 };
 
@@ -157,7 +153,7 @@ const ToastItem: React.FC<{
             <View style={[styles.accentBar, { backgroundColor: cfg.accent }]} />
 
             {/* Icon */}
-            <View style={[styles.iconWrap, { backgroundColor: cfg.iconBg }]}>
+            <View style={[styles.iconWrap, { backgroundColor: cfg.bg, borderColor: cfg.accent }]}>
                 <Text style={[styles.iconText, { color: cfg.accent }]}>{cfg.icon}</Text>
             </View>
 
@@ -307,7 +303,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.35,
         shadowRadius: 16,
         elevation: 12,
-        backgroundColor: DESIGN_TOKENS.bottomToastBg,
+        backgroundColor: DESIGN_TOKENS.background_1,
     },
 
     accentBar: {
@@ -322,6 +318,7 @@ const styles = StyleSheet.create({
         width: DIMENSIONS.touchXl,
         height: DIMENSIONS.touchXl,
         borderRadius: BORDER_RADIUS.md,
+        borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
@@ -332,8 +329,8 @@ const styles = StyleSheet.create({
 
     textWrap: { flex: 1 },
     title: {
-        color: DESIGN_TOKENS.textPrimary,
-        ...TYPOGRAPHY.body,
+        color: DESIGN_TOKENS.titleText,
+        ...TYPOGRAPHY.body_bold,
         marginBottom: SPACING.xxs,
     },
     message: {
