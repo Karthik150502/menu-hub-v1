@@ -21,11 +21,6 @@ const optionGroups: SidebarOptionGroup[] = [
                 href: '/(tabs)',
             },
             {
-                key: 'get_started',
-                label: 'Get Started',
-                href: '/login',
-            },
-            {
                 key: 'welcome',
                 label: 'Welcome',
                 href: '/welcome',

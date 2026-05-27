@@ -148,7 +148,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({
             inputRefs.current[index + 1]?.focus();
         }
 
-        if (otp.length === length && !otp.includes('')) {
+        if (otp.length === length && !next.includes('')) {
             onComplete?.(otp);
         }
     };
@@ -193,7 +193,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({
         const lastFilled = Math.min(startIndex + digits.length, length - 1);
         inputRefs.current[lastFilled]?.focus();
 
-        if (otp.length === length && !otp.includes('')) {
+        if (otp.length === length && !next.includes('')) {
             onComplete?.(otp);
         }
     };

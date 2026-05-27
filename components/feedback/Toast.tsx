@@ -1,7 +1,8 @@
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { Ionicons } from '@expo/vector-icons';
 import React, {
     createContext,
     useCallback,
@@ -54,22 +55,22 @@ const TOAST_CONFIG: Record<ToastType, { accent: string; bg?: string; icon: strin
     success: {
         accent: DESIGN_TOKENS.subPositiveDark,
         bg: DESIGN_TOKENS.background_1,
-        icon: '✓',
+        icon: 'checkmark-sharp',
     },
     error: {
         accent: DESIGN_TOKENS.errorRedDark,
         bg: DESIGN_TOKENS.background_1,
-        icon: '✕',
+        icon: 'ban-outline',
     },
     warning: {
         accent: DESIGN_TOKENS.feedbackWarning,
         bg: DESIGN_TOKENS.background_1,
-        icon: '⚠',
+        icon: 'alert-circle-outline',
     },
     info: {
         accent: DESIGN_TOKENS.feedbackInfo,
         bg: DESIGN_TOKENS.background_1,
-        icon: 'i',
+        icon: 'information-circle-outline',
     },
 };
 
@@ -154,13 +155,13 @@ const ToastItem: React.FC<{
 
             {/* Icon */}
             <View style={[styles.iconWrap, { backgroundColor: cfg.bg, borderColor: cfg.accent }]}>
-                <Text style={[styles.iconText, { color: cfg.accent }]}>{cfg.icon}</Text>
+                <Ionicons name={cfg.icon as any} size={FONT_SIZES.xxl} color={cfg.accent} />
             </View>
 
             {/* Text */}
             <View style={styles.textWrap}>
                 {entry.title ? (
-                    <Text style={styles.title} numberOfLines={1}>{entry.title}</Text>
+                    <Text style={styles.title} numberOfLines={4} ellipsizeMode="tail">{entry.title}</Text>
                 ) : null}
                 <Text style={styles.message} numberOfLines={3}>{entry.message}</Text>
             </View>
@@ -169,7 +170,6 @@ const ToastItem: React.FC<{
             <Pressable onPress={dismiss} style={styles.closeBtn} hitSlop={10}>
                 <Text style={styles.closeText}>✕</Text>
             </Pressable>
-
             {/* Progress bar */}
             {(entry.duration ?? DEFAULT_DURATION) > 0 && (
                 <Animated.View
@@ -209,8 +209,11 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const portalCount = useRef(0);
 
     const show = useCallback((opts: ToastOptions) => {
-        const id = ++counter.current;
-        setToasts(prev => [...prev, { ...opts, id }]);
+        setToasts(prev => {
+            if (prev.length >= 2) return prev;
+            const id = ++counter.current;
+            return [...prev, { ...opts, id }];
+        });
     }, []);
 
     const dismiss = useCallback((id: number) => {
@@ -318,7 +321,7 @@ const styles = StyleSheet.create({
         width: DIMENSIONS.touchXl,
         height: DIMENSIONS.touchXl,
         borderRadius: BORDER_RADIUS.md,
-        borderWidth: 1,
+        borderWidth: 1.5,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,

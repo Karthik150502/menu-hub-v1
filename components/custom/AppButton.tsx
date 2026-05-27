@@ -12,13 +12,14 @@ import {
     ViewStyle,
 } from 'react-native';
 import Text from './appText';
+import Spinner from './loadingSpinner';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'ghostTransparent' | 'success' | 'warning' | 'accent' | 'outline';
 export type ButtonSize = 'icon' | 'sm' | 'md' | 'lg';
 
-export interface AppButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+export interface AppButtonProps extends Omit<TouchableOpacityProps, 'style' | 'activeOpacity'> {
     label?: string;
     variant?: ButtonVariant;
     size?: ButtonSize;
@@ -92,12 +93,7 @@ const SIZE = {
 
 // ─── Variant config ───────────────────────────────────────────────────────────
 
-function getVariantStyle(variant: ButtonVariant, disabled: boolean) {
-    if (disabled) return {
-        bg: C.disabled, border: C.disabledBorder,
-        text: C.textDisabled, icon: C.textDisabled,
-        shadow: 'transparent', shadowOp: 0, pressOpacity: 0.7,
-    };
+function getVariantStyle(variant: ButtonVariant) {
     switch (variant) {
         case 'primary': return { bg: C.primary, border: C.primaryBorder, text: C.textOnFilled, icon: C.textOnFilled, shadow: C.primary, shadowOp: 0.45, pressOpacity: 0.75 };
         case 'secondary': return { bg: C.secondaryBg, border: C.secondaryBorder, text: C.textOnGhost, icon: C.textOnGhost, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.75 };
@@ -111,22 +107,6 @@ function getVariantStyle(variant: ButtonVariant, disabled: boolean) {
     }
 }
 
-// ─── Spinner ──────────────────────────────────────────────────────────────────
-
-const Spinner: React.FC<{ color: string; size: number }> = ({ color, size }) => {
-    const rotateAnim = useRef(new Animated.Value(0)).current;
-    React.useEffect(() => {
-        Animated.loop(
-            Animated.timing(rotateAnim, { toValue: 1, duration: 700, useNativeDriver: true })
-        ).start();
-    }, []);
-    const rotate = rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-    return (
-        <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name="reload-outline" size={size} color={color} />
-        </Animated.View>
-    );
-};
 
 // ─── AppButton ────────────────────────────────────────────────────────────────
 
@@ -153,7 +133,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
 }) => {
     const pressAnim = useRef(new Animated.Value(1)).current;
     const isInactive = disabled || loading;
-    const v = getVariantStyle(variant, isInactive);
+    const v = getVariantStyle(variant);
     const s = SIZE[size];
 
     const handlePressIn = (e: any) => {
@@ -179,19 +159,18 @@ export const AppButton: React.FC<AppButtonProps> = ({
             style={[
                 styles.wrapper,
                 fullWidth && styles.wrapperFull,
-                { transform: [{ scale: pressAnim }] },
-                // Outer wrapper style — layout concerns only (margin, flex, position)
+                { transform: [{ scale: pressAnim }], opacity: isInactive ? 0.4 : 1 },
                 style,
             ]}
         >
             <TouchableOpacity
                 accessibilityRole="button"
-                activeOpacity={v.pressOpacity}
                 {...touchableProps}                      // spread native props first
                 onPress={isInactive ? undefined : onPress}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 disabled={isInactive}
+                activeOpacity={1}
                 style={[
                     styles.btn,
                     // Computed variant + size styles
@@ -214,16 +193,12 @@ export const AppButton: React.FC<AppButtonProps> = ({
             >
                 {children ? children : (
                     <>
-                        {loading ? (
-                            <Spinner color={v.icon} size={s.iconSize + 2} />
-                        ) : iconLeft ? (
-                            <Ionicons name={iconLeft as any} size={s.iconSize} color={v.icon} />
-                        ) : null}
-
+                        {iconLeft && <Ionicons name={iconLeft as any} size={s.iconSize} color={v.icon} />}
 
                         <Text style={[styles.label, { color: v.text, fontSize: s.fontSize }]}>
-                            {loading ? loadingLabel && 'Loading…' : label}
+                            {loading ? loadingLabel ?? 'Loading....' : label}
                         </Text>
+                        {loading && <Spinner color={v.icon} size={s.iconSize} />}
 
                         {!loading && iconRight && (
                             <Ionicons name={iconRight as any} size={s.iconSize} color={v.icon} />

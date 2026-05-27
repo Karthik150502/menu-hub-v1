@@ -114,6 +114,8 @@ export const DESIGN_TOKENS: Record<string, string> = {
 
   // Accents (primary highlight color)
   feedbackWarning: '#ce9505c6',
+  feedbackWarningDark: '#533c01c6',
+  feedbackWarningDarkBg: '#473404c6',
   feedbackInfo: '#0373b4fc',
 
   // Subtle backgrounds (icon / chip / soft highlight)

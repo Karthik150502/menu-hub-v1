@@ -79,7 +79,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 onPress={onGetStarted}
                 accessibilityRole="button"
                 accessibilityLabel="Get started"
-                iconRight="arrow-forward"
+                iconRight="chevron-forward-outline"
                 label={"Get Started"}
                 fullWidth
             />

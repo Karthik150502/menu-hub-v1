@@ -108,7 +108,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
             tag: '',
             ...dishToFormValues(defaultValues),
         },
-        mode: 'onBlur',
+        mode: 'onSubmit',
         reValidateMode: 'onChange',
     });
 
@@ -294,6 +294,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
             <FormItem span="full">
                 <AppButton
                     size="lg"
+                    variant="outline"
                     label={isSubmitting ? 'Saving…' : submitLabel}
                     disabled={!isDirty || isSubmitting}
                     onPress={handleSubmit(onValid, onInvalid)}
