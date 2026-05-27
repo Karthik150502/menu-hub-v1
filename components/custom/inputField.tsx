@@ -9,9 +9,9 @@ import {
     TextInput,
     View,
 } from 'react-native';
-// eslint-disable-next-line import/no-named-as-default
-import AppBanner from './appBanner';
+
 import Text from './appText';
+import ErrorText from './errortext';
 
 const T = {
     inputBg: DESIGN_TOKENS.inputBg,
@@ -99,7 +99,7 @@ const Field: React.FC<FieldProps> = ({
             </Animated.View>
 
             {error
-                ? <AppBanner dismissible={false} title={label} type="warning" message={error} /> : hint
+                ? <ErrorText message={error} /> : hint
                     ? <Text style={fieldStyles.hint}>{hint}</Text>
                     : null
             }
@@ -108,7 +108,7 @@ const Field: React.FC<FieldProps> = ({
 };
 
 export const fieldStyles = StyleSheet.create({
-    wrapper: { marginBottom: SPACING.xl },
+    wrapper: { marginBottom: SPACING.xl, width: '100%' },
     labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
     label: { color: T.textLabel, ...TYPOGRAPHY.label, letterSpacing: 1.1, textTransform: 'uppercase' },
     optional: { marginLeft: SPACING.sm, color: T.textMuted, ...TYPOGRAPHY.overline },

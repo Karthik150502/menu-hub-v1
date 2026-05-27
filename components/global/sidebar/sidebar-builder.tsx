@@ -1,3 +1,4 @@
+import Text from '@/components/custom/appText';
 import { BottomToastPortal } from '@/components/feedback/BottomToast';
 import { ToastPortal } from '@/components/feedback/Toast';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
@@ -16,7 +17,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ViewStyle,

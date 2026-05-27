@@ -15,23 +15,68 @@ import {
     View
 } from 'react-native';
 
+import {
+    Controller,
+    SubmitErrorHandler,
+    SubmitHandler,
+    useForm
+} from 'react-hook-form';
+
+import Field from '@/components/custom/inputField';
+import { mobileLoginSchema, PhoneFormValues } from '@/types/zod/validations/mobile_login';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface RegisterScreenProps {
+
+export interface RegisterScreenProps {
+    defaultValues?: {
+        phone: string
+    };
+    onSubmit?: (mobile: {
+        phone: string
+    }) => void;
+    submitLabel?: string;
+    isSubmitting?: boolean;
     onBack?: () => void
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const RegisterScreen: React.FC<RegisterScreenProps> = () => {
+export const RegisterScreen: React.FC<RegisterScreenProps> = ({
+    onSubmit,
+    defaultValues,
+}) => {
 
     const toast = useToast();
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isDirty },
+    } = useForm<PhoneFormValues>({
+        resolver: zodResolver(mobileLoginSchema),
+        defaultValues: { phone: '', ...defaultValues },
+        mode: "onSubmit",
+        reValidateMode: 'onChange',
+    });
+
+    const onValid: SubmitHandler<PhoneFormValues> = (values) => {
+        onSubmit?.(values);
+        router.push(`/otp?phno=${values.phone}`)
+        toast.success(`Otp has been sent to ${values.phone}`, "OTP Sent")
+    };
+
+    const onInvalid: SubmitErrorHandler<PhoneFormValues> = (errs) => {
+        console.warn('[MobileLoginForm] Validation failed', errs);
+        toast.warning('Resolve all the errors before submitting');
+    };
 
     return <AuthPage onBack={() => {
         router.back()
     }} backLabel="back">
         {/* ── Content below the hero ── */}
-        <View style={styles.content}>
+        <View style={styles.container}>
             {/* Headline */}
             <View style={styles.headlineWrap}>
                 <PageIntro
@@ -39,17 +84,32 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                     subtitle="Enter the phone number to create your restaurant account."
                 />
             </View>
-            <AppButton
-                fullWidth
-                variant="primary"
-                accessibilityRole="button"
-                accessibilityLabel="Send OTP"
-                onPress={() => {
-                    // router.push("/otp")
-                    toast.error("Hello boys", "Title")
-                }}
-                label='Send OTP'
-            />
+            <View style={styles.content}>
+                <Controller
+                    control={control}
+                    name="phone"
+                    render={({ field: { value, onChange, onBlur } }) => (
+                        <Field
+                            label="Phone number"
+                            value={value}
+                            onChange={onChange}
+                            onBlur={onBlur}
+                            keyboardType="numeric"
+                            placeholder="e.g. 9876543210"
+                            error={errors.phone?.message}
+                        />
+                    )}
+                />
+                <AppButton
+                    fullWidth
+                    variant="outline"
+                    accessibilityRole="button"
+                    accessibilityLabel="Send OTP"
+                    disabled={!isDirty}
+                    onPress={handleSubmit(onValid, onInvalid)}
+                    label='Send OTP'
+                />
+            </View>
         </View>
 
     </AuthPage>
@@ -59,13 +119,18 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = () => {
 
 const styles = StyleSheet.create({
 
-    // ── Content ─────────────────────────────────────────────────────────────
-    content: {
+    // ── Container ─────────────────────────────────────────────────────────────
+    container: {
         alignItems: 'center',
-        // paddingHorizontal: SPACING.lg,
         flex: 1,
         display: "flex",
-        flexDirection: "column",
+        justifyContent: "flex-start",
+    },
+    content: {
+        alignItems: 'center',
+        height: "auto",
+        width: "100%",
+        display: "flex",
         justifyContent: "flex-start",
     },
 
