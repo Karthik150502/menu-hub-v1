@@ -1,4 +1,5 @@
 import { CATEGORIES } from '@/constants/mock-data';
+import { DishFormValues } from '@/types/dish';
 import { dishSchema } from '@/types/zod/validations/dish';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect } from 'react';
@@ -17,21 +18,9 @@ import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
 import { FormGrid, FormItem } from '../forms/formGrid';
 import { Dish } from '../interactive/dishes';
+import { PriceEditorSection } from './priceEditorSection';
 import { Section } from './section';
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface DishFormValues {
-    name: string;
-    description?: string;
-    price: string;
-    currency: string;
-    category: string;
-    imageUrl?: string;
-    available: boolean;
-    veg: boolean;
-    showInMenu?: boolean;
-    tag?: string;
-}
 
 export interface DishEditCreateFormProps {
     /** Pre-populate the form when editing an existing dish. Omit for "create" mode. */
@@ -51,7 +40,7 @@ function dishToFormValues(dish?: Partial<Dish>): Partial<DishFormValues> {
     return {
         name: dish.name ?? '',
         description: dish.description ?? '',
-        price: dish.price != null ? String(dish.price) : '',
+        basePrice: dish.price != null ? String(dish.price) : '',
         currency: dish.currency ?? '₹',
         category: dish.category ?? '',
         imageUrl: dish.imageUrl ?? '',
@@ -66,7 +55,7 @@ function formValuesToDish(values: DishFormValues): Omit<Dish, 'id'> {
     return {
         name: values.name.trim(),
         description: values.description?.trim() ?? '',
-        price: parseFloat(values.price),
+        price: parseFloat(values.basePrice),
         currency: '₹',
         category: values.category,
         imageUrl: values.imageUrl?.trim() || undefined,
@@ -98,7 +87,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
         defaultValues: {
             name: '',
             description: '',
-            price: '',
+            basePrice: '',
             currency: '₹',
             category: '',
             imageUrl: '',
@@ -115,7 +104,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
     // Sync form when defaultValues changes (switching between edit targets)
     useEffect(() => {
         reset({
-            name: '', description: '', price: '', currency: '₹',
+            name: '', description: '', basePrice: '', currency: '₹',
             category: '', imageUrl: '', available: true, veg: false,
             showInMenu: true, tag: '',
             ...dishToFormValues(defaultValues),
@@ -195,19 +184,23 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
 
             {/* ── Pricing ──────────────────────────────────────────────── */}
             <FormItem span="full">
-                <Section title="Pricing" />
+                <Section title="Pricing Details" />
+            </FormItem>
+
+            <FormItem span="full">
+                <PriceEditorSection />
             </FormItem>
 
             <FormItem span={1}>
                 <Controller
                     control={control}
-                    name="price"
+                    name="basePrice"
                     render={({ field: { value, onChange, onBlur } }) => (
                         <PriceField
                             value={value}
                             onChange={onChange}
                             onBlur={onBlur}
-                            error={errors.price?.message}
+                            error={errors.basePrice?.message}
                         />
                     )}
                 />

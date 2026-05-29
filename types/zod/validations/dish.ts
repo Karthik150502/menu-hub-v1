@@ -16,7 +16,7 @@ export const dishSchema = z.object({
         .optional(),
 
     // Price is a string in the form — coerce and validate as a number
-    price: z
+    basePrice: z
         .string()
         .refine(v => !isNaN(parseFloat(v)), { message: 'Enter a suitable price for the item' })
         .refine(v => parseFloat(v) <= 100_000, { message: 'Price seems too high' }),
