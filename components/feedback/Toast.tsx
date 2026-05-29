@@ -2,6 +2,8 @@ import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { FONT_SIZES, TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { dismissToast, selectToasts, showToast, Toast as ReduxToast } from '@/store/uiSlice';
 import { Ionicons } from '@expo/vector-icons';
 import React, {
     createContext,
@@ -32,9 +34,7 @@ export interface ToastOptions {
     duration?: number;
 }
 
-interface ToastEntry extends ToastOptions {
-    id: number;
-}
+type ToastEntry = ReduxToast;
 
 interface ToastContextValue {
     show: (opts: ToastOptions) => void;
@@ -44,7 +44,7 @@ interface ToastContextValue {
     info: (message: string, title?: string) => void;
     // Exposed so ToastPortal can render the same toasts inside a Modal
     toasts: ToastEntry[];
-    dismiss: (id: number) => void;
+    dismiss: (id: string) => void;
     registerPortal: () => void;
     unregisterPortal: () => void;
 }
@@ -81,7 +81,7 @@ const SLIDE_FROM = -120; // slides in from above
 
 const ToastItem: React.FC<{
     entry: ToastEntry;
-    onDismiss: (id: number) => void;
+    onDismiss: (id: string) => void;
 }> = ({ entry, onDismiss }) => {
     const cfg = TOAST_CONFIG[entry.type ?? 'info'];
     const translateY = useRef(new Animated.Value(SLIDE_FROM)).current;
@@ -163,7 +163,9 @@ const ToastItem: React.FC<{
                 {entry.title ? (
                     <Text style={styles.title} numberOfLines={4} ellipsizeMode="tail">{entry.title}</Text>
                 ) : null}
-                <Text style={styles.message} numberOfLines={3}>{entry.message}</Text>
+                {entry.message ? (
+                    <Text style={styles.message} numberOfLines={3}>{entry.message}</Text>
+                ) : null}
             </View>
 
             {/* Close */}
@@ -187,7 +189,7 @@ const ToastItem: React.FC<{
 
 export const ToastContainer: React.FC<{
     toasts: ToastEntry[];
-    onDismiss: (id: number) => void;
+    onDismiss: (id: string) => void;
 }> = ({ toasts, onDismiss }) => (
     <View style={styles.container} pointerEvents="box-none">
         {toasts.map(entry => (
@@ -203,22 +205,23 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [toasts, setToasts] = useState<ToastEntry[]>([]);
+    const dispatch = useAppDispatch();
+    const toasts = useAppSelector(selectToasts);
     const [hasPortal, setHasPortal] = useState(false);
-    const counter = useRef(0);
     const portalCount = useRef(0);
 
     const show = useCallback((opts: ToastOptions) => {
-        setToasts(prev => {
-            if (prev.length >= 2) return prev;
-            const id = ++counter.current;
-            return [...prev, { ...opts, id }];
-        });
-    }, []);
+        dispatch(showToast({
+            type: opts.type ?? 'info',
+            title: opts.title,
+            message: opts.message,
+            duration: opts.duration,
+        }));
+    }, [dispatch]);
 
-    const dismiss = useCallback((id: number) => {
-        setToasts(prev => prev.filter(t => t.id !== id));
-    }, []);
+    const dismiss = useCallback((id: string) => {
+        dispatch(dismissToast(id));
+    }, [dispatch]);
 
     const registerPortal = useCallback(() => {
         portalCount.current += 1;

@@ -5,11 +5,12 @@ import { RootState } from './store';
 // The UI slice owns all ephemeral display state that doesn't belong to any
 // single domain slice — modal visibility, sidebar, toasts, active filters etc.
 
-interface Toast {
+export interface Toast {
     id: string;
     type: 'success' | 'error' | 'warning' | 'info';
-    title: string;
+    title?: string;
     message?: string;
+    duration?: number;
 }
 
 interface UiState {
@@ -47,10 +48,8 @@ const uiSlice = createSlice({
 
         // Toasts
         showToast(s, a: PayloadAction<Omit<Toast, 'id'>>) {
-            s.toasts.push({
-                ...a.payload,
-                id: Date.now().toString(),
-            });
+            if (s.toasts.length >= 2) return;
+            s.toasts.push({ ...a.payload, id: Date.now().toString() });
         },
         dismissToast(s, a: PayloadAction<string>) {
             s.toasts = s.toasts.filter(t => t.id !== a.payload);
