@@ -95,6 +95,7 @@ export const DESIGN_TOKENS: Record<string, string> = {
   // ── Accent ────────────────────────────────────────────────────────────────
   accentDefault: '#9400AB',
   primaryBright: '#AA00FF',
+  primaryBrightFaint: '#f200ff78',
   bottomToastBg: 'rgba(22,22,32,0.96)',
 
   /** ~15% opacity tint of accentDefault for chip/badge backgrounds */
