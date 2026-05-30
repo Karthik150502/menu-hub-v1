@@ -41,6 +41,7 @@ export const DIMENSIONS = {
     barShort: 12,
     barFull: 18,
 
+    inputFieldHeight: 55,
     // ── Feature / hero icon container ─────────────────────────────────────────
     featureIcon: 80,
 

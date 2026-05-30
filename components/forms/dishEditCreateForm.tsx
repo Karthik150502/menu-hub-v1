@@ -2,7 +2,7 @@ import { CATEGORIES } from '@/constants/mock-data';
 import { DishFormValues } from '@/types/dish';
 import { dishSchema } from '@/types/zod/validations/dish';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Controller,
     SubmitErrorHandler,
@@ -18,6 +18,7 @@ import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
 import { FormGrid, FormItem } from '../forms/formGrid';
 import { Dish } from '../interactive/dishes';
+import DatePicker from '../utils/DatePicker';
 import { PriceEditorSection } from './priceEditorSection';
 import { Section } from './section';
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -76,6 +77,9 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
     isSubmitting = false,
 }) => {
     const { info: bottomInfo } = useBottomToast();
+
+    // Date only
+    const [date, setDate] = useState<Date | null>(null);
 
     const {
         control,
@@ -143,6 +147,21 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
                             error={errors.name?.message}
                         />
                     )}
+                />
+            </FormItem>
+
+            <FormItem span={1}>
+                <DatePicker
+                    label="Discount offer valid duration"
+                    value={date}
+                    mode="range"
+                    dateConstraint={{
+                        type: "future"
+                    }}
+                    onChange={setDate}
+                    onClear={() => setDate(null)}
+                // yearStart={1970}
+                // yearEnd={2100}
                 />
             </FormItem>
 
