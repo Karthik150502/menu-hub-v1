@@ -17,7 +17,7 @@ import Spinner from './loadingSpinner';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'ghostTransparent' | 'success' | 'warning' | 'accent' | 'outline';
-export type ButtonSize = 'icon' | 'sm' | 'md' | 'lg';
+export type ButtonSize = 'icon' | 'sm' | 'md' | 'lg' | 'base';
 
 export interface AppButtonProps extends Omit<TouchableOpacityProps, 'style' | 'activeOpacity'> {
     label?: string;
@@ -87,7 +87,8 @@ const C = {
 const SIZE = {
     icon: { paddingH: SPACING.xs, paddingV: SPACING.xs, ...TYPOGRAPHY.bodySmall, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconXs, gap: 0, radius: BORDER_RADIUS.lg },
     sm: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodySmall, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconSm, gap: SPACING.xs, radius: BORDER_RADIUS.xl },
-    md: { paddingH: SPACING.xl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyBase, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconMd, gap: SPACING.xsm, radius: BORDER_RADIUS.lg },
+    md: { paddingH: SPACING.xl, paddingV: SPACING.md, ...TYPOGRAPHY.bodyBase, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconMd, gap: SPACING.xsm, radius: BORDER_RADIUS.xxl },
+    base: { paddingH: SPACING.md, paddingV: SPACING.sm, ...TYPOGRAPHY.bodyBase, fontWeight: FONT_WEIGHTS.bold, iconSize: DIMENSIONS.iconMd, gap: SPACING.xsm, radius: BORDER_RADIUS.xl },
     lg: { paddingH: SPACING.xxl, paddingV: SPACING.lg, ...TYPOGRAPHY.bodyLarge, fontWeight: FONT_WEIGHTS.semibold, iconSize: DIMENSIONS.iconLg, gap: SPACING.ssm, radius: BORDER_RADIUS.xxl },
 } as const;
 
@@ -132,24 +133,35 @@ export const AppButton: React.FC<AppButtonProps> = ({
     ...touchableProps
 }) => {
     const pressAnim = useRef(new Animated.Value(1)).current;
+    const opacityAnim = useRef(new Animated.Value(1)).current;
     const isInactive = disabled || loading;
     const v = getVariantStyle(variant);
     const s = SIZE[size];
 
     const handlePressIn = (e: any) => {
         if (!isInactive) {
-            Animated.spring(pressAnim, {
-                toValue: 0.96, useNativeDriver: true, speed: 50, bounciness: 0,
-            }).start();
+            Animated.parallel([
+                Animated.spring(pressAnim, {
+                    toValue: 0.96, useNativeDriver: true, speed: 50, bounciness: 0,
+                }),
+                Animated.timing(opacityAnim, {
+                    toValue: v.pressOpacity, useNativeDriver: true, duration: 80,
+                }),
+            ]).start();
         }
         externalPressIn?.(e);
     };
 
     const handlePressOut = (e: any) => {
         if (!isInactive) {
-            Animated.spring(pressAnim, {
-                toValue: 1, useNativeDriver: true, speed: 28, bounciness: 5,
-            }).start();
+            Animated.parallel([
+                Animated.spring(pressAnim, {
+                    toValue: 1, useNativeDriver: true, speed: 28, bounciness: 5,
+                }),
+                Animated.timing(opacityAnim, {
+                    toValue: 1, useNativeDriver: true, duration: 150,
+                }),
+            ]).start();
         }
         externalPressOut?.(e);
     };
@@ -159,7 +171,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
             style={[
                 styles.wrapper,
                 fullWidth && styles.wrapperFull,
-                { transform: [{ scale: pressAnim }], opacity: isInactive ? 0.4 : 1 },
+                { transform: [{ scale: pressAnim }], opacity: isInactive ? 0.4 : opacityAnim },
                 style,
             ]}
         >
@@ -170,7 +182,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 disabled={isInactive}
-                activeOpacity={1}
+                activeOpacity={0.85}
                 style={[
                     styles.btn,
                     // Computed variant + size styles
