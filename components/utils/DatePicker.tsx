@@ -642,7 +642,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
                         <View style={styles.monthYearGroup}>
                             <Text style={styles.monthLabel}>{MONTHS[viewMonth]}</Text>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => setYearPickerOpen(v => !v)}
                                 style={[styles.yearPill, yearPickerOpen && styles.yearPillActive]}
                                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -654,7 +654,17 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                                     size={12}
                                     color={DESIGN_TOKENS.primaryBright}
                                 />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
+
+                            <AppButton
+                                label={viewYear.toString()}
+                                onPress={() => setYearPickerOpen(v => !v)}
+                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                                accessibilityLabel={yearPickerOpen ? 'Close year picker' : 'Select year'}
+                                iconRight={yearPickerOpen ? 'chevron-up-outline' : 'chevron-down-outline'}
+                                variant="outline"
+                                size="base"
+                            />
                         </View>
 
                         <TouchableOpacity
@@ -868,9 +878,8 @@ const styles = StyleSheet.create({
     },
     monthLabel: {
         fontSize: FONT_SIZES.lg,
-        fontWeight: '700',
+        fontWeight: FONT_WEIGHTS.bold,
         color: DESIGN_TOKENS.textPrimary,
-        letterSpacing: 0.2,
     },
     yearPill: {
         flexDirection: 'row',

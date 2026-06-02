@@ -1,9 +1,6 @@
-// ─── Currency ─────────────────────────────────────────────────────────────────
+// ─── Building blocks ──────────────────────────────────────────────────────────
 
-/** ISO 4217 currency code or common symbol */
 export type CurrencyCode = 'INR' | 'USD' | 'EUR' | 'GBP' | 'AED' | string;
-
-/** Human-readable symbol shown in the UI */
 export type CurrencySymbol = '₹' | '$' | '€' | '£' | 'AED' | string;
 
 export interface Currency {
@@ -11,105 +8,190 @@ export interface Currency {
     symbol: CurrencySymbol;
 }
 
-// ─── Tax ─────────────────────────────────────────────────────────────────────
-
-export type TaxName = 'GST' | 'VAT' | 'Service Tax' | 'IGST' | string;
+// ─── ItemTax ──────────────────────────────────────────────────────────────────
+// A single, reusable tax rule stored in the catalogue.
 
 export interface ItemTax {
-    /** Tax label shown on bill e.g. "GST", "VAT" */
-    name: TaxName;
-    /** Percentage rate e.g. 5, 12, 18 */
-    rate: number;
-    /**
-     * Computed tax amount = base_price × (rate / 100).
-     * Stored for audit trail — never recalculate from rate alone.
-     */
-    amount: number;
-    /**
-     * If true: base_price already includes tax (most Indian restaurant menus).
-     * If false: tax is added on top of base_price at checkout.
-     */
-    inclusive: boolean;
+    id: string;
+    name: string;   // "GST", "CGST", "SGST", "Service Charge"
+    rate: number;   // percentage, e.g. 2.5, 5, 18
+    inclusive: boolean;  // true = already in displayed price
+    description?: string;
 }
 
-// ─── Discount ─────────────────────────────────────────────────────────────────
+// ─── TaxGroup ─────────────────────────────────────────────────────────────────
+// A named bundle of ItemTaxes. One group can be referenced by many dishes.
+// e.g. "Restaurant Standard" = [CGST 2.5% + SGST 2.5%]
+
+export interface TaxGroup {
+    id: string;
+    name: string;   // "Restaurant Standard", "Liquor"
+    description?: string;
+    taxes: ItemTax[];
+    /** Pre-computed sum of member rates — for display only */
+    combinedRate: number;
+}
+
+// ─── TaxLineItem ──────────────────────────────────────────────────────────────
+// The single tax configuration attached to one ItemPrice.
+// Can hold any mix of standalone ItemTaxes and/or TaxGroups.
+// References the ItemPrice it belongs to via itemPriceId.
+//
+// Example: a dish with a group (CGST+SGST) AND a standalone packaging cess:
+//   groups: [restaurantStandard]
+//   taxes:  [packagingCess]
+//
+// Example: a dish with only individually selected taxes:
+//   groups: []
+//   taxes:  [cgst, sgst, serviceCharge]
+//
+// Example: a dish with multiple groups (rare but supported):
+//   groups: [baseGroup, stateSpecialGroup]
+//   taxes:  []
+
+export interface TaxLineItem {
+    id: string;
+    /** The ItemPrice this line item belongs to */
+    itemPriceId: string;
+    /** Zero or more TaxGroups applied to this price */
+    groups: TaxGroup[];
+    /** Zero or more individually applied ItemTaxes (outside any group) */
+    taxes: ItemTax[];
+
+    /**
+     * Computed amounts keyed by the source ID (ItemTax.id or TaxGroup.id).
+     * Stored for audit and receipt rendering — never recalculate at read time.
+     *
+     * For a group the key is the group ID; for an individual tax it's the tax ID.
+     * Use flattenTaxLines() to expand group entries into per-member lines.
+     */
+    computedAmounts: Record<string, number>;
+
+    /** Sum of all computedAmounts — stored for fast access */
+    totalTaxAmount: number;
+}
+
+// ─── ItemPrice ────────────────────────────────────────────────────────────────
 
 export type DiscountType = 'percentage' | 'fixed';
 export type DiscountOnType = 'basePrice' | 'priceIncludingTaxes';
 
-export interface ItemDiscount {
-    /** Is discount apply to the base price or the price including taxes */
-    discountOn: DiscountOnType
-    /** How the discount is calculated */
-    type: DiscountType;
-    /**
-     * The discount value.
-     * type='percentage' → 0–100 (e.g. 40 means 40% off)
-     * type='fixed'      → absolute amount in the Item's currency (e.g. ₹50 off)
-     */
-    value: number;
-    /**
-    * Pre-computed discounted price stored for fast reads.
-    * = base_price − (base_price × value/100)  for percentage
-    * = base_price − value                      for fixed
-    */
-    discounted_price: number;
-    /** Short label shown on the Item card e.g. "40% off 💚", "Happy Hours" */
-    label?: string;
-    /** ISO 8601 — offer starts at this time. Null = always active */
-    valid_from?: string | null;
-    /** ISO 8601 — offer expires at this time. Null = no expiry */
-    valid_until?: string | null;
-}
-
-// ─── Core price ──────────────────────────────────────────────────────────────
-
 export interface ItemPrice {
-    /** The menu price of the Item before any discount */
-    base_price: number;
+    id: string;
+    basePrice: number;
     currency: Currency;
-    /** Tax config — null if this Item is not taxed separately */
-    tax: ItemTax | null;
-    /** Active discount — null if no discount is running */
-    discount: ItemDiscount | null;
+
     /**
-     * The price the customer actually pays.
-     * = discounted_price (if discount active) else base_price.
-     * Always stored — never compute on the frontend.
+     * The single TaxLineItem for this price — holds all groups + individual taxes.
+     * Null = untaxed item.
      */
-    final_price: number;
-    /**
-     * Original price shown crossed-out when a discount is active.
-     * e.g. ~~₹400~~ ₹320
-     * Null if no MRP to display (base_price IS the MRP).
-     */
+    taxLineItem: TaxLineItem | null;
+
+    /** Mirrors TaxLineItem.totalTaxAmount for fast access without joining */
+    totalTaxAmount: number;
+
+    finalPrice: number;
     mrp?: number | null;
+
+    discountOn: DiscountOnType;
+    discountType: DiscountType;
+    discountValue: number;   // 0 = no discount
+    discountLabel?: string;
+    discountValidFrom?: string | null;
+    discountValidUntil?: string | null;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** True if a discount is currently valid (time-bound check) */
-export function isDiscountActive(discount: ItemDiscount | null): boolean {
-    if (!discount) return false;
+/** Whether the discount on a price is currently active */
+export function isDiscountActive(price: ItemPrice): boolean {
+    if (!price.discountValue) return false;
     const now = Date.now();
-    const from = discount.valid_from ? new Date(discount.valid_from).getTime() : -Infinity;
-    const until = discount.valid_until ? new Date(discount.valid_until).getTime() : Infinity;
+    const from = price.discountValidFrom
+        ? new Date(price.discountValidFrom).getTime() : -Infinity;
+    const until = price.discountValidUntil
+        ? new Date(price.discountValidUntil).getTime() : Infinity;
     return now >= from && now <= until;
 }
 
-/** Format a price for display: symbol + amount to 2dp */
+/** "₹192" or "$15.50" */
 export function formatPrice(amount: number, currency: Currency): string {
     return `${currency.symbol}${amount.toFixed(2).replace(/\.00$/, '')}`;
 }
 
-/** Compute final price from a ItemPrice (does not mutate) */
+/**
+ * Expand a TaxLineItem into flat { name, rate, amount } lines for a receipt.
+ * Group entries are expanded into one line per member tax.
+ */
+export function flattenTaxLines(
+    lineItem: TaxLineItem | null,
+): { id: string; name: string; rate: number; amount: number }[] {
+    if (!lineItem) return [];
+
+    const lines: { id: string; name: string; rate: number; amount: number }[] = [];
+
+    for (const group of lineItem.groups) {
+        // Distribute the group's total amount evenly across its members
+        // using each member's rate as a weight (standard apportionment)
+        const groupTotal = lineItem.computedAmounts[group.id] ?? 0;
+        const totalRate = group.combinedRate || 1;
+        for (const tax of group.taxes) {
+            lines.push({
+                id: tax.id,
+                name: tax.name,
+                rate: tax.rate,
+                amount: parseFloat(((tax.rate / totalRate) * groupTotal).toFixed(2)),
+            });
+        }
+    }
+
+    for (const tax of lineItem.taxes) {
+        lines.push({
+            id: tax.id,
+            name: tax.name,
+            rate: tax.rate,
+            amount: lineItem.computedAmounts[tax.id] ?? 0,
+        });
+    }
+
+    return lines;
+}
+
+/**
+ * Compute the total tax amount from a TaxLineItem against a taxable base.
+ * Used for live preview in the form — don't use for stored values.
+ */
+export function computeTotalTax(lineItem: TaxLineItem | null, taxableBase: number): number {
+    if (!lineItem) return 0;
+
+    let total = 0;
+
+    for (const group of lineItem.groups) {
+        for (const tax of group.taxes) {
+            if (!tax.inclusive) total += taxableBase * (tax.rate / 100);
+        }
+    }
+    for (const tax of lineItem.taxes) {
+        if (!tax.inclusive) total += taxableBase * (tax.rate / 100);
+    }
+
+    return parseFloat(total.toFixed(2));
+}
+
+/**
+ * Compute final price for live form preview.
+ * The stored ItemPrice.finalPrice is the source of truth for everything else.
+ */
 export function computeFinalPrice(price: ItemPrice): number {
-    if (!price.discount || !isDiscountActive(price.discount)) {
-        return price.base_price;
-    }
-    const { type, value } = price.discount;
-    if (type === 'percentage') {
-        return parseFloat((price.base_price * (1 - value / 100)).toFixed(2));
-    }
-    return parseFloat((price.base_price - value).toFixed(2));
+    if (!isDiscountActive(price)) return price.basePrice;
+
+    const base = price.discountOn === 'priceIncludingTaxes'
+        ? price.basePrice + price.totalTaxAmount
+        : price.basePrice;
+
+    const discounted = price.discountType === 'percentage'
+        ? base * (1 - price.discountValue / 100)
+        : base - price.discountValue;
+
+    return parseFloat(discounted.toFixed(2));
 }
