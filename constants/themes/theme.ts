@@ -69,6 +69,10 @@ export const DESIGN_TOKENS: Record<string, string> = {
   textMuted: 'rgba(255,255,255,0.25)',
   /** Disabled / placeholder text */
   textPlaceholder: 'rgba(255,255,255,0.20)',
+  /** Heavily dimmed text — disabled calendar days */
+  textFaint: 'rgba(255,255,255,0.15)',
+  /** Mid-dim text — inactive scroll picker items */
+  textTertiary: 'rgba(255,255,255,0.35)',
   /** Secondary descriptive text */
   textSubtle: 'rgba(255,255,255,0.38)',
   /** Section / category titles */
@@ -82,6 +86,9 @@ export const DESIGN_TOKENS: Record<string, string> = {
   background_1: '#110013',
   cardBg: '#1D1120',
   cardBorder: 'rgba(255,255,255,0.10)',
+
+  /** Bottom sheet / modal sheet background */
+  sheetBg: '#1A0B1E',
 
   /** Form input background */
   inputBg: 'rgba(255,255,255,0.04)',
@@ -134,6 +141,8 @@ export const DESIGN_TOKENS: Record<string, string> = {
 
 
   borderSubtle: 'rgba(255,255,255,0.07)',
+  /** Very subtle separators — divider lines in pickers/sheets */
+  borderFaint: 'rgba(255,255,255,0.06)',
   accentLineSubtle: 'rgba(99,179,237,0.18)',
   iconMuted: 'rgba(255,255,255,0.2)',
 
@@ -162,7 +171,19 @@ export const DESIGN_TOKENS: Record<string, string> = {
   primaryGlow: 'rgba(148,0,171,0.35)',
   primaryFaint: 'rgba(148,0,171,0.12)',
   primaryFaintDark: 'rgba(78, 3, 89, 0.12)',
+  /** Very faint tinted surface — active trigger background */
+  primarySurface: 'rgba(148,0,171,0.05)',
+  /** Scroll picker highlight background */
+  primaryTint: 'rgba(148,0,171,0.14)',
+  /** Light tint — range track fill, hover/active states */
+  primarySubtle: 'rgba(148,0,171,0.18)',
+  /** Light accent border — ampm button */
+  primaryBorderLight: 'rgba(148,0,171,0.30)',
+  /** Mid accent border — today cell, year pill */
+  primaryBorderMid: 'rgba(148,0,171,0.40)',
   primaryBorder: 'rgba(148,0,171,0.45)',
+  /** Strong accent border — active trigger */
+  primaryBorderStrong: 'rgba(148,0,171,0.55)',
 
   // ── White ─────────────────────────────────────────────────────────────────
   primaryWhite: '#FFFFFF',
@@ -181,6 +202,10 @@ export const DESIGN_TOKENS: Record<string, string> = {
   primaryRing: 'rgba(148,0,171,0.15)',
   primaryRingFaint: 'rgba(148,0,171,0.08)',
   whiteGhost: 'rgba(255,255,255,0.04)',
+
+  // ── Overlays ──────────────────────────────────────────────────────────────
+  /** Modal backdrop scrim */
+  backdropColor: 'rgba(0,0,0,0.55)',
 
   // ── Float card background ─────────────────────────────────────────────────
   floatCardBg: '#1E0C24',

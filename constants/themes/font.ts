@@ -1,9 +1,11 @@
 export const FONT_SIZES = {
     xxs: 8,
     xs: 10,
+    xsm: 11,
     sm: 12,
     compact: 13,
     md: 14,
+    mdx: 15,
     base: 16,
     lg: 18,
     xl: 20,
@@ -24,6 +26,12 @@ export const LINE_HEIGHTS = {
     tight: 1.2,
     normal: 1.4,
     relaxed: 1.6,
+} as const;
+
+export const LETTER_SPACING = {
+    tight: 0.3,
+    normal: 0.5,
+    label: 1.1,
 } as const;
 
 
