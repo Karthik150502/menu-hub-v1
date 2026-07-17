@@ -11,13 +11,16 @@ export const DIMENSIONS = {
     // ── Icon rendering sizes (for vector icon libraries) ─────────────────────
     iconXs: 8,
     iconSm: 13,
+    iconXmd: 14,
     iconMd: 15,
+    iconBase: 16,
     iconLg: 18,
 
     // ── Touch target / component sizes ────────────────────────────────────────
     // Reuse for: avatars, icon buttons, close buttons, icon wraps, dots
     touchSm: 20,
     touchMd: 24,
+    touchNav: 30,
     touchLg: 32,
     touchXl: 34,
     touchXxl: 38,
@@ -42,6 +45,20 @@ export const DIMENSIONS = {
     barFull: 18,
 
     inputFieldHeight: 55,
+
+    // ── Picker / scroll picker ────────────────────────────────────────────────
+    pickerRowH: 40,
+    scrollPickerItemH: 36,
+    scrollPickerW: 60,
+
+    // ── Border widths ─────────────────────────────────────────────────────────
+    borderWidthBase: 1,
+    borderWidthThin: 1.25,
+    borderWidthMedium: 1.5,
+
+    // ── Opacity ───────────────────────────────────────────────────────────────
+    opacityDisabled: 0.45,
+
     // ── Feature / hero icon container ─────────────────────────────────────────
     featureIcon: 80,
 
@@ -79,6 +96,7 @@ export const BORDER_RADIUS = {
     xxs: 2,    // progress bars, drag pill
     xs: 4,     // tiny rounds (badge dots)
     sm: 6,     // small chips
+    base: 8,   // nav buttons, ampm button, picker highlight
     md: 10,    // button sm
     lg: 12,    // inputs, toggle rows
     xl: 14,    // dropdown panels, stat cards

@@ -1,5 +1,5 @@
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
-import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from '@/constants/themes/font';
+import { FONT_SIZES, FONT_WEIGHTS, LETTER_SPACING, TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -105,7 +105,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 // ─── Year picker ──────────────────────────────────────────────────────────────
 
 const YEAR_COL = 3;
-const YEAR_ITEM_H = 40;
+const YEAR_ITEM_H = DIMENSIONS.pickerRowH;
 const DEFAULT_YEAR_START = 1900;
 const DEFAULT_YEAR_END = 2100;
 
@@ -177,11 +177,11 @@ const yp = StyleSheet.create({
         height: YEAR_ITEM_H,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: FONT_SIZES.base,
+        borderRadius: BORDER_RADIUS.xxl,
         padding: SPACING.xs,
     },
     cellSelected: {
-        borderWidth: 1.25,
+        borderWidth: DIMENSIONS.borderWidthThin,
         borderColor: DESIGN_TOKENS.primaryBright,
         backgroundColor: "transparent",
     },
@@ -291,7 +291,7 @@ const CalendarGrid: React.FC<{
     );
 };
 
-const CELL = 38;
+const CELL = DIMENSIONS.touchXxl;
 const cg = StyleSheet.create({
     grid: {
         flexDirection: 'row',
@@ -314,49 +314,49 @@ const cg = StyleSheet.create({
     },
     trackLeft: {
         position: 'absolute',
-        top: 6,
-        bottom: 6,
+        top: SPACING.xsm,
+        bottom: SPACING.xsm,
         left: 0,
         right: '50%',
-        backgroundColor: 'rgba(148,0,171,0.18)',
+        backgroundColor: DESIGN_TOKENS.primarySubtle,
     },
     trackRight: {
         position: 'absolute',
-        top: 6,
-        bottom: 6,
+        top: SPACING.xsm,
+        bottom: SPACING.xsm,
         left: '50%',
         right: 0,
-        backgroundColor: 'rgba(148,0,171,0.18)',
+        backgroundColor: DESIGN_TOKENS.primarySubtle,
     },
     cellSelected: {
         backgroundColor: DESIGN_TOKENS.accentDefault,
     },
     cellToday: {
-        borderWidth: 1.5,
-        borderColor: 'rgba(148,0,171,0.40)',
+        borderWidth: DIMENSIONS.borderWidthMedium,
+        borderColor: DESIGN_TOKENS.primaryBorderMid,
     },
     cellText: {
-        fontSize: 13,
-        fontWeight: '500',
+        fontSize: FONT_SIZES.compact,
+        fontWeight: FONT_WEIGHTS.medium,
         color: DESIGN_TOKENS.textPrimary,
     },
     cellTextOther: {
-        color: 'rgba(255,255,255,0.20)',
+        color: DESIGN_TOKENS.textPlaceholder,
     },
     cellTextToday: {
         color: DESIGN_TOKENS.primaryBright,
-        fontWeight: '700',
+        fontWeight: FONT_WEIGHTS.bold,
     },
     cellTextSelected: {
-        color: '#fff',
-        fontWeight: '700',
+        color: DESIGN_TOKENS.primaryWhite,
+        fontWeight: FONT_WEIGHTS.bold,
     },
     cellTextInRange: {
-        color: 'rgba(255,255,255,0.90)',
-        fontWeight: '600',
+        color: DESIGN_TOKENS.textPrimary,
+        fontWeight: FONT_WEIGHTS.semibold,
     },
     cellTextDisabled: {
-        color: 'rgba(255,255,255,0.15)',
+        color: DESIGN_TOKENS.textFaint,
     },
 });
 
@@ -597,7 +597,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 >
                     <Ionicons
                         name="calendar-outline"
-                        size={16}
+                        size={DIMENSIONS.iconBase}
                         color={hasValue ? DESIGN_TOKENS.accentDefault : DESIGN_TOKENS.textSubtle}
                     />
                     <Text
@@ -611,7 +611,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     </Text>
                     <Ionicons
                         name={open ? 'chevron-up-outline' : 'chevron-down-outline'}
-                        size={14}
+                        size={DIMENSIONS.iconXmd}
                         color={DESIGN_TOKENS.textSubtle}
                     />
                 </TouchableOpacity>
@@ -633,11 +633,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                         <TouchableOpacity
                             onPress={prevMonth}
                             style={[styles.navBtn, yearPickerOpen && styles.navBtnHidden]}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            hitSlop={{ top: SPACING.sm, bottom: SPACING.sm, left: SPACING.sm, right: SPACING.sm }}
                             accessibilityLabel="Previous month"
                             disabled={yearPickerOpen}
                         >
-                            <Ionicons name="chevron-back-outline" size={16} color={DESIGN_TOKENS.textSubtle} />
+                            <Ionicons name="chevron-back-outline" size={DIMENSIONS.iconBase} color={DESIGN_TOKENS.textSubtle} />
                         </TouchableOpacity>
 
                         <View style={styles.monthYearGroup}>
@@ -645,13 +645,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                             {/* <TouchableOpacity
                                 onPress={() => setYearPickerOpen(v => !v)}
                                 style={[styles.yearPill, yearPickerOpen && styles.yearPillActive]}
-                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                                hitSlop={{ top: SPACING.sm, bottom: SPACING.sm, left: SPACING.sm, right: SPACING.sm }}
                                 accessibilityLabel={yearPickerOpen ? 'Close year picker' : 'Select year'}
                             >
                                 <Text style={styles.yearPillText}>{viewYear}</Text>
                                 <Ionicons
                                     name={yearPickerOpen ? 'chevron-up-outline' : 'chevron-down-outline'}
-                                    size={12}
+                                    size={FONT_SIZES.sm}
                                     color={DESIGN_TOKENS.primaryBright}
                                 />
                             </TouchableOpacity> */}
@@ -659,7 +659,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                             <AppButton
                                 label={viewYear.toString()}
                                 onPress={() => setYearPickerOpen(v => !v)}
-                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                                hitSlop={{ top: SPACING.sm, bottom: SPACING.sm, left: SPACING.sm, right: SPACING.sm }}
                                 accessibilityLabel={yearPickerOpen ? 'Close year picker' : 'Select year'}
                                 iconRight={yearPickerOpen ? 'chevron-up-outline' : 'chevron-down-outline'}
                                 variant="outline"
@@ -670,11 +670,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                         <TouchableOpacity
                             onPress={nextMonth}
                             style={[styles.navBtn, yearPickerOpen && styles.navBtnHidden]}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            hitSlop={{ top: SPACING.sm, bottom: SPACING.sm, left: SPACING.sm, right: SPACING.sm }}
                             accessibilityLabel="Next month"
                             disabled={yearPickerOpen}
                         >
-                            <Ionicons name="chevron-forward-outline" size={16} color={DESIGN_TOKENS.textSubtle} />
+                            <Ionicons name="chevron-forward-outline" size={DIMENSIONS.iconBase} color={DESIGN_TOKENS.textSubtle} />
                         </TouchableOpacity>
                     </View>
 
@@ -769,7 +769,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     <View style={styles.footer}>
                         <AppButton
                             onPress={handleClear}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            hitSlop={{ top: SPACING.sm, bottom: SPACING.sm, left: SPACING.sm, right: SPACING.sm }}
                             accessibilityLabel="Clear date"
                             label="Clear"
                             variant="ghostTransparent"
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
     fieldLabel: {
         color: DESIGN_TOKENS.textLabel,
         ...TYPOGRAPHY.label,
-        letterSpacing: 1.1,
+        letterSpacing: LETTER_SPACING.label,
         textTransform: 'uppercase',
         marginBottom: SPACING.sm,
     },
@@ -807,49 +807,49 @@ const styles = StyleSheet.create({
         gap: SPACING.sm,
         height: DIMENSIONS.inputFieldHeight,
         backgroundColor: DESIGN_TOKENS.inputBg,
-        borderWidth: 1.5,
+        borderWidth: DIMENSIONS.borderWidthMedium,
         borderColor: DESIGN_TOKENS.whiteFadeXs,
         borderRadius: BORDER_RADIUS.lg,
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.md,
-        marginBottom: SPACING.xl
+        marginBottom: SPACING.xl,
     },
     triggerOpen: {
-        borderColor: 'rgba(148,0,171,0.55)',
-        backgroundColor: 'rgba(148,0,171,0.05)',
+        borderColor: DESIGN_TOKENS.primaryBorderStrong,
+        backgroundColor: DESIGN_TOKENS.primarySurface,
     },
     triggerDisabled: {
-        opacity: 0.45,
+        opacity: DIMENSIONS.opacityDisabled,
     },
     triggerText: {
         ...TYPOGRAPHY.body,
         flex: 1,
         color: DESIGN_TOKENS.textPrimary,
-        fontWeight: '500',
+        fontWeight: FONT_WEIGHTS.medium,
     },
     triggerPlaceholder: {
         color: DESIGN_TOKENS.textPlaceholder,
     },
     rangeHint: {
-        fontSize: 11,
+        fontSize: FONT_SIZES.xsm,
         color: DESIGN_TOKENS.textSubtle,
         textAlign: 'center',
         paddingBottom: SPACING.xs,
-        letterSpacing: 0.3,
+        letterSpacing: LETTER_SPACING.tight,
     },
 
     // ── Modal / sheet ──────────────────────────────────────────────────────────
     backdrop: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.55)',
+        backgroundColor: DESIGN_TOKENS.backdropColor,
     },
 
     sheet: {
-        backgroundColor: '#1A0B1E',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: DESIGN_TOKENS.sheetBg,
+        borderTopLeftRadius: BORDER_RADIUS.card,
+        borderTopRightRadius: BORDER_RADIUS.card,
+        borderWidth: DIMENSIONS.borderWidthBase,
+        borderColor: DESIGN_TOKENS.whiteFadeXs,
     },
 
     pickerHeader: {
@@ -858,16 +858,16 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(255,255,255,0.06)',
+        borderBottomWidth: DIMENSIONS.borderWidthBase,
+        borderBottomColor: DESIGN_TOKENS.borderFaint,
     },
     navBtn: {
-        width: 30,
-        height: 30,
-        borderRadius: 8,
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.08)',
+        width: DIMENSIONS.touchNav,
+        height: DIMENSIONS.touchNav,
+        borderRadius: BORDER_RADIUS.base,
+        backgroundColor: DESIGN_TOKENS.ghostBg,
+        borderWidth: DIMENSIONS.borderWidthBase,
+        borderColor: DESIGN_TOKENS.whiteFadeXs,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -885,20 +885,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: SPACING.xsm,
-        borderWidth: 1.5,
-        borderColor: 'rgba(148,0,171,0.40)',
+        borderWidth: DIMENSIONS.borderWidthMedium,
+        borderColor: DESIGN_TOKENS.primaryBorderMid,
         borderRadius: BORDER_RADIUS.lg,
-        paddingHorizontal: SPACING.sm + 2,
-        paddingVertical: 5,
-        backgroundColor: 'rgba(148,0,171,0.08)',
+        paddingHorizontal: SPACING.ssm,
+        paddingVertical: SPACING.xsp,
+        backgroundColor: DESIGN_TOKENS.primaryRingFaint,
     },
     yearPillActive: {
         borderColor: DESIGN_TOKENS.primaryBright,
-        backgroundColor: 'rgba(148,0,171,0.18)',
+        backgroundColor: DESIGN_TOKENS.primarySubtle,
     },
     yearPillText: {
-        fontSize: 15,
-        fontWeight: '600',
+        fontSize: FONT_SIZES.mdx,
+        fontWeight: FONT_WEIGHTS.semibold,
         color: DESIGN_TOKENS.primaryBright,
     },
     navBtnHidden: {
@@ -918,10 +918,10 @@ const styles = StyleSheet.create({
     weekday: {
         width: `${100 / 7}%` as any,
         textAlign: 'center',
-        fontSize: 11,
-        fontWeight: '700',
-        color: 'rgba(255,255,255,0.25)',
-        letterSpacing: 0.5,
+        fontSize: FONT_SIZES.xsm,
+        fontWeight: FONT_WEIGHTS.bold,
+        color: DESIGN_TOKENS.textMuted,
+        letterSpacing: LETTER_SPACING.normal,
     },
 
     // ── Footer ────────────────────────────────────────────────────────────────
@@ -931,8 +931,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        borderTopWidth: 1,
-        borderTopColor: 'rgba(255,255,255,0.06)',
+        borderTopWidth: DIMENSIONS.borderWidthBase,
+        borderTopColor: DESIGN_TOKENS.borderFaint,
     }
 });
 

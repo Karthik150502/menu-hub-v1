@@ -1,4 +1,5 @@
-import { TYPOGRAPHY } from '@/constants/themes/font';
+import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
+import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import React, { useEffect, useRef, useState } from 'react';
@@ -31,7 +32,7 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'))
 
 // ─── Scroll picker ────────────────────────────────────────────────────────────
 
-const ITEM_H = 36;
+const ITEM_H = DIMENSIONS.scrollPickerItemH;
 
 const ScrollPicker: React.FC<{
     items: string[];
@@ -90,7 +91,7 @@ const ScrollPicker: React.FC<{
 const sp = StyleSheet.create({
     wrap: {
         height: ITEM_H * 3,
-        width: 60,
+        width: DIMENSIONS.scrollPickerW,
         overflow: 'hidden',
         position: 'relative',
     },
@@ -100,8 +101,8 @@ const sp = StyleSheet.create({
         left: 0,
         right: 0,
         height: ITEM_H,
-        backgroundColor: 'rgba(148,0,171,0.14)',
-        borderRadius: 8,
+        backgroundColor: DESIGN_TOKENS.primaryTint,
+        borderRadius: BORDER_RADIUS.base,
         zIndex: 1,
         pointerEvents: 'none',
     },
@@ -111,14 +112,14 @@ const sp = StyleSheet.create({
         justifyContent: 'center',
     },
     itemText: {
-        fontSize: 15,
-        fontWeight: '500',
-        color: 'rgba(255,255,255,0.35)',
+        fontSize: FONT_SIZES.mdx,
+        fontWeight: FONT_WEIGHTS.medium,
+        color: DESIGN_TOKENS.textTertiary,
     },
     itemTextActive: {
         color: DESIGN_TOKENS.textPrimary,
-        fontWeight: '700',
-        fontSize: 17,
+        fontWeight: FONT_WEIGHTS.bold,
+        fontSize: FONT_SIZES.base,
     },
 });
 
@@ -161,8 +162,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.sm,
-        borderTopWidth: 1,
-        borderTopColor: 'rgba(255,255,255,0.06)',
+        borderTopWidth: DIMENSIONS.borderWidthBase,
+        borderTopColor: DESIGN_TOKENS.borderFaint,
     },
     left: {
         flexDirection: 'row',
@@ -179,22 +180,22 @@ const styles = StyleSheet.create({
         ...TYPOGRAPHY.body
     },
     sep: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: 'rgba(255,255,255,0.30)',
+        fontSize: FONT_SIZES.lg,
+        fontWeight: FONT_WEIGHTS.bold,
+        color: DESIGN_TOKENS.textSectionTitle,
     },
     ampmBtn: {
-        backgroundColor: 'rgba(148,0,171,0.12)',
-        borderWidth: 1,
-        borderColor: 'rgba(148,0,171,0.30)',
-        borderRadius: 8,
+        backgroundColor: DESIGN_TOKENS.primaryFaint,
+        borderWidth: DIMENSIONS.borderWidthBase,
+        borderColor: DESIGN_TOKENS.primaryBorderLight,
+        borderRadius: BORDER_RADIUS.base,
         paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.xs + 2,
+        paddingVertical: SPACING.xsm,
         marginLeft: SPACING.xs,
     },
     ampmText: {
-        fontSize: 12,
-        fontWeight: '700',
+        fontSize: FONT_SIZES.sm,
+        fontWeight: FONT_WEIGHTS.bold,
         color: DESIGN_TOKENS.primaryBright,
     },
 });

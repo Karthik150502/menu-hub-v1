@@ -69,7 +69,10 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
     const onInvalid: SubmitErrorHandler<PhoneFormValues> = (errs) => {
         console.warn('[MobileLoginForm] Validation failed', errs);
-        toast.warning('Resolve all the errors before submitting');
+        // toast.warning('Resolve all the errors before submitting');
+        // toast.error('Resolve all the errors before submitting');
+        toast.success('Resolve all the errors before submitting');
+        toast.info('Resolve all the errors before submitting');
     };
 
     return <AuthPage onBack={() => {
