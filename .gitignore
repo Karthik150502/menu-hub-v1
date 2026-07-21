@@ -42,3 +42,9 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Obsidian vault
+.obsidian/
+
+# graphify knowledge graph output
+graphify-out/
