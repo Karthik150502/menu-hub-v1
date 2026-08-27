@@ -76,6 +76,16 @@ export interface TaxLineItem {
 export type DiscountType = 'percentage' | 'fixed';
 export type DiscountOnType = 'basePrice' | 'priceIncludingTaxes';
 
+
+export interface Discount {
+    type: DiscountType;
+    on: DiscountOnType;
+    value: number;
+    label?: string;
+    validFrom?: string | null;
+    validUntil?: string | null;
+}
+
 export interface ItemPrice {
     id: string;
     basePrice: number;
@@ -93,24 +103,19 @@ export interface ItemPrice {
     finalPrice: number;
     mrp?: number | null;
 
-    discountOn: DiscountOnType;
-    discountType: DiscountType;
-    discountValue: number;   // 0 = no discount
-    discountLabel?: string;
-    discountValidFrom?: string | null;
-    discountValidUntil?: string | null;
+    discount: Discount | null;   // null = no discount — unambiguous
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /** Whether the discount on a price is currently active */
 export function isDiscountActive(price: ItemPrice): boolean {
-    if (!price.discountValue) return false;
+    if (!price.discount) return false;
     const now = Date.now();
-    const from = price.discountValidFrom
-        ? new Date(price.discountValidFrom).getTime() : -Infinity;
-    const until = price.discountValidUntil
-        ? new Date(price.discountValidUntil).getTime() : Infinity;
+    const from = price.discount?.validFrom
+        ? new Date(price.discount?.validFrom).getTime() : -Infinity;
+    const until = price.discount?.validUntil
+        ? new Date(price.discount.validUntil).getTime() : Infinity;
     return now >= from && now <= until;
 }
 
@@ -185,13 +190,13 @@ export function computeTotalTax(lineItem: TaxLineItem | null, taxableBase: numbe
 export function computeFinalPrice(price: ItemPrice): number {
     if (!isDiscountActive(price)) return price.basePrice;
 
-    const base = price.discountOn === 'priceIncludingTaxes'
+    const base = price.discount?.on === 'priceIncludingTaxes'
         ? price.basePrice + price.totalTaxAmount
         : price.basePrice;
 
-    const discounted = price.discountType === 'percentage'
-        ? base * (1 - price.discountValue / 100)
-        : base - price.discountValue;
+    const discounted = price.discount?.type === 'percentage'
+        ? base * (1 - price.discount?.value / 100)
+        : base - price.discount?.value!;
 
     return parseFloat(discounted.toFixed(2));
 }
