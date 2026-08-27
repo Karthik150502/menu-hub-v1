@@ -4,7 +4,7 @@ export type DishItem = {
     name: string;
     description?: string;
     priceComponent: ItemPrice;
-    basePrice: string,
+    basePrice: number,
     currency: string;
     category: string;
     imageUrl?: string;
