@@ -6,12 +6,12 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import {
     Animated,
-    Dimensions,
     Easing,
     Modal,
     Pressable,
     StyleSheet,
     TouchableOpacity,
+    useWindowDimensions,
     View,
 } from "react-native";
 import Text from "./appText";
@@ -35,8 +35,6 @@ export interface AppDropdownProps {
     dropdownButtonIcon?: string;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const AppDropdown: React.FC<AppDropdownProps> = ({
@@ -44,6 +42,7 @@ const AppDropdown: React.FC<AppDropdownProps> = ({
     dropdownButtonLabel,
     dropdownButtonIcon = 'options-outline',
 }) => {
+    const { width: SCREEN_WIDTH } = useWindowDimensions();
     const [open, setOpen] = useState(false);
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const dropdownAnim = useRef(new Animated.Value(0)).current;
@@ -53,18 +52,37 @@ const AppDropdown: React.FC<AppDropdownProps> = ({
     const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.88, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
     const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
 
+    const showDropdown = (x: number, y: number, width: number, height: number) => {
+        setAnchor({ x, y: y + height + 4, width });
+        setOpen(true);
+        dropdownAnim.setValue(0);
+        Animated.timing(dropdownAnim, {
+            toValue: 1,
+            duration: 180,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true,
+        }).start();
+    };
+
     const openDropdown = () => {
-        btnRef.current?.measureInWindow((x, y, width, height) => {
-            setAnchor({ x, y: y + height + 4, width });
-            setOpen(true);
-            dropdownAnim.setValue(0);
-            Animated.timing(dropdownAnim, {
-                toValue: 1,
-                duration: 180,
-                easing: Easing.out(Easing.cubic),
-                useNativeDriver: true,
-            }).start();
-        });
+        // Right after another <Modal> on the screen (e.g. the edit-dish
+        // pageSheet) has been dismissed, the native side can report a stale
+        // window frame for one measurement pass — measureInWindow then
+        // resolves with leftover coordinates instead of this button's real
+        // position. Deferring past the current macrotask + one frame gives
+        // the native layout a chance to settle before we trust the result;
+        // an all-zero readout (the clearest sign of a bad measurement) gets
+        // one retry the same way.
+        const measure = () => {
+            btnRef.current?.measureInWindow((x, y, width, height) => {
+                if (width === 0 && height === 0) {
+                    requestAnimationFrame(measure);
+                    return;
+                }
+                showDropdown(x, y, width, height);
+            });
+        };
+        setTimeout(() => requestAnimationFrame(measure), 0);
     };
 
     const closeDropdown = () => {
