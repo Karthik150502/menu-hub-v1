@@ -1,6 +1,8 @@
 import { CATEGORIES } from '@/constants/mock-data';
-import { DishFormValues } from '@/types/dish';
-import { dishSchema } from '@/types/zod/validations/dish';
+// The form's runtime values (basePrice as a string, straight out of
+// PriceField) are shaped by the zod schema, not the domain DishItem model —
+// that's `DishFormValues` from types/dish.ts, where basePrice is a number.
+import { DishFormValues, dishSchema } from '@/types/zod/validations/dish';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import {
@@ -18,6 +20,7 @@ import ToggleRow from '../custom/ToggleRow';
 import { useBottomToast } from '../feedback/BottomToast';
 import { FormGrid, FormItem } from '../forms/formGrid';
 import { Dish } from '../interactive/dishes';
+// eslint-disable-next-line import/no-named-as-default
 import DatePicker from '../utils/DatePicker';
 import { PriceEditorSection } from './priceEditorSection';
 import { Section } from './section';
@@ -203,11 +206,7 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
 
             {/* ── Pricing ──────────────────────────────────────────────── */}
             <FormItem span="full">
-                <Section title="Pricing Details" />
-            </FormItem>
-
-            <FormItem span="full">
-                <PriceEditorSection />
+                <Section title="Pricing, Discount and Taxes" />
             </FormItem>
 
             <FormItem span={1}>
@@ -223,6 +222,10 @@ export const DishEditCreateForm: React.FC<DishEditCreateFormProps> = ({
                         />
                     )}
                 />
+            </FormItem>
+
+            <FormItem span="full">
+                <PriceEditorSection />
             </FormItem>
 
             {/* ── Classification ───────────────────────────────────────── */}

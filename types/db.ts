@@ -10,6 +10,7 @@
 // just auth — see lib/supabase/auth.ts) or for admin/debug tooling.
 
 import type { Tables, TablesInsert, TablesUpdate } from './database';
+import { ItemPrice } from './price';
 
 // ─── restaurants ────────────────────────────────────────────────────────────
 export type RestaurantRow = Tables<'restaurants'>;
