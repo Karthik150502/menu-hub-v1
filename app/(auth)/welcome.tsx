@@ -7,7 +7,7 @@ export default function WelcomePage() {
     return (
         <WelcomeScreen
             onGetStarted={() => router.push('/(auth)/register')}
-            onSignIn={() => router.replace('/login')}
+            onSignIn={() => router.push('/(auth)/register?mode=signin')}
         />
     );
 }

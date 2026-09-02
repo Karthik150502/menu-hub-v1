@@ -1,5 +1,19 @@
 import { supabase } from '@/lib/supabase';
 
+// ─── Apply a backend-issued token pair ───────────────────────────────────────
+// The FastAPI backend's /api/v1/auth/login (and /register, /phone/verify)
+// return an access + refresh token pair minted through Supabase Auth on the
+// server. Handing that pair to the Supabase client persists it (SecureStore)
+// and lets it auto-refresh — so every other call, which reads its bearer
+// token from supabase.auth.getSession() (see lib/api/apiClient.ts), keeps
+// working without knowing the login happened via the backend.
+
+export async function applySession(tokens: { access_token: string; refresh_token: string }) {
+    const { data, error } = await supabase.auth.setSession(tokens);
+    if (error) throw error;
+    return data;   // { session, user }
+}
+
 // ─── Phone OTP — Step 1 ───────────────────────────────────────────────────────
 // Sends a 6-digit OTP SMS to the given phone number.
 // Phone must be in E.164 format: +919876543210 (country code + number, no spaces).

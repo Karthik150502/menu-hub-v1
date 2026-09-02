@@ -31,16 +31,19 @@ interface FieldProps {
     onChange: (v: string) => void;
     onBlur: () => void;
     placeholder?: string;
-    keyboardType?: 'default' | 'numeric' | 'decimal-pad' | 'url';
+    keyboardType?: 'default' | 'numeric' | 'decimal-pad' | 'url' | 'email-address';
     multiline?: boolean;
     error?: string;
     hint?: string;
     optional?: boolean;
+    secureTextEntry?: boolean;
+    autoComplete?: 'email' | 'password' | 'current-password' | 'new-password' | 'off';
 }
 
 const Field: React.FC<FieldProps> = ({
     label, value, onChange, onBlur, placeholder,
     keyboardType = 'default', multiline, error, hint, optional,
+    secureTextEntry, autoComplete,
 }) => {
     const borderAnim = useRef(new Animated.Value(0)).current;
     const isFocused = useRef(false);
@@ -90,10 +93,21 @@ const Field: React.FC<FieldProps> = ({
                     placeholderTextColor={T.textPlaceholder}
                     keyboardType={keyboardType}
                     multiline={multiline}
+                    secureTextEntry={secureTextEntry}
+                    autoComplete={autoComplete}
+                    textContentType={
+                        autoComplete === 'password' || autoComplete === 'new-password'
+                            ? 'newPassword'
+                            : autoComplete === 'current-password'
+                                ? 'password'
+                                : autoComplete === 'email'
+                                    ? 'emailAddress'
+                                    : 'none'
+                    }
                     underlineColorAndroid="transparent"
                     numberOfLines={multiline ? 3 : 1}
                     autoCapitalize={keyboardType === 'default' ? 'sentences' : 'none'}
-                    autoCorrect={keyboardType === 'default'}
+                    autoCorrect={keyboardType === 'default' && !secureTextEntry}
                     style={[fieldStyles.input, multiline && fieldStyles.inputMulti]}
                 />
             </Animated.View>

@@ -1,6 +1,3 @@
-
-
-
 // eslint-disable-next-line import/no-named-as-default
 import AppButton from '@/components/custom/AppButton';
 import { useToast } from '@/components/feedback/Toast';
@@ -8,8 +5,9 @@ import { useToast } from '@/components/feedback/Toast';
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
-import { router } from 'expo-router';
-import React from 'react';
+import { sendPhoneOtp } from '@/lib/supabase/auth';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     View
@@ -41,6 +39,13 @@ export interface RegisterScreenProps {
     onBack?: () => void
 }
 
+// ─── Phone formatting ─────────────────────────────────────────────────────────
+// The form only collects a 10-digit local number (see mobileLoginSchema) —
+// Supabase's phone auth needs E.164 (+<country code><number>, no spaces).
+// India-only for now, hence the hardcoded +91.
+
+const toE164 = (phone: string) => `+91${phone}`;
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const RegisterScreen: React.FC<RegisterScreenProps> = ({
@@ -49,6 +54,9 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 }) => {
 
     const toast = useToast();
+    const { mode } = useLocalSearchParams<{ mode?: string }>();
+    const isSignIn = mode === 'signin';
+    const [sending, setSending] = useState(false);
 
     const {
         control,
@@ -61,18 +69,24 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         reValidateMode: 'onChange',
     });
 
-    const onValid: SubmitHandler<PhoneFormValues> = (values) => {
+    const onValid: SubmitHandler<PhoneFormValues> = async (values) => {
         onSubmit?.(values);
-        router.push(`/otp?phno=${values.phone}`)
-        toast.success(`Otp has been sent to ${values.phone}`, "OTP Sent")
+        setSending(true);
+        try {
+            await sendPhoneOtp(toE164(values.phone));
+            router.push(`/otp?phno=${values.phone}`);
+            toast.success(`Otp has been sent to ${values.phone}`, "OTP Sent");
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Could not send the OTP. Please try again.';
+            toast.error(message, 'Failed to send OTP');
+        } finally {
+            setSending(false);
+        }
     };
 
     const onInvalid: SubmitErrorHandler<PhoneFormValues> = (errs) => {
         console.warn('[MobileLoginForm] Validation failed', errs);
-        // toast.warning('Resolve all the errors before submitting');
-        // toast.error('Resolve all the errors before submitting');
-        toast.success('Resolve all the errors before submitting');
-        toast.info('Resolve all the errors before submitting');
+        toast.warning('Resolve all the errors before submitting');
     };
 
     return <AuthPage onBack={() => {
@@ -83,8 +97,12 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             {/* Headline */}
             <View style={styles.headlineWrap}>
                 <PageIntro
-                    title="Get started"
-                    subtitle="Enter the phone number to create your restaurant account."
+                    title={isSignIn ? 'Welcome back' : 'Get started'}
+                    subtitle={
+                        isSignIn
+                            ? 'Enter your phone number to sign in.'
+                            : 'Enter the phone number to create your restaurant account.'
+                    }
                 />
             </View>
             <View style={styles.content}>
@@ -108,7 +126,9 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                     variant="outline"
                     accessibilityRole="button"
                     accessibilityLabel="Send OTP"
-                    disabled={!isDirty}
+                    disabled={!isDirty || sending}
+                    loading={sending}
+                    loadingLabel="Sending…"
                     onPress={handleSubmit(onValid, onInvalid)}
                     label='Send OTP'
                 />
