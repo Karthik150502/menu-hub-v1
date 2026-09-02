@@ -11,7 +11,8 @@ import { Text, TextInput } from 'react-native';
 
 import { BottomToastProvider } from '@/components/feedback/BottomToast';
 import { ToastProvider } from '@/components/feedback/Toast';
-import { store } from '@/store';
+import { onAuthStateChange } from '@/lib/supabase/auth';
+import { setSession, store, useAppDispatch } from '@/store';
 import {
   Montserrat_300Light,
   Montserrat_400Regular,
@@ -41,6 +42,24 @@ TextInput.defaultProps.style = { fontFamily: 'Montserrat_300Light' };
 
 SplashScreen.preventAutoHideAsync();
 
+// ─── Auth sync ────────────────────────────────────────────────────────────────
+// Subscribes to Supabase auth events (sign in, sign out, token refresh — see
+// lib/supabase/auth.ts) for the lifetime of the app and mirrors them into
+// Redux, so `selectIsAuthenticated` (app/index.tsx) stays accurate whether the
+// session came from the login screen, phone OTP, or a silent token refresh.
+function AuthSync() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const { data: { subscription } } = onAuthStateChange((session) => {
+      dispatch(setSession({ session, user: session?.user ?? null }));
+    });
+    return () => subscription.unsubscribe();
+  }, [dispatch]);
+
+  return null;
+}
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
@@ -62,6 +81,7 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
+      <AuthSync />
       <ToastProvider>
         <BottomToastProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
