@@ -49,4 +49,30 @@ export const selectAuthUser = (s: RootState) => s.auth.user;
 export const selectAuthStatus = (s: RootState) => s.auth.status;
 export const selectIsAuthenticated = (s: RootState) => s.auth.status === 'authenticated';
 
+// ─── Display name ─────────────────────────────────────────────────────────────
+// `user` here is decoded straight from the access token's claims (Supabase
+// parses the JWT for us — see onAuthStateChange in lib/supabase/auth.ts), so
+// user_metadata.full_name is "the name from the access token". Nothing in the
+// phone-OTP sign-up flow collects a name yet, so this comes back null for
+// every current user until a profile step sets it (e.g. via
+// supabase.auth.updateUser({ data: { full_name } })) — callers get a sensible
+// fallback instead of a blank UI.
+
+const getFullName = (user: User | null): string | null => {
+    const meta = user?.user_metadata as { full_name?: string; name?: string } | undefined;
+    return meta?.full_name?.trim() || meta?.name?.trim() || null;
+};
+
+export const selectDisplayName = (s: RootState): string =>
+    getFullName(s.auth.user) ?? 'Owner';
+
+export const selectUserInitials = (s: RootState): string => {
+    const name = getFullName(s.auth.user);
+    if (!name) return 'U';
+    const parts = name.split(/\s+/).filter(Boolean);
+    return parts.length === 1
+        ? parts[0].slice(0, 2).toUpperCase()
+        : (parts[0][0] + parts[1][0]).toUpperCase();
+};
+
 export default authSlice.reducer;

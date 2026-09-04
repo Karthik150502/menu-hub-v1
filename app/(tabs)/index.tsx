@@ -9,9 +9,12 @@ import { Page } from '@/components/Page';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { selectDisplayName, selectUserInitials, useAppSelector } from '@/store';
 import { StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
+  const displayName = useAppSelector(selectDisplayName);
+  const userInitials = useAppSelector(selectUserInitials);
 
   return (
     /*
@@ -49,7 +52,7 @@ export default function HomeScreen() {
         header={
           <AppHeader
             title="Mijoko"
-            userInitials="KJ"
+            userInitials={userInitials}
             onProfilePress={() => { }}
           />
         }
@@ -62,7 +65,7 @@ export default function HomeScreen() {
       >
         <View style={styles.heroSection}>
           <HomePageHero
-            name="Frank"
+            name={displayName}
             isOpen
             restaurantName="Mijoko"
           />
