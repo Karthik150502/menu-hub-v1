@@ -2,9 +2,12 @@
 import AppButton from '@/components/custom/AppButton';
 import { useToast } from '@/components/feedback/Toast';
 // eslint-disable-next-line import/no-named-as-default
+import StepIndicator from '@/components/interactive/stepIndicator';
+// eslint-disable-next-line import/no-named-as-default
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
+import { useRegisterStep } from '@/hooks/use-register-step';
 import { sendPhoneOtp } from '@/lib/supabase/auth';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -57,6 +60,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     const { mode } = useLocalSearchParams<{ mode?: string }>();
     const isSignIn = mode === 'signin';
     const [sending, setSending] = useState(false);
+    const registerStep = useRegisterStep();
 
     const {
         control,
@@ -91,7 +95,9 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
     return <AuthPage onBack={() => {
         router.back()
-    }} backLabel="back">
+    }} backLabel="back"
+        headerBelow={<StepIndicator {...registerStep} />}
+    >
         {/* ── Content below the hero ── */}
         <View style={styles.container}>
             {/* Headline */}

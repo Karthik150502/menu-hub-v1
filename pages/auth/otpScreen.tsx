@@ -3,9 +3,12 @@ import AppButton from '@/components/custom/AppButton';
 import OtpInput from '@/components/custom/otpField';
 import { useToast } from '@/components/feedback/Toast';
 // eslint-disable-next-line import/no-named-as-default
+import StepIndicator from '@/components/interactive/stepIndicator';
+// eslint-disable-next-line import/no-named-as-default
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
+import { useRegisterStep } from '@/hooks/use-register-step';
 import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/supabase/auth';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -32,6 +35,7 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
 }) => {
     const { phno } = useLocalSearchParams<{ phno: string }>();
     const toast = useToast();
+    const registerStep = useRegisterStep();
     const [otp, setOtp] = useState('');
     const [otpComplete, setOtpComplete] = useState(false);
     const [verifying, setVerifying] = useState(false);
@@ -69,7 +73,9 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
 
     return <AuthPage onBack={() => {
         router.back()
-    }} backLabel="back">
+    }} backLabel="back"
+        headerBelow={<StepIndicator {...registerStep} />}
+    >
         {/* ── Content below the hero ── */}
         <View style={styles.container}>
             {/* Headline */}
