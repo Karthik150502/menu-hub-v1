@@ -47,8 +47,9 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
         try {
             await verifyPhoneOtp(toE164(phno), otp);
             // Session is now set on the Supabase client — AuthSync (app/_layout.tsx)
-            // picks up the change and updates auth state; navigate straight to tabs.
-            router.replace('/(tabs)');
+            // picks up the change and updates auth state. One more step (name)
+            // before we're done with registration.
+            router.push(`/name?phno=${phno}`);
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Invalid OTP. Please try again.';
             toast.error(message, 'Verification failed');

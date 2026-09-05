@@ -17,4 +17,5 @@ export interface RegisterFlowStep {
 export const REGISTER_FLOW_STEPS: RegisterFlowStep[] = [
     { route: 'register', label: 'Phone number' },
     { route: 'otp', label: 'Verify OTP' },
+    { route: 'name', label: 'Your name' },
 ];
