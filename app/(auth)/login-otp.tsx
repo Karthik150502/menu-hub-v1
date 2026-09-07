@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-named-as-default
 import OtpScreen from '@/pages/auth/otpScreen';
-export default function OtpPage() {
+export default function LoginOtpPage() {
 
     return (
-        <OtpScreen flow="register" />
+        <OtpScreen flow="login" />
     );
 }

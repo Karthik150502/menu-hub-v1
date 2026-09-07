@@ -7,9 +7,12 @@ import StepIndicator from '@/components/interactive/stepIndicator';
 // eslint-disable-next-line import/no-named-as-default
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
+import { LOGIN_FLOW_STEPS } from '@/constants/auth/loginFlow';
+import { REGISTER_FLOW_STEPS } from '@/constants/auth/registerFlow';
 import { SPACING } from '@/constants/themes/spacing';
-import { useRegisterStep } from '@/hooks/use-register-step';
-import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/supabase/auth';
+import { useFlowStep } from '@/hooks/use-flow-step';
+import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/api/auth';
+import { applySession } from '@/lib/supabase/auth';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -26,16 +29,26 @@ const toE164 = (phone: string) => `+91${phone}`;
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface OtpScreenProps {
+    /**
+     * Which auth flow this verification belongs to — decides the step count
+     * shown and where verify sends the user next. Set by the route file that
+     * renders this screen (app/(auth)/otp.tsx vs login-otp.tsx), not a URL
+     * param, since it's a fixed property of the screen, not user-supplied
+     * data.
+     * @default 'register'
+     */
+    flow?: 'register' | 'login';
     onBack?: () => void
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const OtpScreen: React.FC<OtpScreenProps> = ({
+    flow = 'register',
 }) => {
     const { phno } = useLocalSearchParams<{ phno: string }>();
     const toast = useToast();
-    const registerStep = useRegisterStep();
+    const flowStep = useFlowStep(flow === 'login' ? LOGIN_FLOW_STEPS : REGISTER_FLOW_STEPS);
     const [otp, setOtp] = useState('');
     const [otpComplete, setOtpComplete] = useState(false);
     const [verifying, setVerifying] = useState(false);
@@ -45,11 +58,19 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
         if (!phno) return;
         setVerifying(true);
         try {
-            await verifyPhoneOtp(toE164(phno), otp);
-            // Session is now set on the Supabase client — AuthSync (app/_layout.tsx)
-            // picks up the change and updates auth state. One more step (name)
-            // before we're done with registration.
-            router.push(`/name?phno=${phno}`);
+            const tokens = await verifyPhoneOtp(toE164(phno), otp);
+            // Hand the backend-minted token pair to the Supabase client so it's
+            // persisted (SecureStore) and auto-refreshes — AuthSync
+            // (app/_layout.tsx) picks up the change via onAuthStateChange and
+            // updates auth state.
+            await applySession(tokens);
+            if (flow === 'login') {
+                // Existing account — already has a name on file, skip straight in.
+                router.replace('/(tabs)');
+            } else {
+                // New account — one more step (name) before we're done.
+                router.push(`/name?phno=${phno}`);
+            }
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Invalid OTP. Please try again.';
             toast.error(message, 'Verification failed');
@@ -75,7 +96,7 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
     return <AuthPage onBack={() => {
         router.back()
     }} backLabel="back"
-        headerBelow={<StepIndicator {...registerStep} />}
+        headerBelow={<StepIndicator {...flowStep} />}
     >
         {/* ── Content below the hero ── */}
         <View style={styles.container}>

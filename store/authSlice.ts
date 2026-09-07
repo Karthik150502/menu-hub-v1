@@ -37,10 +37,18 @@ const authSlice = createSlice({
             s.user = null;
             s.status = 'unauthenticated';
         },
+        // Patches the locally-held user's metadata (e.g. right after PATCH
+        // /users/me sets full_name) so selectors like selectDisplayName read
+        // the new value immediately, without waiting on a token refresh to
+        // bring back fresh JWT claims.
+        setUserMetadata(s, a: PayloadAction<Record<string, unknown>>) {
+            if (!s.user) return;
+            s.user.user_metadata = { ...s.user.user_metadata, ...a.payload };
+        },
     },
 });
 
-export const { setSession, clearSession } = authSlice.actions;
+export const { setSession, clearSession, setUserMetadata } = authSlice.actions;
 
 // ─── Selectors ────────────────────────────────────────────────────────────────
 
