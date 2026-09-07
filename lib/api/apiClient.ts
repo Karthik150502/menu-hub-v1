@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { ENV } from '@/constants/env';
+import axios from 'axios';
 
 const BASE_URL = ENV.API_URL;
 
@@ -18,34 +19,45 @@ export class ApiError extends Error {
     }
 }
 
-// ─── Core fetch wrapper ───────────────────────────────────────────────────────
+// ─── Axios instance ───────────────────────────────────────────────────────────
 
-async function apiFetch<T>(
-    path: string,
-    options: RequestInit = {},
-): Promise<T> {
-    // Attach the Supabase JWT on every request so FastAPI can verify the user.
+// eslint-disable-next-line import/no-named-as-default-member
+const client = axios.create({
+    baseURL: BASE_URL,
+    headers: { 'Content-Type': 'application/json' },
+});
+
+// Attach the Supabase JWT on every request so FastAPI can verify the user.
+client.interceptors.request.use(async (config) => {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token;
+    if (token) {
+        config.headers.set('Authorization', `Bearer ${token}`);
+    }
+    return config;
+});
 
-    const response = await fetch(`${BASE_URL}${path}`, {
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            ...options.headers,
-        },
-    });
+// ─── Error normalization ──────────────────────────────────────────────────────
 
-    if (!response.ok) {
+function toApiError(err: unknown): ApiError {
+    // eslint-disable-next-line import/no-named-as-default-member
+    if (axios.isAxiosError(err)) {
+        const response = err.response;
+        if (!response) {
+            // Request never got a response — device can't reach BASE_URL, DNS
+            // failure, timeout, etc. (see constants/env.ts for the common
+            // localhost-on-a-device gotcha).
+            return new ApiError(0, 'NETWORK_ERROR', err.message || 'Network request failed');
+        }
+
         // Two error shapes come back from this backend:
         //  - our Response envelope, for business-logic errors: { success: false, message, data: null }
         //  - FastAPI's own validation errors (422), which bypass that envelope: { detail: ValidationError[] }
-        const body = await response.json().catch(() => ({}));
+        const body = response.data ?? {};
         const detail = body?.detail;
 
         let code = 'API_ERROR';
-        let message: string = response.statusText;
+        let message: string = response.statusText || err.message;
 
         if (typeof body?.message === 'string') {
             message = body.message;
@@ -59,21 +71,29 @@ async function apiFetch<T>(
             message = detail.message ?? message;
         }
 
-        throw new ApiError(response.status, code, message);
+        return new ApiError(response.status, code, message);
     }
 
-    // 204 No Content — return undefined instead of trying to parse empty body
-    if (response.status === 204) return undefined as T;
-
-    return response.json() as Promise<T>;
+    return new ApiError(0, 'UNKNOWN_ERROR', err instanceof Error ? err.message : 'Something went wrong');
 }
 
 // ─── HTTP helpers ─────────────────────────────────────────────────────────────
 
+async function unwrap<T>(request: Promise<{ status: number; data: T }>): Promise<T> {
+    try {
+        const res = await request;
+        // 204 No Content — axios still resolves, just with an empty body.
+        if (res.status === 204) return undefined as T;
+        return res.data;
+    } catch (err) {
+        throw toApiError(err);
+    }
+}
+
 export const api = {
-    get: <T>(path: string) => apiFetch<T>(path),
-    post: <T>(path: string, body: unknown) => apiFetch<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-    patch: <T>(path: string, body: unknown) => apiFetch<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
-    put: <T>(path: string, body: unknown) => apiFetch<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
-    delete: <T>(path: string) => apiFetch<T>(path, { method: 'DELETE' }),
+    get: <T>(path: string) => unwrap<T>(client.get<T>(path)),
+    post: <T>(path: string, body: unknown) => unwrap<T>(client.post<T>(path, body)),
+    patch: <T>(path: string, body: unknown) => unwrap<T>(client.patch<T>(path, body)),
+    put: <T>(path: string, body: unknown) => unwrap<T>(client.put<T>(path, body)),
+    delete: <T>(path: string) => unwrap<T>(client.delete<T>(path)),
 };

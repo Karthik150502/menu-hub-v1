@@ -10,34 +10,18 @@ import { supabase } from '@/lib/supabase';
 
 export async function applySession(tokens: { access_token: string; refresh_token: string }) {
     const { data, error } = await supabase.auth.setSession(tokens);
+    console.log({
+        data,
+        error
+    })
     if (error) throw error;
     return data;   // { session, user }
 }
 
-// ─── Phone OTP — Step 1 ───────────────────────────────────────────────────────
-// Sends a 6-digit OTP SMS to the given phone number.
-// Phone must be in E.164 format: +919876543210 (country code + number, no spaces).
-
-export async function sendPhoneOtp(phone: string) {
-    const { data, error } = await supabase.auth.signInWithOtp({ phone });
-    if (error) throw error;
-    return data;
-}
-
-// ─── Phone OTP — Step 2 ───────────────────────────────────────────────────────
-// Verifies the OTP the user received.
-// Works for both sign-up and sign-in — Supabase creates the user if new,
-// signs them in if they already exist.
-
-export async function verifyPhoneOtp(phone: string, token: string) {
-    const { data, error } = await supabase.auth.verifyOtp({
-        phone,
-        token,
-        type: 'sms',
-    });
-    if (error) throw error;
-    return data;   // { session, user }
-}
+// Phone OTP send/verify go through the FastAPI backend now (lib/api/auth.ts
+// → sendPhoneOtp / verifyPhoneOtp) rather than calling supabase.auth directly,
+// so verify can return a backend-minted token pair — hand that to
+// `applySession` above to persist it here.
 
 // ─── Sign out ─────────────────────────────────────────────────────────────────
 

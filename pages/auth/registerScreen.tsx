@@ -8,8 +8,8 @@ import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
 import { useRegisterStep } from '@/hooks/use-register-step';
-import { sendPhoneOtp } from '@/lib/supabase/auth';
-import { router, useLocalSearchParams } from 'expo-router';
+import { sendPhoneOtp } from '@/lib/api/auth';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
     StyleSheet,
@@ -57,8 +57,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 }) => {
 
     const toast = useToast();
-    const { mode } = useLocalSearchParams<{ mode?: string }>();
-    const isSignIn = mode === 'signin';
     const [sending, setSending] = useState(false);
     const registerStep = useRegisterStep();
 
@@ -103,12 +101,8 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             {/* Headline */}
             <View style={styles.headlineWrap}>
                 <PageIntro
-                    title={isSignIn ? 'Welcome back' : 'Get started'}
-                    subtitle={
-                        isSignIn
-                            ? 'Enter your phone number to sign in.'
-                            : 'Enter the phone number to create your restaurant account.'
-                    }
+                    title="Get started"
+                    subtitle="Enter the phone number to create your restaurant account."
                 />
             </View>
             <View style={styles.content}>

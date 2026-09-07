@@ -7,9 +7,8 @@ import StepIndicator from '@/components/interactive/stepIndicator';
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
-import { useRegisterStep } from '@/hooks/use-register-step';
-import { updateMe } from '@/lib/api/users';
-import { setUserMetadata, useAppDispatch } from '@/store';
+import { useLoginStep } from '@/hooks/use-login-step';
+import { sendPhoneOtp } from '@/lib/api/auth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -25,100 +24,99 @@ import {
 } from 'react-hook-form';
 
 import Field from '@/components/custom/inputField';
-import { NameFormValues, nameSchema } from '@/types/zod/validations/name';
+import { mobileLoginSchema, PhoneFormValues } from '@/types/zod/validations/mobile_login';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface NameScreenProps {
+export interface LoginScreenProps {
     defaultValues?: {
-        name: string
+        phone: string
     };
-    onSubmit?: (values: {
-        name: string
+    onSubmit?: (mobile: {
+        phone: string
     }) => void;
     submitLabel?: string;
     isSubmitting?: boolean;
     onBack?: () => void
 }
 
+// ─── Phone formatting ─────────────────────────────────────────────────────────
+// The form only collects a 10-digit local number (see mobileLoginSchema) —
+// Supabase's phone auth needs E.164 (+<country code><number>, no spaces).
+// India-only for now, hence the hardcoded +91.
+
+const toE164 = (phone: string) => `+91${phone}`;
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const NameScreen: React.FC<NameScreenProps> = ({
+export const LoginScreen: React.FC<LoginScreenProps> = ({
     onSubmit,
     defaultValues,
 }) => {
 
     const toast = useToast();
-    const [saving, setSaving] = useState(false);
-    const registerStep = useRegisterStep();
-    const dispatch = useAppDispatch();
+    const [sending, setSending] = useState(false);
+    const loginStep = useLoginStep();
 
     const {
         control,
         handleSubmit,
         formState: { errors, isDirty },
-    } = useForm<NameFormValues>({
-        resolver: zodResolver(nameSchema),
-        defaultValues: { name: '', ...defaultValues },
+    } = useForm<PhoneFormValues>({
+        resolver: zodResolver(mobileLoginSchema),
+        defaultValues: { phone: '', ...defaultValues },
         mode: "onSubmit",
         reValidateMode: 'onChange',
     });
 
-    const onValid: SubmitHandler<NameFormValues> = async (values) => {
+    const onValid: SubmitHandler<PhoneFormValues> = async (values) => {
         onSubmit?.(values);
-        setSaving(true);
+        setSending(true);
         try {
-            // The bearer token from OTP verify (applySession, in otpScreen) is
-            // already on the Supabase client, so apiClient attaches it here
-            // automatically — the backend resolves the user from it and
-            // updates their profile row.
-            const user = await updateMe({ full_name: values.name });
-            // Mirror the saved name onto the in-memory session so
-            // selectDisplayName picks it up immediately, without waiting for
-            // a token refresh to bring back fresh JWT claims.
-            dispatch(setUserMetadata({ full_name: user.full_name }));
-            router.replace('/(tabs)');
+            await sendPhoneOtp(toE164(values.phone));
+            router.push(`/login-otp?phno=${values.phone}`);
+            toast.success(`Otp has been sent to ${values.phone}`, "OTP Sent");
         } catch (err) {
-            const message = err instanceof Error ? err.message : 'Could not save your name. Please try again.';
-            toast.error(message, 'Failed to save');
+            const message = err instanceof Error ? err.message : 'Could not send the OTP. Please try again.';
+            toast.error(message, 'Failed to send OTP');
         } finally {
-            setSaving(false);
+            setSending(false);
         }
     };
 
-    const onInvalid: SubmitErrorHandler<NameFormValues> = (errs) => {
-        console.warn('[NameScreen] Validation failed', errs);
+    const onInvalid: SubmitErrorHandler<PhoneFormValues> = (errs) => {
+        console.warn('[LoginScreen] Validation failed', errs);
         toast.warning('Resolve all the errors before submitting');
     };
 
     return <AuthPage onBack={() => {
         router.back()
     }} backLabel="back"
-        headerBelow={<StepIndicator {...registerStep} />}
+        headerBelow={<StepIndicator {...loginStep} />}
     >
         {/* ── Content below the hero ── */}
         <View style={styles.container}>
             {/* Headline */}
             <View style={styles.headlineWrap}>
                 <PageIntro
-                    title="What's your name?"
-                    subtitle="Let us know who we're setting the account up for."
+                    title="Welcome back"
+                    subtitle="Enter your phone number to sign in."
                 />
             </View>
             <View style={styles.content}>
                 <Controller
                     control={control}
-                    name="name"
+                    name="phone"
                     render={({ field: { value, onChange, onBlur } }) => (
                         <Field
-                            label="Full name"
+                            label="Phone number"
                             value={value}
                             onChange={onChange}
                             onBlur={onBlur}
-                            placeholder="e.g. Jane Doe"
-                            autoComplete="off"
-                            error={errors.name?.message}
+                            keyboardType="numeric"
+                            placeholder="e.g. 9876543210"
+                            error={errors.phone?.message}
                         />
                     )}
                 />
@@ -126,12 +124,12 @@ export const NameScreen: React.FC<NameScreenProps> = ({
                     fullWidth
                     variant="outline"
                     accessibilityRole="button"
-                    accessibilityLabel="Continue"
-                    disabled={!isDirty || saving}
-                    loading={saving}
-                    loadingLabel="Saving…"
+                    accessibilityLabel="Send OTP"
+                    disabled={!isDirty || sending}
+                    loading={sending}
+                    loadingLabel="Sending…"
                     onPress={handleSubmit(onValid, onInvalid)}
-                    label='Continue'
+                    label='Send OTP'
                 />
             </View>
         </View>
@@ -165,4 +163,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default NameScreen;
+export default LoginScreen;
