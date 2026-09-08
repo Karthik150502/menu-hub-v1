@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     },
 
     bannerWrapper: { height: DIMENSIONS.bannerHeight, overflow: 'hidden', position: 'relative' },
-    banner: { ...StyleSheet.absoluteFillObject },
+    banner: { ...StyleSheet.absoluteFill },
     bannerOverlay: {
         opacity: 0.5,
         transform: [{ skewX: '-20deg' }, { translateX: SCREEN_WIDTH * 0.4 }],
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     },
     tagText: { color: DESIGN_TOKENS.textPrimary, ...TYPOGRAPHY.bodySmall },
     unavailableScrim: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         backgroundColor: DESIGN_TOKENS.unavailableScrim,
         alignItems: 'center',
         justifyContent: 'center',

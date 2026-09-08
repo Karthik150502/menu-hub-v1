@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
 
     // Completely transparent — captures input, sits on top of the visual box
     hiddenInput: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         opacity:    0,
         color:      'transparent',
         fontSize:   1,

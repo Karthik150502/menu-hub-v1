@@ -717,7 +717,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
                         {/* Year picker overlay */}
                         {yearPickerOpen && (
-                            <View style={[StyleSheet.absoluteFillObject, styles.yearPickerOverlay]}>
+                            <View style={[StyleSheet.absoluteFill, styles.yearPickerOverlay]}>
                                 <YearPicker
                                     selected={viewYear}
                                     onSelect={handleYearSelect}

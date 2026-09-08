@@ -7,8 +7,10 @@ import StepIndicator from '@/components/interactive/stepIndicator';
 import PageIntro from '@/components/intros/pageIntro';
 import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
+import { useCallingCode } from '@/hooks/use-calling-code';
 import { useLoginStep } from '@/hooks/use-login-step';
 import { sendPhoneOtp } from '@/lib/api/auth';
+import { DEFAULT_DIAL_CODE, toE164 } from '@/lib/phone';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -23,7 +25,7 @@ import {
     useForm
 } from 'react-hook-form';
 
-import Field from '@/components/custom/inputField';
+import PhoneField from '@/components/custom/phoneField';
 import { mobileLoginSchema, PhoneFormValues } from '@/types/zod/validations/mobile_login';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -41,14 +43,17 @@ export interface LoginScreenProps {
     onBack?: () => void
 }
 
-// ─── Phone formatting ─────────────────────────────────────────────────────────
-// The form only collects a 10-digit local number (see mobileLoginSchema) —
-// Supabase's phone auth needs E.164 (+<country code><number>, no spaces).
-// India-only for now, hence the hardcoded +91.
-
-const toE164 = (phone: string) => `+91${phone}`;
-
 // ─── Component ────────────────────────────────────────────────────────────────
+// The form only collects a 10-digit local number (see mobileLoginSchema) —
+// Supabase's phone auth needs E.164 (+<dial code><number>, no spaces).
+//
+// India-only for now (phone auth/Twilio and the OTP flow only support Indian
+// numbers today), so the dial code is pinned to DEFAULT_DIAL_CODE ('+91')
+// rather than left to useCallingCode's device-locale detection — that's
+// unreliable for this: an India-based user's OS/browser locale often reports
+// as "en-US", which resolves to +1. useCallingCode still takes an override,
+// so this is the one place to swap in a real country picker once multi-
+// country support exists.
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({
     onSubmit,
@@ -58,6 +63,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     const toast = useToast();
     const [sending, setSending] = useState(false);
     const loginStep = useLoginStep();
+    const dialCode = useCallingCode(DEFAULT_DIAL_CODE);
 
     const {
         control,
@@ -74,7 +80,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         onSubmit?.(values);
         setSending(true);
         try {
-            await sendPhoneOtp(toE164(values.phone));
+            await sendPhoneOtp(toE164(dialCode, values.phone));
             router.push(`/login-otp?phno=${values.phone}`);
             toast.success(`Otp has been sent to ${values.phone}`, "OTP Sent");
         } catch (err) {
@@ -109,14 +115,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     control={control}
                     name="phone"
                     render={({ field: { value, onChange, onBlur } }) => (
-                        <Field
+                        <PhoneField
                             label="Phone number"
                             value={value}
                             onChange={onChange}
                             onBlur={onBlur}
-                            keyboardType="numeric"
                             placeholder="e.g. 9876543210"
                             error={errors.phone?.message}
+                            dialCode={dialCode}
                         />
                     )}
                 />
