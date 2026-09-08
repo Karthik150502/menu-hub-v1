@@ -274,7 +274,7 @@ const AnimatedOption: React.FC<AnimatedOptionProps> = ({
 
 const styles = StyleSheet.create({
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: DESIGN_TOKENS.primaryBlack,
   },
   sidebar: {

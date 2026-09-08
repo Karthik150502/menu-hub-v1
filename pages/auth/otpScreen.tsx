@@ -10,8 +10,10 @@ import { AuthPage } from '@/components/Page';
 import { LOGIN_FLOW_STEPS } from '@/constants/auth/loginFlow';
 import { REGISTER_FLOW_STEPS } from '@/constants/auth/registerFlow';
 import { SPACING } from '@/constants/themes/spacing';
+import { useCallingCode } from '@/hooks/use-calling-code';
 import { useFlowStep } from '@/hooks/use-flow-step';
 import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/api/auth';
+import { DEFAULT_DIAL_CODE, toE164 } from '@/lib/phone';
 import { applySession } from '@/lib/supabase/auth';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -21,10 +23,10 @@ import {
 } from 'react-native';
 
 // ─── Phone formatting ─────────────────────────────────────────────────────────
-// Mirrors registerScreen.tsx — the route only carries the 10-digit local
-// number, Supabase needs E.164. India-only for now, hence the hardcoded +91.
-
-const toE164 = (phone: string) => `+91${phone}`;
+// Mirrors registerScreen.tsx/loginScreen.tsx — the route only carries the
+// 10-digit local number, Supabase needs E.164. Must reconstruct it with the
+// same (pinned, India-only for now — see registerScreen.tsx) dial code that
+// was used to send the OTP, or verify/resend would target the wrong number.
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,6 +50,7 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
 }) => {
     const { phno } = useLocalSearchParams<{ phno: string }>();
     const toast = useToast();
+    const dialCode = useCallingCode(DEFAULT_DIAL_CODE);
     const flowStep = useFlowStep(flow === 'login' ? LOGIN_FLOW_STEPS : REGISTER_FLOW_STEPS);
     const [otp, setOtp] = useState('');
     const [otpComplete, setOtpComplete] = useState(false);
@@ -58,7 +61,7 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
         if (!phno) return;
         setVerifying(true);
         try {
-            const tokens = await verifyPhoneOtp(toE164(phno), otp);
+            const tokens = await verifyPhoneOtp(toE164(dialCode, phno), otp);
             // Hand the backend-minted token pair to the Supabase client so it's
             // persisted (SecureStore) and auto-refreshes — AuthSync
             // (app/_layout.tsx) picks up the change via onAuthStateChange and
@@ -83,7 +86,7 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
         if (!phno) return;
         setResending(true);
         try {
-            await sendPhoneOtp(toE164(phno));
+            await sendPhoneOtp(toE164(dialCode, phno));
             toast.success(`Otp has been resent to ${phno}`, 'OTP Sent');
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Could not resend the OTP. Please try again.';

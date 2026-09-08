@@ -200,7 +200,7 @@ export const AppLoader: React.FC<AppLoaderProps> = ({
 
 const styles = StyleSheet.create({
     overlay: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         backgroundColor: DESIGN_TOKENS.background_1,
         alignItems: 'center',
         justifyContent: 'center',
