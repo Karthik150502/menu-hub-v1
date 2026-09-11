@@ -18,6 +18,19 @@ export async function applySession(tokens: { access_token: string; refresh_token
     return data;   // { session, user }
 }
 
+// ─── User metadata ────────────────────────────────────────────────────────────
+// Persists fields (e.g. full_name) onto the Supabase Auth user itself, so
+// they land in `user_metadata` and get baked into the JWT on the next
+// refresh — not just mirrored into Redux for the current session. This
+// fires a USER_UPDATED event, so onAuthStateChange (see app/_layout.tsx)
+// picks up the fresh user and re-dispatches setSession on its own.
+
+export async function updateUserMetadata(data: Record<string, unknown>) {
+    const { data: res, error } = await supabase.auth.updateUser({ data });
+    if (error) throw error;
+    return res;   // { user }
+}
+
 // Phone OTP send/verify go through the FastAPI backend now (lib/api/auth.ts
 // → sendPhoneOtp / verifyPhoneOtp) rather than calling supabase.auth directly,
 // so verify can return a backend-minted token pair — hand that to

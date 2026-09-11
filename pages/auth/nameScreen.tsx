@@ -9,6 +9,7 @@ import { AuthPage } from '@/components/Page';
 import { SPACING } from '@/constants/themes/spacing';
 import { useRegisterStep } from '@/hooks/use-register-step';
 import { updateMe } from '@/lib/api/users';
+import { updateUserMetadata } from '@/lib/supabase/auth';
 import { setUserMetadata, useAppDispatch } from '@/store';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -74,9 +75,14 @@ export const NameScreen: React.FC<NameScreenProps> = ({
             // automatically — the backend resolves the user from it and
             // updates their profile row.
             const user = await updateMe({ full_name: values.name });
-            // Mirror the saved name onto the in-memory session so
-            // selectDisplayName picks it up immediately, without waiting for
-            // a token refresh to bring back fresh JWT claims.
+            // Also persist it onto the Supabase Auth user itself, so it lands
+            // in user_metadata and gets baked into the JWT on the next
+            // refresh — updateMe above only updates our own `profiles` row,
+            // it doesn't touch Supabase Auth.
+            await updateUserMetadata({ full_name: user.full_name });
+            // Mirror the saved name onto the in-memory session immediately —
+            // updateUserMetadata triggers onAuthStateChange too, but that's
+            // async, so this avoids a flash of the old/blank name.
             dispatch(setUserMetadata({ full_name: user.full_name }));
             router.replace('/(tabs)');
         } catch (err) {
