@@ -9,12 +9,13 @@ import 'react-native-reanimated';
 import Sidebar from '@/components/global/sidebar/sidebar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Text, TextInput } from 'react-native';
 
 import { BottomToastProvider } from '@/components/feedback/BottomToast';
 import { ToastProvider } from '@/components/feedback/Toast';
-import { onAuthStateChange } from '@/lib/supabase/auth';
+import { me } from '@/lib/api/auth';
+import { onAuthStateChange, updateUserMetadata } from '@/lib/supabase/auth';
 import { setSession, store, useAppDispatch } from '@/store';
 import {
   Montserrat_300Light,
@@ -52,10 +53,40 @@ SplashScreen.preventAutoHideAsync();
 // session came from the login screen, phone OTP, or a silent token refresh.
 function AuthSync() {
   const dispatch = useAppDispatch();
+  // Tracks user ids we've already attempted a backfill for, so a token
+  // refresh or other benign auth event doesn't re-trigger the network call
+  // every time — only once per signed-in user per app lifetime.
+  const backfilledRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const { data: { subscription } } = onAuthStateChange((session) => {
       dispatch(setSession({ session, user: session?.user ?? null }));
+
+      // Legacy-account backfill: accounts that saved a name via nameScreen
+      // before it also called updateUserMetadata have full_name in our
+      // backend `profiles` row but not in Supabase Auth's user_metadata (and
+      // therefore not in the JWT), so selectDisplayName falls back to
+      // "Owner". Sync it once per session so existing users self-heal on
+      // their next sign-in without re-entering their name.
+      const userId = session?.user?.id;
+      const hasName = !!session?.user?.user_metadata?.full_name;
+      if (userId && !hasName && !backfilledRef.current.has(userId)) {
+        backfilledRef.current.add(userId);
+        me()
+          .then((profile) => {
+            if (profile.full_name) {
+              // Fires a USER_UPDATED event, which re-enters this callback
+              // with the now-populated user_metadata and re-dispatches
+              // setSession — no manual dispatch needed here.
+              return updateUserMetadata({ full_name: profile.full_name });
+            }
+          })
+          .catch(() => {
+            // Best-effort — leave the "Owner" fallback and retry next
+            // sign-in rather than looping on a failing request.
+            backfilledRef.current.delete(userId);
+          });
+      }
     });
     return () => subscription.unsubscribe();
   }, [dispatch]);

@@ -12,7 +12,7 @@ import { REGISTER_FLOW_STEPS } from '@/constants/auth/registerFlow';
 import { SPACING } from '@/constants/themes/spacing';
 import { useCallingCode } from '@/hooks/use-calling-code';
 import { useFlowStep } from '@/hooks/use-flow-step';
-import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/api/auth';
+import { me, sendPhoneOtp, verifyPhoneOtp } from '@/lib/api/auth';
 import { DEFAULT_DIAL_CODE, toE164 } from '@/lib/phone';
 import { applySession } from '@/lib/supabase/auth';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -67,11 +67,18 @@ export const OtpScreen: React.FC<OtpScreenProps> = ({
             // (app/_layout.tsx) picks up the change via onAuthStateChange and
             // updates auth state.
             await applySession(tokens);
-            if (flow === 'login') {
-                // Existing account — already has a name on file, skip straight in.
+            // `flow` only reflects which screen (register vs login) sent the
+            // user here — it says nothing about whether this phone number
+            // actually already had an account, since verifyPhoneOtp signs
+            // existing users in transparently (see lib/api/auth.ts). Check
+            // the real account state instead of trusting `flow`, so a
+            // "register" attempt on an existing number skips straight in
+            // (and doesn't re-prompt for / overwrite their name), and a
+            // "login" attempt on a brand-new number still collects one.
+            const profile = await me();
+            if (profile.full_name) {
                 router.replace('/(tabs)');
             } else {
-                // New account — one more step (name) before we're done.
                 router.push(`/name?phno=${phno}`);
             }
         } catch (err) {
