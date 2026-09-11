@@ -50,8 +50,8 @@ const BottomToastItem: React.FC<{
     entry: BottomToastEntry;
     onDismiss: (id: number) => void;
 }> = ({ entry, onDismiss }) => {
-    const translateY = useRef(new Animated.Value(SLIDE_FROM)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
+    const translateY = useState(() => new Animated.Value(SLIDE_FROM))[0];
+    const opacity = useState(() => new Animated.Value(0))[0];
     const dismissed = useRef(false);
 
     const dismiss = useCallback(() => {

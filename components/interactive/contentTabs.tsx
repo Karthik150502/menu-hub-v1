@@ -66,7 +66,7 @@ export function ContentTabs<T extends string>({
     );
     const active = value ?? internalValue;
 
-    const fade = useRef(new Animated.Value(1)).current;
+    const fade = useState(() => new Animated.Value(1))[0];
 
     const handleChange = (key: T) => {
         if (key === active) return;

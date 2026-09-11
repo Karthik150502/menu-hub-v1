@@ -1,7 +1,7 @@
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Easing,
@@ -64,7 +64,7 @@ const OrbitRing: React.FC<{
     duration: number;
     clockwise: boolean;
 }> = ({ radius, color, duration: ringDuration, clockwise }) => {
-    const rotateAnim = useRef(new Animated.Value(0)).current;
+    const rotateAnim = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
         const loop = Animated.loop(
@@ -137,7 +137,7 @@ const INPUT_RANGE = Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS);
 const FloatingCard: React.FC<FloatingCardConfig> = ({
     icon, orbitColor, radius, startAngle, duration, clockwise,
 }) => {
-    const anim = useRef(new Animated.Value(0)).current;
+    const anim = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
         if (!icon) return;
@@ -185,8 +185,8 @@ const FloatingCard: React.FC<FloatingCardConfig> = ({
 export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
     showCenterIcon = true
 }) => {
-    const slideY = useRef(new Animated.Value(-500)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
+    const slideY = useState(() => new Animated.Value(-500))[0];
+    const opacity = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
         Animated.parallel([

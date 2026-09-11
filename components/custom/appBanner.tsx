@@ -2,7 +2,7 @@ import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Easing,
@@ -87,10 +87,10 @@ export const AppBanner: React.FC<AppBannerProps> = ({
     const isCompact = variant === 'compact';
 
     // JS driver — maxHeight collapse
-    const maxH = useRef(new Animated.Value(1)).current;
+    const maxH = useState(() => new Animated.Value(1))[0];
     // Native driver — opacity + translate
-    const slideY = useRef(new Animated.Value(-10)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
+    const slideY = useState(() => new Animated.Value(-10))[0];
+    const opacity = useState(() => new Animated.Value(0))[0];
 
     const handleDismiss = () => {
         Animated.parallel([

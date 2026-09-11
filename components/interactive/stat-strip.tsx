@@ -2,7 +2,7 @@ import { BORDER_RADIUS } from '@/constants/themes/dimensions';
 import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Animated,
     ScrollView,
@@ -69,7 +69,7 @@ const StatCardItem: React.FC<{ card: StatCard; width: number; height: number }> 
     width,
     height,
 }) => {
-    const pressAnim = useRef(new Animated.Value(1)).current;
+    const pressAnim = useState(() => new Animated.Value(1))[0];
 
     const onPressIn = () =>
         Animated.spring(pressAnim, { toValue: 0.95, useNativeDriver: true, speed: 50, bounciness: 0 }).start();
@@ -130,7 +130,7 @@ const RefreshButton: React.FC<{ onPress?: () => void; spinning: boolean }> = ({
     onPress,
     spinning,
 }) => {
-    const rotation = useRef(new Animated.Value(0)).current;
+    const rotation = useState(() => new Animated.Value(0))[0];
     const animRef = useRef<Animated.CompositeAnimation | null>(null);
 
     React.useEffect(() => {

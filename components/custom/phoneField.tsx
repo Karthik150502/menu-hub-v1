@@ -3,7 +3,7 @@ import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { useCallingCode } from '@/hooks/use-calling-code';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     StyleSheet,
@@ -61,7 +61,7 @@ const PhoneField: React.FC<PhoneFieldProps> = ({
     dialCode: dialCodeOverride,
 }) => {
     const dialCode = useCallingCode(dialCodeOverride);
-    const borderAnim = useRef(new Animated.Value(0)).current;
+    const borderAnim = useState(() => new Animated.Value(0))[0];
     const isFocused = useRef(false);
 
     useEffect(() => {

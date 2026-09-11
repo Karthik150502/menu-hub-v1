@@ -1,7 +1,7 @@
 import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Animated, StyleSheet, TextInput, View } from "react-native";
 // eslint-disable-next-line import/no-named-as-default
 import AppBanner from "./appBanner";
@@ -32,7 +32,7 @@ export interface PriceFieldProps {
 }
 
 export const PriceField: React.FC<PriceFieldProps> = ({ value, onChange, onBlur, error }) => {
-    const borderAnim = useRef(new Animated.Value(0)).current;
+    const borderAnim = useState(() => new Animated.Value(0))[0];
 
     const handleFocus = () => Animated.spring(borderAnim, {
         toValue: 1, useNativeDriver: false, speed: 22, bounciness: 4,

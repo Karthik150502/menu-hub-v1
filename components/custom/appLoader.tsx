@@ -1,7 +1,7 @@
 import { DIMENSIONS } from '@/constants/themes/dimensions';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { Image } from 'expo-image';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Easing,
@@ -47,7 +47,7 @@ const OrbitDot: React.FC<{
     startDeg: number;
     opacity?: number;
 }> = ({ radius, size, color, duration, startDeg, opacity = 1 }) => {
-    const anim = useRef(new Animated.Value(0)).current;
+    const anim = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
         Animated.loop(
@@ -101,7 +101,7 @@ const OrbitDot: React.FC<{
 // ─── Typing dots ──────────────────────────────────────────────────────────────
 
 const TypingDot: React.FC<{ delay: number }> = ({ delay }) => {
-    const anim = useRef(new Animated.Value(0.2)).current;
+    const anim = useState(() => new Animated.Value(0.2))[0];
 
     useEffect(() => {
         Animated.loop(
@@ -133,7 +133,7 @@ export const AppLoader: React.FC<AppLoaderProps> = ({
     style,
 }) => {
     // Centre icon pulse
-    const pulse = useRef(new Animated.Value(1)).current;
+    const pulse = useState(() => new Animated.Value(1))[0];
 
     useEffect(() => {
         Animated.loop(

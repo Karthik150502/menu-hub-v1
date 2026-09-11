@@ -41,8 +41,8 @@ interface DigitBoxProps {
 }
 
 const DigitBox: React.FC<DigitBoxProps> = ({ value, focused, error, disabled }) => {
-    const borderAnim = useRef(new Animated.Value(0)).current;
-    const scaleAnim  = useRef(new Animated.Value(1)).current;
+    const borderAnim = useState(() => new Animated.Value(0))[0];
+    const scaleAnim  = useState(() => new Animated.Value(1))[0];
 
     // JS driver — borderColor + backgroundColor (layout props, can't use native driver)
     useEffect(() => {
