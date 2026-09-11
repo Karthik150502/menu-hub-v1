@@ -2,7 +2,7 @@ import { FONT_SIZES, TYPOGRAPHY } from "@/constants/themes/font"
 import { SPACING } from "@/constants/themes/spacing"
 import { DESIGN_TOKENS } from "@/constants/themes/theme"
 import { Ionicons } from "@expo/vector-icons"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Animated, StyleSheet } from "react-native"
 import Text from "./appText"
 
@@ -13,8 +13,8 @@ interface ErrorTextProps {
 const ErrorText = ({
     message
 }: ErrorTextProps) => {
-    const translateX = useRef(new Animated.Value(-8)).current
-    const opacity = useRef(new Animated.Value(0)).current
+    const translateX = useState(() => new Animated.Value(-8))[0]
+    const opacity = useState(() => new Animated.Value(0))[0]
 
     useEffect(() => {
         translateX.setValue(-8)

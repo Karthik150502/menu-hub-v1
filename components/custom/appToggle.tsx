@@ -1,5 +1,5 @@
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Easing,
@@ -69,7 +69,7 @@ export const AppToggle: React.FC<AppToggleProps> = ({
     const cfg = VARIANTS[variant];
 
     // 0 = off, 1 = on
-    const anim = useRef(new Animated.Value(value ? 1 : 0)).current;
+    const anim = useState(() => new Animated.Value(value ? 1 : 0))[0];
 
     useEffect(() => {
         Animated.timing(anim, {

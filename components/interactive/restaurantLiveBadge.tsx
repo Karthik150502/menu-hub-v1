@@ -2,7 +2,7 @@ import { FONT_SIZES, FONT_WEIGHTS, TYPOGRAPHY } from '@/constants/themes/font';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Text from '@/components/custom/appText';
 import { Animated, StyleSheet, View } from 'react-native';
 
@@ -19,7 +19,7 @@ export const RestaurantLiveBadge: React.FC<RestaurantLiveBadgeProps> = ({
     isOpen,
     restaurantName,
 }) => {
-    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const pulseAnim = useState(() => new Animated.Value(1))[0];
 
     // Pulse the dot when open — stops when closed
     useEffect(() => {

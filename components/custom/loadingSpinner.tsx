@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Animated,
     Easing,
@@ -12,7 +12,7 @@ import {
 const DOT_COUNT = 8;
 
 const Spinner: React.FC<{ color: string; size: number }> = ({ color, size }) => {
-    const rotateAnim = useRef(new Animated.Value(0)).current;
+    const rotateAnim = useState(() => new Animated.Value(0))[0];
 
     React.useEffect(() => {
         Animated.loop(

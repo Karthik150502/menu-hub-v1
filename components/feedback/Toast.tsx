@@ -84,9 +84,9 @@ const ToastItem: React.FC<{
     onDismiss: (id: string) => void;
 }> = ({ entry, onDismiss }) => {
     const cfg = TOAST_CONFIG[entry.type ?? 'info'];
-    const translateY = useRef(new Animated.Value(SLIDE_FROM)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
-    const scaleX = useRef(new Animated.Value(1)).current;     // progress bar
+    const translateY = useState(() => new Animated.Value(SLIDE_FROM))[0];
+    const opacity = useState(() => new Animated.Value(0))[0];
+    const scaleX = useState(() => new Animated.Value(1))[0];     // progress bar
     const dismissed = useRef(false);
 
     const dismiss = useCallback(() => {

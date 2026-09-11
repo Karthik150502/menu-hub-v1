@@ -12,6 +12,14 @@ export interface SidebarOption {
     onPress?: () => void;
     disabled?: boolean;
     danger?: boolean;
+    /**
+     * Skip the sidebar's own close-on-press behavior — use when the press
+     * itself only opens something layered on top (e.g. a confirmation
+     * dialog) and the sidebar should stay visible underneath it. The
+     * option's `onPress` is then responsible for closing the sidebar itself,
+     * if/when that's the right outcome.
+     */
+    keepOpen?: boolean;
 }
 
 export interface SidebarOptionGroup {

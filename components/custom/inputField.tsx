@@ -2,7 +2,7 @@ import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     StyleSheet,
@@ -45,7 +45,7 @@ const Field: React.FC<FieldProps> = ({
     keyboardType = 'default', multiline, error, hint, optional,
     secureTextEntry, autoComplete,
 }) => {
-    const borderAnim = useRef(new Animated.Value(0)).current;
+    const borderAnim = useState(() => new Animated.Value(0))[0];
     const isFocused = useRef(false);
 
     useEffect(() => {

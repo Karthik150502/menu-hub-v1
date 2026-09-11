@@ -44,8 +44,8 @@ const AppDropdown: React.FC<AppDropdownProps> = ({
 }) => {
     const { width: SCREEN_WIDTH } = useWindowDimensions();
     const [open, setOpen] = useState(false);
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-    const dropdownAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useState(() => new Animated.Value(1))[0];
+    const dropdownAnim = useState(() => new Animated.Value(0))[0];
     const btnRef = useRef<View>(null);
     const [anchor, setAnchor] = useState({ x: 0, y: 0, width: 0 });
 

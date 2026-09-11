@@ -1,5 +1,8 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { SplashScreen, Stack } from 'expo-router';
+// As of SDK 56, expo-router vendors its own fork of react-navigation
+// internals and re-exports the theming pieces directly — importing
+// '@react-navigation/native' alongside it loads two copies and expo-router's
+// build-time check rejects it. Pull these from 'expo-router' instead.
+import { DarkTheme, DefaultTheme, SplashScreen, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 

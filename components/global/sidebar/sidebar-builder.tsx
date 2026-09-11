@@ -7,7 +7,7 @@ import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
 import { SidebarOption, SidebarProps } from '@/types/sidebar';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -38,11 +38,11 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
   containerStyle,
 }) => {
   const router = useRouter();
-  const translateX = useRef(
-    new Animated.Value(side === 'left' ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH),
-  ).current;
-  const backdropOpacity = useRef(new Animated.Value(0)).current;
-  const itemAnimations = useRef<Animated.Value[]>([]).current;
+  const translateX = useState(
+    () => new Animated.Value(side === 'left' ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH),
+  )[0];
+  const backdropOpacity = useState(() => new Animated.Value(0))[0];
+  const itemAnimations = useState<Animated.Value[]>(() => [])[0];
 
   const allOptions = optionGroups.flatMap((g) => g.options);
   while (itemAnimations.length < allOptions.length + 10) {
@@ -164,6 +164,13 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
                     showSeparator={!isLast}
                     onPress={() => {
                       if (option.disabled) return;
+                      if (option.keepOpen) {
+                        // Sidebar stays put — the option (e.g. a confirmation
+                        // dialog) is responsible for closing it, if at all.
+                        if (option.href) router.push(option.href as never);
+                        option.onPress?.();
+                        return;
+                      }
                       handleClose();
                       setTimeout(() => {
                         if (option.href) router.push(option.href as never);
@@ -207,8 +214,8 @@ interface AnimatedOptionProps {
 const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   option, animValue, onPress, showSeparator,
 }) => {
-  const pressAnim = useRef(new Animated.Value(1)).current;
-  const bgAnim = useRef(new Animated.Value(0)).current;
+  const pressAnim = useState(() => new Animated.Value(1))[0];
+  const bgAnim = useState(() => new Animated.Value(0))[0];
 
   const handlePressIn = () => {
     Animated.parallel([

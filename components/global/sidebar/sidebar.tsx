@@ -20,9 +20,9 @@ const Sidebar: React.FC = () => {
     const dispatch = useAppDispatch();
     const isOpen = useAppSelector(selectSidebarOpen);
 
-    // The sidebar itself closes as soon as any option is pressed (see
-    // sidebar-builder.tsx), so the "are you sure?" prompt is a separate,
-    // self-contained modal rather than sidebar state.
+    // The "Log Out" option is marked `keepOpen` (see optionGroups below), so
+    // the sidebar stays open behind the confirmation modal instead of
+    // closing on press.
     const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
 
     // ─── Log out ──────────────────────────────────────────────────────────────
@@ -34,6 +34,7 @@ const Sidebar: React.FC = () => {
     // return to an authenticated screen.
     const handleConfirmLogout = useCallback(async () => {
         setLogoutConfirmVisible(false);
+        dispatch(closeSidebar());
         try {
             await signOut();
         } catch (err) {
@@ -97,6 +98,7 @@ const Sidebar: React.FC = () => {
                     label: 'Log Out',
                     onPress: handleRequestLogout,
                     danger: true,
+                    keepOpen: true,
                 },
             ],
         },

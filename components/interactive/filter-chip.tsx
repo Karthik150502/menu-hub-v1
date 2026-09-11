@@ -4,7 +4,7 @@ import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Animated, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import Text from "../custom/appText";
 import { useBottomToast } from "../feedback/BottomToast";
@@ -24,7 +24,7 @@ const FilterChip: React.FC<{
     selected: boolean;
     onPress: () => void;
 }> = ({ label, selected, onPress }) => {
-    const pressAnim = useRef(new Animated.Value(1)).current;
+    const pressAnim = useState(() => new Animated.Value(1))[0];
 
     const onPressIn = () =>
         Animated.spring(pressAnim, { toValue: 0.93, useNativeDriver: true, speed: 50, bounciness: 0 }).start();

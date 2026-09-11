@@ -1,5 +1,5 @@
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     DimensionValue,
@@ -37,7 +37,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     borderRadius = 8,
     style,
 }) => {
-    const shimmer = useRef(new Animated.Value(0)).current;
+    const shimmer = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
         const loop = Animated.loop(

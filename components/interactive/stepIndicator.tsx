@@ -3,7 +3,7 @@ import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -25,7 +25,7 @@ export interface StepIndicatorProps {
 // indicator reads as progress rather than a static state.
 
 const Segment: React.FC<{ filled: boolean }> = ({ filled }) => {
-    const progress = useRef(new Animated.Value(filled ? 1 : 0)).current;
+    const progress = useState(() => new Animated.Value(filled ? 1 : 0))[0];
 
     useEffect(() => {
         Animated.timing(progress, {

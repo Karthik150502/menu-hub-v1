@@ -25,6 +25,21 @@ function getGreeting(hour: number): GreetingConfig {
     return { salutation: 'Good night', emoji: '🌙' };
 }
 
+const GREETING_WORDS = [
+    "Hello",
+    "Hi",
+    "Hey there",
+    "Hiya",
+    "Greetings",
+    "Yo",
+    "Sup",
+    "Wassup",
+    "Howdy",
+    "Hi there",
+    "Hey buddy",
+    "How you doin?",
+];
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const HeroGreeting: React.FC<HeroGreetingProps> = ({ name }) => {
@@ -32,21 +47,12 @@ export const HeroGreeting: React.FC<HeroGreetingProps> = ({ name }) => {
         getGreeting(new Date().getHours()),
     );
 
-    const greetings = [
-        "Hello",
-        "Hi",
-        "Hey there",
-        "Hiya",
-        "Greetings",
-        "Yo",
-        "Sup",
-        "Wassup",
-        "Howdy",
-        "Hi there",
-        "Hey buddy",
-        "How you doin?",
-    ];
-    const greetingWord = greetings[Math.floor(Math.random() * greetings.length)];
+    // Picked once per mount (lazy initializer), not recomputed on every
+    // render — Math.random() is impure, and re-rolling it on each render
+    // would flip the greeting word underneath the user for no reason.
+    const [greetingWord] = useState(
+        () => GREETING_WORDS[Math.floor(Math.random() * GREETING_WORDS.length)],
+    );
 
     // Re-check every minute in case the user crosses a time boundary
     useEffect(() => {

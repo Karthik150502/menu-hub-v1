@@ -70,7 +70,7 @@ interface DropdownItem {
 // ─── Menu visibility badge ────────────────────────────────────────────────────
 
 const MenuVisibilityBadge: React.FC<{ showInMenu: boolean }> = ({ showInMenu }) => {
-    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const pulseAnim = useState(() => new Animated.Value(1))[0];
 
     React.useEffect(() => {
         if (!showInMenu) {
@@ -120,9 +120,9 @@ const DishCard: React.FC<{
     onEdit?: (updated: Dish) => void;
     onDelete?: (key: string) => void;
 }> = ({ dish, index, onLayout, onToggle, onPress, onEdit, onDelete }) => {
-    const mountAnim = useRef(new Animated.Value(0)).current;
-    const pressAnim = useRef(new Animated.Value(1)).current;
-    const switchAnim = useRef(new Animated.Value(dish.available ? 1 : 0)).current;
+    const mountAnim = useState(() => new Animated.Value(0))[0];
+    const pressAnim = useState(() => new Animated.Value(1))[0];
+    const switchAnim = useState(() => new Animated.Value(dish.available ? 1 : 0))[0];
     const [editModalVisible, setEditModalVisible] = useState(false);
 
     React.useEffect(() => {
