@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-named-as-default
-import ConfirmationModal from '@/components/custom/confirmationModal';
+import { ConfirmationDialogContent } from '@/components/custom/confirmationModal';
 import Text from '@/components/custom/appText';
 import { DIMENSIONS } from '@/constants/themes/dimensions';
 import { TYPOGRAPHY } from '@/constants/themes/font';
@@ -127,7 +126,7 @@ const Sidebar: React.FC = () => {
         </View>
     );
 
-    return <>
+    return (
         <SidebarBuilder
             visible={isOpen}
             onClose={() => dispatch(closeSidebar())}
@@ -136,15 +135,16 @@ const Sidebar: React.FC = () => {
             footer={sidebarFooter}
             optionGroups={optionGroups}
             overlayOpacity={0.55}
+            overlay={logoutConfirmVisible ? (
+                <ConfirmationDialogContent
+                    title="Log out?"
+                    message="Are you sure you want to log out?"
+                    onConfirm={handleConfirmLogout}
+                    onCancel={handleCancelLogout}
+                />
+            ) : null}
         />
-        <ConfirmationModal
-            visible={logoutConfirmVisible}
-            title="Log out?"
-            message="Are you sure you want to log out?"
-            onConfirm={handleConfirmLogout}
-            onCancel={handleCancelLogout}
-        />
-    </>
+    );
 
 }
 

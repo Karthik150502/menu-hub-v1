@@ -36,6 +36,7 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
   side = 'left',
   overlayOpacity = 0.6,
   containerStyle,
+  overlay,
 }) => {
   const router = useRouter();
   const translateX = useState(
@@ -198,6 +199,11 @@ const SidebarBuilder: React.FC<SidebarProps> = ({
 
       <ToastPortal />
       <BottomToastPortal />
+
+      {/* Layered above the sidebar panel/backdrop, inside this same Modal —
+          see the `overlay` prop doc in types/sidebar.tsx for why this isn't
+          a second sibling <Modal>. */}
+      {overlay && <View style={StyleSheet.absoluteFill}>{overlay}</View>}
     </Modal>
   );
 };

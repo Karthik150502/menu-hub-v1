@@ -26,6 +26,7 @@ export interface UserRead {
     phone: string | null;
     full_name: string | null;
     avatar_url: string | null;
+    date_of_birth: string | null;
     is_active: boolean;
     is_superuser: boolean;
     email_confirmed: boolean;
