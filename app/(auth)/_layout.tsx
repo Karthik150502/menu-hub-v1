@@ -8,6 +8,7 @@ export default function AuthLayout() {
             <Stack.Screen name="register" />
             <Stack.Screen name="otp" />
             <Stack.Screen name="name" />
+            <Stack.Screen name="dob" />
             <Stack.Screen name="login" />
             <Stack.Screen name="login-otp" />
         </Stack>

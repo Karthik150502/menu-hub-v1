@@ -41,13 +41,17 @@ const T = {
     message: DESIGN_TOKENS.textSubtle,
 } as const;
 
-// ─── Component ────────────────────────────────────────────────────────────────
-// A small centered Yes/No dialog — distinct from AppModal (a full-screen sheet
-// for forms/content). Use this for anything that needs a quick "are you sure?"
-// before running an action that isn't trivially reversible.
+// ─── Dialog content ───────────────────────────────────────────────────────────
+// Split out from the `<Modal>` wrapper below so a caller that already has its
+// own native Modal open (e.g. the sidebar) can render this directly inside
+// it, instead of opening a second one. Two concurrently-visible RN <Modal>s
+// is a known iOS bug — each Modal presents as its own native window, and
+// iOS frequently drops touches on (or mis-stacks) the second one. Android's
+// Modal is backed by a Dialog window instead, so this only shows up on iOS.
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
-    visible,
+export type ConfirmationDialogContentProps = Omit<ConfirmationModalProps, 'visible'>;
+
+export const ConfirmationDialogContent: React.FC<ConfirmationDialogContentProps> = ({
     title,
     message,
     onConfirm,
@@ -55,6 +59,47 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     confirmLabel = 'Yes',
     cancelLabel = 'No',
     destructive = true,
+}) => (
+    <Pressable style={styles.backdrop} onPress={onCancel} accessibilityRole="none">
+        {/* Swallow taps on the card itself so they don't bubble to the backdrop */}
+        <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.message}>{message}</Text>
+
+            <View style={styles.actions}>
+                <AppButton
+                    label={cancelLabel}
+                    variant="secondary"
+                    onPress={onCancel}
+                    accessibilityRole="button"
+                    accessibilityLabel={cancelLabel}
+                    style={styles.action}
+                    fullWidth
+                />
+                <AppButton
+                    label={confirmLabel}
+                    variant={destructive ? 'danger' : 'primary'}
+                    onPress={onConfirm}
+                    accessibilityRole="button"
+                    accessibilityLabel={confirmLabel}
+                    style={styles.action}
+                    fullWidth
+                />
+            </View>
+        </Pressable>
+    </Pressable>
+);
+
+// ─── Component ────────────────────────────────────────────────────────────────
+// A small centered Yes/No dialog — distinct from AppModal (a full-screen sheet
+// for forms/content). Use this for anything that needs a quick "are you sure?"
+// before running an action that isn't trivially reversible, as long as it
+// isn't itself opening inside another already-visible Modal — if it is, use
+// ConfirmationDialogContent directly inside that Modal instead (see Sidebar).
+
+export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+    visible,
+    ...contentProps
 }) => {
     return (
         <Modal
@@ -62,36 +107,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             transparent
             animationType="fade"
             statusBarTranslucent
-            onRequestClose={onCancel}
+            onRequestClose={contentProps.onCancel}
         >
-            <Pressable style={styles.backdrop} onPress={onCancel} accessibilityRole="none">
-                {/* Swallow taps on the card itself so they don't bubble to the backdrop */}
-                <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
-                    <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.message}>{message}</Text>
-
-                    <View style={styles.actions}>
-                        <AppButton
-                            label={cancelLabel}
-                            variant="secondary"
-                            onPress={onCancel}
-                            accessibilityRole="button"
-                            accessibilityLabel={cancelLabel}
-                            style={styles.action}
-                            fullWidth
-                        />
-                        <AppButton
-                            label={confirmLabel}
-                            variant={destructive ? 'danger' : 'primary'}
-                            onPress={onConfirm}
-                            accessibilityRole="button"
-                            accessibilityLabel={confirmLabel}
-                            style={styles.action}
-                            fullWidth
-                        />
-                    </View>
-                </Pressable>
-            </Pressable>
+            <ConfirmationDialogContent {...contentProps} />
         </Modal>
     );
 };

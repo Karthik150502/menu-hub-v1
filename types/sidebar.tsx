@@ -56,5 +56,15 @@ export interface SidebarProps {
 
     /** Extra style applied to the sidebar container */
     containerStyle?: ViewStyle;
+
+    /**
+     * Rendered inside the sidebar's own native Modal, layered above
+     * everything else in it (e.g. a confirmation dialog triggered by a
+     * `keepOpen` option). Keep dialogs like this here rather than in a
+     * second sibling <Modal> — two concurrently-visible RN Modals is a
+     * known iOS bug where the second one can silently drop touches (see
+     * ConfirmationDialogContent in components/custom/confirmationModal.tsx).
+     */
+    overlay?: React.ReactNode;
 }
 

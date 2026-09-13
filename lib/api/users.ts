@@ -18,6 +18,8 @@ interface ApiResponse<T> {
 export interface UpdateMePayload {
     full_name?: string | null;
     avatar_url?: string | null;
+    /** ISO "YYYY-MM-DD" — matches the backend's UserUpdate.date_of_birth (format: date). */
+    date_of_birth?: string | null;
 }
 
 export async function updateMe(payload: UpdateMePayload): Promise<UserRead> {
