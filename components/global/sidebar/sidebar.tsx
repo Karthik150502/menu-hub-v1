@@ -4,6 +4,7 @@ import { DIMENSIONS } from '@/constants/themes/dimensions';
 import { TYPOGRAPHY } from '@/constants/themes/font';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { queryClient } from '@/lib/queryClient';
 import { signOut } from '@/lib/supabase/auth';
 import { SidebarOptionGroup } from '@/types/sidebar';
 import { router } from 'expo-router';
@@ -40,6 +41,11 @@ const Sidebar: React.FC = () => {
             console.warn('[Sidebar] signOut request failed, clearing local session anyway', err);
         } finally {
             dispatch(clearSession());
+            // Also cleared by AuthSync (app/_layout.tsx) when Supabase's own
+            // SIGNED_OUT event fires — but signOut() can throw before that
+            // happens, so clear it here too rather than depend on the event
+            // making it through. queryClient.clear() is idempotent.
+            queryClient.clear();
             router.replace('/welcome');
         }
     }, [dispatch]);

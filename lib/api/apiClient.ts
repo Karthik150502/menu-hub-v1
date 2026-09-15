@@ -91,7 +91,8 @@ async function unwrap<T>(request: Promise<{ status: number; data: T }>): Promise
 }
 
 export const api = {
-    get: <T>(path: string) => unwrap<T>(client.get<T>(path)),
+    get: <T>(path: string, params?: Record<string, unknown>) =>
+        unwrap<T>(client.get<T>(path, params ? { params } : undefined)),
     post: <T>(path: string, body: unknown) => unwrap<T>(client.post<T>(path, body)),
     patch: <T>(path: string, body: unknown) => unwrap<T>(client.patch<T>(path, body)),
     put: <T>(path: string, body: unknown) => unwrap<T>(client.put<T>(path, body)),

@@ -18,6 +18,9 @@ export const ENDPOINTS = {
     users: {
         me: `${V1}/users/me`,
     },
+    restaurants: {
+        me: `${V1}/restaurants/me`,
+    },
 } as const;
 
 export const SUPABASE_ENDPOINTS = {
