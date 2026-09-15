@@ -54,13 +54,25 @@ const C = {
     danger: DESIGN_TOKENS.subNegative,
     dangerDark: DESIGN_TOKENS.subNegativeDark,
     dangerGlow: DESIGN_TOKENS.dangerGlow,
-    dangerFaint: DESIGN_TOKENS.dangerFaint,
+    // background_1, not dangerFaint — 'danger' (like 'secondary' above) is
+    // only used by the confirmation modal's Confirm button, which sits on a
+    // background_1 card. dangerFaint is a translucent coral tint (10% alpha)
+    // — composited over background_1's near-black it barely reads as a
+    // color at all, unlike Toast's error state, which keeps the same
+    // background_1 fill everywhere and carries "danger" entirely through
+    // the border/text/icon color instead (see components/feedback/Toast.tsx).
+    dangerBg: DESIGN_TOKENS.background_1,
     dangerBorder: DESIGN_TOKENS.dangerBorder,
 
     ghostBorder: DESIGN_TOKENS.ghostBorder,
     ghostBg: DESIGN_TOKENS.ghostBg,
 
-    secondaryBg: DESIGN_TOKENS.floatCardBg,
+    // background_1, not floatCardBg — 'secondary' is only used by the
+    // confirmation modal's Cancel button (components/custom/confirmationModal.tsx),
+    // which now sits on a background_1 card; floatCardBg is a separate,
+    // lighter purple meant for decorative floating cards elsewhere (see
+    // components/design/welcomeIntro.tsx) and seamed visibly against it.
+    secondaryBg: DESIGN_TOKENS.background_1,
     secondaryBorder: DESIGN_TOKENS.cardBorder,
 
     success: DESIGN_TOKENS.subPositive,
@@ -99,7 +111,7 @@ function getVariantStyle(variant: ButtonVariant) {
         case 'primary': return { bg: C.primary, border: C.primaryBorder, text: C.textOnFilled, icon: C.textOnFilled, shadow: C.primary, shadowOp: 0.45, pressOpacity: 0.75 };
         case 'secondary': return { bg: C.secondaryBg, border: C.secondaryBorder, text: C.textOnGhost, icon: C.textOnGhost, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.75 };
         case 'ghost': return { bg: C.ghostBg, border: C.ghostBorder, text: C.textOnGhost, icon: DESIGN_TOKENS.accentDefault, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.85 };
-        case 'danger': return { bg: C.dangerFaint, border: C.dangerBorder, text: C.danger, icon: C.danger, shadow: C.danger, shadowOp: 0.25, pressOpacity: 0.75 };
+        case 'danger': return { bg: C.dangerBg, border: C.dangerBorder, text: C.danger, icon: C.danger, shadow: C.danger, shadowOp: 0.25, pressOpacity: 0.75 };
         case 'ghostTransparent': return { bg: 'transparent', border: 'transparent', text: C.textOnGhost, icon: DESIGN_TOKENS.accentDefault, shadow: 'transparent', shadowOp: 0, pressOpacity: 0.9 };
         case 'success': return { bg: C.successBg, border: C.successBorder, text: C.success, icon: C.success, shadow: C.success, shadowOp: 0.20, pressOpacity: 0.75 };
         case 'warning': return { bg: C.warningBg, border: C.warningBorder, text: C.warning, icon: C.warning, shadow: C.warning, shadowOp: 0.20, pressOpacity: 0.75 };

@@ -9,12 +9,23 @@ import { Page } from '@/components/Page';
 import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 import { SPACING } from '@/constants/themes/spacing';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
+import { useMyRestaurant } from '@/hooks/use-my-restaurant';
 import { selectDisplayName, selectUserInitials, useAppSelector } from '@/store';
 import { StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
   const displayName = useAppSelector(selectDisplayName);
   const userInitials = useAppSelector(selectUserInitials);
+
+  // Only name/open-state are shown today — RestaurantRead carries the rest
+  // (address, currency, timings, …) for whenever the home screen grows to
+  // show more. Renders blank rather than a "Loading…" label while the first
+  // fetch is in flight — the name pops in once it resolves; "Restaurant" is
+  // only a fallback once loading has actually finished with nothing to show
+  // (e.g. an error) — a stale name is a smaller problem than blowing up the
+  // header.
+  const { data: restaurant, isPending: restaurantLoading } = useMyRestaurant();
+  const restaurantName = restaurant?.name ?? (restaurantLoading ? '' : 'Restaurant');
 
   return (
     /*
@@ -51,7 +62,7 @@ export default function HomeScreen() {
         */
         header={
           <AppHeader
-            title="Mijoko"
+            title={restaurantName}
             userInitials={userInitials}
             onProfilePress={() => { }}
           />
@@ -66,8 +77,8 @@ export default function HomeScreen() {
         <View style={styles.heroSection}>
           <HomePageHero
             name={displayName}
-            isOpen
-            restaurantName="Mijoko"
+            isOpen={restaurant?.is_open ?? true}
+            restaurantName={restaurantName}
           />
           <ScrollableStatsStrip />
         </View>

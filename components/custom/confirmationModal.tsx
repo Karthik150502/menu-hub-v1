@@ -35,7 +35,13 @@ export interface ConfirmationModalProps {
 
 const T = {
     backdrop: DESIGN_TOKENS.backdropColor,
-    cardBg: DESIGN_TOKENS.cardBg,
+    // background_1, not cardBg — this is a floating modal surface, same as
+    // AppModal (components/custom/appModal.tsx) and the sidebar panel
+    // (sidebar-builder.tsx). cardBg is a lighter purple meant for inline
+    // content cards (dish cards, stat strips, …), not modals — using it here
+    // was the one surface in the app that didn't match the rest of the dark
+    // theme.
+    cardBg: DESIGN_TOKENS.background_1,
     cardBorder: DESIGN_TOKENS.cardBorder,
     title: DESIGN_TOKENS.textPrimary,
     message: DESIGN_TOKENS.textSubtle,

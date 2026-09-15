@@ -15,6 +15,7 @@ import { Text, TextInput } from 'react-native';
 import { BottomToastProvider } from '@/components/feedback/BottomToast';
 import { ToastProvider } from '@/components/feedback/Toast';
 import { me } from '@/lib/api/auth';
+import { queryClient } from '@/lib/queryClient';
 import { onAuthStateChange, updateUserMetadata } from '@/lib/supabase/auth';
 import { setSession, store, useAppDispatch } from '@/store';
 import {
@@ -26,6 +27,7 @@ import {
   Montserrat_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/montserrat';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 
 export const unstable_settings = {
@@ -61,6 +63,12 @@ function AuthSync() {
   useEffect(() => {
     const { data: { subscription } } = onAuthStateChange((session) => {
       dispatch(setSession({ session, user: session?.user ?? null }));
+
+      // Drop every cached query (restaurant data, etc.) on sign-out so the
+      // next signed-in user — on a shared device, or just the next session —
+      // never sees a flash of the previous account's cached data before
+      // their own fetch resolves.
+      if (!session) queryClient.clear();
 
       // Legacy-account backfill: accounts that saved a name via nameScreen
       // before it also called updateUserMetadata have full_name in our
@@ -114,22 +122,24 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <Provider store={store}>
-      <AuthSync />
-      <ToastProvider>
-        <BottomToastProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Sidebar />
-            <Stack initialRouteName="index">
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </BottomToastProvider>
-      </ToastProvider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <AuthSync />
+        <ToastProvider>
+          <BottomToastProvider>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Sidebar />
+              <Stack initialRouteName="index">
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </BottomToastProvider>
+        </ToastProvider>
+      </Provider>
+    </QueryClientProvider>
   );
 }
