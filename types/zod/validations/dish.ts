@@ -3,7 +3,6 @@ import { z } from "zod";
 // ─── Zod schema ───────────────────────────────────────────────────────────────
 // Mirrors the Dish interface. All fields the user can edit are validated here.
 // price is kept as a string in the form (TextInput), coerced on output.
-
 export const dishSchema = z.object({
     name: z
         .string()
