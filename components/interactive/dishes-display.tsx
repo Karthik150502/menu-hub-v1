@@ -1,4 +1,6 @@
-import { INITIAL_DISHES } from "@/constants/mock-data";
+import { ALL_CATEGORY_ID } from "@/hooks/use-categories";
+import { useDishes } from "@/hooks/use-dishes";
+import { DishRead } from "@/lib/api/dishes";
 import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -10,26 +12,53 @@ import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import DishList, { Dish } from "./dishes";
 import CategoryBar from "./filter-chip";
 
+// Adapts the backend's richer shape (nested category/price objects) to the
+// flat Dish shape DishCard/DishList render. `availableOverride` lets the
+// availability toggle patch the UI instantly — there's no PATCH endpoint for
+// it yet, so this stays a local-only override rather than a real mutation.
+function toDish(d: DishRead, availableOverride?: boolean): Dish {
+    return {
+        id: d.id,
+        name: d.name,
+        description: d.description ?? undefined,
+        price: d.price.final_price,
+        currency: d.price.currency_code,
+        available: availableOverride ?? d.available,
+        imageUrl: d.image_url ?? undefined,
+        category: d.category.id,
+        categoryLabel: d.category.label,
+        veg: d.veg,
+        showInMenu: d.show_in_menu,
+        tag: d.tag ?? undefined,
+    };
+}
+
 const DishesDisplay: React.FC = () => {
 
-    const [dishes, setDishes] = useState<Dish[]>(INITIAL_DISHES);
-    const [activeCategories, setActiveCategories] = useState<string[]>(["all"]);
+    const [activeCategories, setActiveCategories] = useState<string[]>([ALL_CATEGORY_ID]);
+    // TODO: drop once dish availability has a real PATCH endpoint — until
+    // then, toggling is a local-only patch over the fetched data.
+    const [availabilityOverrides, setAvailabilityOverrides] = useState<Record<string, boolean>>({});
 
-    const visibleDishes = useMemo<Dish[]>(() => {
-        return dishes.filter(dish => activeCategories.includes(dish.category) || activeCategories.includes("all"))
-    }, [activeCategories, dishes])
+    const { data: rawDishes, isLoading: dishesLoading, isError: dishesError, refetch: refetchDishes } = useDishes(activeCategories);
+
+    const dishes = useMemo<Dish[]>(
+        () => rawDishes.map((d) => toDish(d, availabilityOverrides[d.id])),
+        [rawDishes, availabilityOverrides],
+    );
 
     const handleToggle = (id: string, available: boolean) => {
-        setDishes((prev) =>
-            prev.map((d) => (d.id === id ? { ...d, available } : d))
-        );
+        setAvailabilityOverrides((prev) => ({ ...prev, [id]: available }));
     };
 
     return (
         <View style={styles.container}>
             <CategoryBar selected={activeCategories} onSelect={setActiveCategories} />
             <DishList
-                dishes={visibleDishes}
+                dishes={dishes}
+                loading={dishesLoading}
+                error={dishesError}
+                onRetry={refetchDishes}
                 onToggleAvailability={handleToggle}
                 onDishPress={(dish) => console.log("Tapped:", dish.name)}
                 style={styles.list}
@@ -84,4 +113,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DishesDisplay; 
+export default DishesDisplay;

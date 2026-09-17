@@ -1,5 +1,6 @@
+import { BORDER_RADIUS } from '@/constants/themes/dimensions';
 import { DESIGN_TOKENS } from '@/constants/themes/theme';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Animated,
     DimensionValue,
@@ -11,12 +12,26 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/** 'rectangle' (default) is a free-form block, 'square' and 'circle' are equal-sided. */
+export type SkeletonShape = 'rectangle' | 'square' | 'circle';
+
 export interface SkeletonProps {
+    /**
+     * Shape helper. 'square'/'circle' use `size` (or `width`/`height`) for both
+     * dimensions and pick the matching app-standard radius automatically.
+     * Defaults to 'rectangle'.
+     */
+    shape?: SkeletonShape;
     /** Height of the skeleton block. Number = px, string = '100%' etc. */
-    height: number | DimensionValue;
-    /** Width of the skeleton block. Defaults to '100%'. */
+    height?: number | DimensionValue;
+    /** Width of the skeleton block. Defaults to '100%' for rectangles. */
     width?: number | DimensionValue;
-    /** Border radius. Pass 9999 for a full circle/pill. Defaults to 8. */
+    /** Convenience for 'square'/'circle' — sets both width and height. */
+    size?: number;
+    /**
+     * Border radius override. Defaults to the app's standard radius for the
+     * shape: BORDER_RADIUS.full for 'circle', BORDER_RADIUS.base otherwise.
+     */
     borderRadius?: number;
     /** Extra styles applied to the outer container */
     style?: ViewStyle;
@@ -32,11 +47,20 @@ const HIGHLIGHT_COLOR = DESIGN_TOKENS.inputBg;           // 'rgba(255,255,255,0.
 // ─── Single skeleton block ────────────────────────────────────────────────────
 
 export const Skeleton: React.FC<SkeletonProps> = ({
+    shape = 'rectangle',
     height,
-    width = '100%',
-    borderRadius = 8,
+    width,
+    size,
+    borderRadius,
     style,
 }) => {
+    const isEqualSided = shape === 'square' || shape === 'circle';
+    const equalSize = size ?? (typeof height === 'number' ? height : typeof width === 'number' ? width : 40);
+
+    const resolvedWidth = isEqualSided ? (width ?? equalSize) : (width ?? '100%');
+    const resolvedHeight = isEqualSided ? (height ?? equalSize) : (height ?? 12);
+    const resolvedRadius = borderRadius ?? (shape === 'circle' ? BORDER_RADIUS.full : BORDER_RADIUS.base);
+
     const shimmer = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
@@ -69,7 +93,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         <Animated.View
             style={[
                 styles.base,
-                { height, width, borderRadius, backgroundColor },
+                { height: resolvedHeight, width: resolvedWidth, borderRadius: resolvedRadius, backgroundColor },
                 style,
             ]}
             accessibilityRole="progressbar"
@@ -84,8 +108,15 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
 /** Circle — avatar, icon placeholder */
 export const SkeletonCircle: React.FC<{ size: number; style?: ViewStyle }> = ({ size, style }) => (
-    <Skeleton height={size} width={size} borderRadius={size / 2} style={style} />
+    <Skeleton shape="circle" size={size} style={style} />
 );
+
+/** Square — thumbnail, icon tile placeholder */
+export const SkeletonSquare: React.FC<{ size: number; borderRadius?: number; style?: ViewStyle }> = ({
+    size,
+    borderRadius,
+    style,
+}) => <Skeleton shape="square" size={size} borderRadius={borderRadius} style={style} />;
 
 /** Single line of text — use multiple stacked for a paragraph */
 export const SkeletonText: React.FC<{

@@ -1,13 +1,14 @@
-import { CATEGORIES } from "@/constants/mock-data";
+import { ALL_CATEGORY_ID, useCategories } from "@/hooks/use-categories";
 import { BORDER_RADIUS } from "@/constants/themes/dimensions";
 import { TYPOGRAPHY } from "@/constants/themes/font";
 import { SPACING } from "@/constants/themes/spacing";
 import { DESIGN_TOKENS } from "@/constants/themes/theme";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Animated, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import Text from "../custom/appText";
 import { useBottomToast } from "../feedback/BottomToast";
+import { SkeletonPill } from "../skeletons";
 import { Dish } from "./dishes";
 
 export interface Category {
@@ -61,11 +62,49 @@ const FilterChip: React.FC<{
 
 // ─── Category filter bar ──────────────────────────────────────────────────────
 
+// Varied widths so the loading row reads as label-shaped chips, not a uniform brick.
+const SKELETON_CHIP_WIDTHS = [56, 84, 68, 96, 64];
+
 const CategoryBar: React.FC<{
     selected: string[];
     onSelect: React.Dispatch<React.SetStateAction<string[]>>;
 }> = ({ selected, onSelect }) => {
     const { info } = useBottomToast();
+    const { data: categories, isLoading, isError, refetch } = useCategories();
+
+    // "All" isn't a real category from the backend — it's UI-only logic for
+    // "no filter" (see ALL_CATEGORY_ID). It's always known up front, so it
+    // stays a real, interactive chip even while the rest are still loading —
+    // only the fetched categories need a skeleton placeholder.
+    const handlePress = (categoryId: string) => {
+        const isSelected = selected.includes(categoryId);
+        onSelect(prev => {
+            if (isSelected) {
+                if (prev.length === 1) {
+                    info('Atleast select one category');
+                    return prev;
+                }
+                return prev.filter(key => key !== categoryId)
+            } else {
+                if (selected.includes(ALL_CATEGORY_ID) && categoryId !== ALL_CATEGORY_ID) {
+                    return [...prev.filter(key => key !== ALL_CATEGORY_ID), categoryId]
+                }
+                if (categoryId === ALL_CATEGORY_ID) {
+                    return [categoryId]
+                }
+                return [...prev, categoryId]
+            }
+        });
+    };
+
+    if (isError) {
+        return (
+            <TouchableOpacity style={styles.retryChip} onPress={() => refetch()}>
+                <Ionicons name="refresh" size={14} color={DESIGN_TOKENS.textLabel} />
+                <Text style={styles.retryText}>Couldn&apos;t load categories — tap to retry</Text>
+            </TouchableOpacity>
+        );
+    }
 
     return <ScrollView
         horizontal
@@ -73,32 +112,24 @@ const CategoryBar: React.FC<{
         contentContainerStyle={styles.barContent}
         style={styles.bar}
     >
-        {CATEGORIES.map((cat) => {
-            const isSelected = selected.includes(cat.key)
+        <FilterChip
+            label="All"
+            selected={selected.includes(ALL_CATEGORY_ID)}
+            onPress={() => handlePress(ALL_CATEGORY_ID)}
+        />
 
-            return <FilterChip
-                key={cat.key}
-                label={cat.label}
-                selected={isSelected}
-                onPress={() => onSelect(prev => {
-                    if (isSelected) {
-                        if (prev.length === 1) {
-                            info('Atleast select one category');
-                            return prev;
-                        }
-                        return prev.filter(key => key !== cat.key)
-                    } else {
-                        if (selected.includes("all") && cat.key !== "all") {
-                            return [...prev.filter(key => key !== "all"), cat.key]
-                        }
-                        if (cat.key === "all") {
-                            return [cat.key]
-                        }
-                        return [...prev, cat.key]
-                    }
-                })}
-            />
-        })}
+        {isLoading
+            ? SKELETON_CHIP_WIDTHS.map((width, i) => (
+                <SkeletonPill key={i} width={width} height={36} />
+            ))
+            : categories?.map((cat) => (
+                <FilterChip
+                    key={cat.id}
+                    label={cat.label}
+                    selected={selected.includes(cat.id)}
+                    onPress={() => handlePress(cat.id)}
+                />
+            ))}
     </ScrollView>
 }
 
@@ -154,6 +185,25 @@ const styles = StyleSheet.create({
         color: DESIGN_TOKENS.textPrimary,
     },
 
+    // ── Error state ───────────────────────────────────────────────────────────
+    retryChip: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SPACING.xs,
+        marginHorizontal: SPACING.md,
+        marginVertical: SPACING.ssm,
+        paddingHorizontal: SPACING.lg,
+        paddingVertical: SPACING.sm,
+        borderRadius: BORDER_RADIUS.full,
+        backgroundColor: DESIGN_TOKENS.cardBg,
+        borderWidth: 1,
+        borderColor: DESIGN_TOKENS.cardBorder,
+        alignSelf: "flex-start",
+    },
+    retryText: {
+        color: DESIGN_TOKENS.textLabel,
+        ...TYPOGRAPHY.bodySmall,
+    },
 });
 
 export default CategoryBar;

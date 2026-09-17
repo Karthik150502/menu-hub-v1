@@ -21,6 +21,8 @@ import { BORDER_RADIUS, DIMENSIONS } from '@/constants/themes/dimensions';
 
 import { dishSplashIcon } from '@/constants/images';
 import { SPACING } from '@/constants/themes/spacing';
+import ErrorState from '../Page/components/ErrorState';
+import { SkeletonCard } from '../skeletons';
 import AppDropdown from '../custom/dropdown-select';
 // eslint-disable-next-line import/no-named-as-default
 import AppToggle from '../custom/appToggle';
@@ -42,7 +44,10 @@ export interface Dish {
     currency?: string;
     available: boolean;
     imageUrl?: string;
+    /** Category id — used for filtering/matching, not for display. */
     category: string;
+    /** Human-readable category name — this is what the card shows. */
+    categoryLabel?: string;
     veg: boolean;
     showInMenu?: boolean;
     tag?: string;
@@ -50,6 +55,14 @@ export interface Dish {
 
 export interface DishListProps {
     dishes: Dish[];
+    /** Show a skeleton grid instead of the dish list — while dishes are being fetched. */
+    loading?: boolean;
+    /** How many skeleton cards to render while loading. Defaults to 6. */
+    skeletonCount?: number;
+    /** Show an error state with retry instead of the dish list. */
+    error?: boolean;
+    /** Called when the user taps "Try again" in the error state. */
+    onRetry?: () => void;
     onToggleAvailability?: (key: string, newValue: boolean) => void;
     onDishPress?: (dish: Dish) => void;
     onDishEdit?: (updated: Dish) => void;
@@ -231,7 +244,7 @@ const DishCard: React.FC<{
                                         { backgroundColor: dish.veg ? DESIGN_TOKENS.subPositiveDarkFade : DESIGN_TOKENS.subNegativeDarkFade },
                                     ]}>
                                         <Text style={[styles.categoryText, { color: DESIGN_TOKENS.titleText }]}>
-                                            {dish.category}
+                                            {dish.categoryLabel ?? dish.category}
                                         </Text>
                                     </View>
                                 </View>
@@ -270,7 +283,7 @@ const DishCard: React.FC<{
 // ─── DishList ─────────────────────────────────────────────────────────────────
 
 export const DishList: React.FC<DishListProps> = ({
-    dishes, onToggleAvailability, onDishPress, onDishEdit, onDishDelete, style,
+    dishes, loading = false, skeletonCount = 6, error = false, onRetry, onToggleAvailability, onDishPress, onDishEdit, onDishDelete, style,
 }) => {
     const { width: screenWidth } = useWindowDimensions();
     const columns = getColumns(screenWidth);
@@ -286,6 +299,26 @@ export const DishList: React.FC<DishListProps> = ({
             setCardHeight(e.nativeEvent.layout.height);
         }
     }, []);
+
+    if (loading) {
+        return (
+            <ScrollView
+                showsVerticalScrollIndicator
+                contentContainerStyle={styles.grid}
+                style={[styles.list, style]}
+            >
+                {Array.from({ length: skeletonCount }).map((_, i) => (
+                    <View key={`skeleton-${i}`} style={styles.cardWrapper}>
+                        <SkeletonCard />
+                    </View>
+                ))}
+            </ScrollView>
+        );
+    }
+
+    if (error) {
+        return <ErrorState message="Couldn't load dishes." onRetry={onRetry} />;
+    }
 
     return (
         <ScrollView

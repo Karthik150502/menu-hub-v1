@@ -1,22 +1,12 @@
 import { api } from './apiClient';
 import { ENDPOINTS } from './endpoints';
+import { PaginatedResponse } from './types';
 
 // ─── Backend restaurants API ──────────────────────────────────────────────────
 // Wraps FastAPI's /restaurants routes. Only "my restaurants" is needed for
 // now — the home screen shows just the current owner's restaurant name/open
 // state (see hooks/use-my-restaurant.ts) — the rest of RestaurantRead
 // (address, timings, currency, …) is reserved for later screens.
-
-// Every backend list response is wrapped in this paginated envelope.
-export interface PaginatedResponse<T> {
-    success: boolean;
-    message: string;
-    data: T[];
-    total: number;
-    page: number;
-    page_size: number;
-    has_next: boolean;
-}
 
 export interface RestaurantRead {
     id: string;

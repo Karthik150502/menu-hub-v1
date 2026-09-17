@@ -20,6 +20,8 @@ export const ENDPOINTS = {
     },
     restaurants: {
         me: `${V1}/restaurants/me`,
+        categories: (restaurantId: string) => `${V1}/restaurants/${restaurantId}/categories`,
+        dishes: (restaurantId: string) => `${V1}/restaurants/${restaurantId}/dishes`,
     },
 } as const;
 
